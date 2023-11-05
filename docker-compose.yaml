@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  backend:
+    build: .
+    command: uvicorn main:app --port 80 --host 0.0.0.0 --reload
+    ports: 
+      - 80:80
+    env_file:
+      - .env
+    depends_on:
+      postgreSQL:
+        condition: service_healthy
+    volumes:
+      - .:/app
+
+  postgreSQL:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      # POSTGRES_DB: file_sharing_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes: 
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
