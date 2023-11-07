@@ -13,6 +13,18 @@ services:
     volumes: 
       - log-directory:/var/lib/postgresql/data
 
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - "5050:5050"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 5050
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+
   backend:
     build: .
     command: uvicorn main:app --port 80 --host 0.0.0.0 --reload
@@ -27,3 +39,4 @@ services:
 
 volumes:
   log-directory:
+  pgadmin:
