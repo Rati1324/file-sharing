@@ -35,7 +35,7 @@ def get_db():
         db.close()
 
 app = FastAPI()
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 @app.get("/clear_users")
 async def clear_users(db: Session = Depends(get_db)):
@@ -48,7 +48,6 @@ async def test():
 
 @app.post("/signup")
 async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
-    print("fuck you")
     check_user = db.query(User).filter_by(username=user_data.username).first()
     if check_user is not None:
         raise HTTPException(status_code=400, detail="Username already registered")
