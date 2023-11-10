@@ -21,7 +21,7 @@ from core.config import Base, engine, SessionLocal
 from core.models import User
 
 hash_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="signin")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
@@ -36,44 +36,6 @@ def get_db():
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
-
-@app.get("/clear_users")
-async def clear_users(db: Session = Depends(get_db)):
-    db.query(User).delete()
-    db.commit()
-
-@app.get("/")
-async def test():
-    return {"message": "hi4"}
-
-@app.post("/signup")
-async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
-    check_user = db.query(User).filter_by(username=user_data.username).first()
-    if check_user is not None:
-        raise HTTPException(status_code=400, detail="Username already registered")
-
-    db_user = User(
-        username = user_data.username,
-        password = get_hashed_password(user_data.password)
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    expire_mins = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    token = create_jwt_token(user_data.username, expire_mins)
-    token_schema = TokenSchema(access_token=token, token_type="bearer")
-    return token_schema
-
-@app.post('/signin', response_model=TokenSchema)
-async def signin(db: Session = Depends(get_db), user_data: UserSchema = None):
-    user = db.query(User).filter_by(username=user_data.username).first().password
-
-    # if user is None:
-    #     raise exception.HTTPException(status_code=400, detail="Invalid username of password")
-
-    # password_valid = verify_password(user_data.password, user)
-    # print(password_valid)
-    return {"response": "user successfully logged in"}
 
 def find_user(db: Session = Depends(get_db), username: str or None=None):
     user = db.query(User).filter_by(username=username).first().password
@@ -98,3 +60,44 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     
     return user
 
+@app.get("/clear_users")
+async def clear_users(db: Session = Depends(get_db)):
+    db.query(User).delete()
+    db.commit()
+
+@app.get("/")
+async def test():
+    return {"message": "hi4"}
+
+@app.post("/signup")
+async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
+    check_user = db.query(User).filter_by(username=user_data.username).first()
+    if check_user is not None:
+        raise HTTPException(status_code=400, detail="Username already registered")
+
+    db_user = User(
+        username = user_data.username,
+        password = get_hashed_password(user_data.password)
+    )
+
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    expire_mins = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    token = create_jwt_token(user_data.username, expire_mins)
+    token_schema = TokenSchema(access_token=token, token_type="bearer")
+    return token_schema
+
+@app.post('/signin', response_model=TokenSchema)
+async def signin(db: Session = Depends(get_db), user_data: OAuth2PasswordRequestForm = Depends()):
+    # user = db.query(User).filter_by(username=user_data.username).first().password
+    # if user is None:
+    #     raise exception.HTTPException(status_code=400, detail="Invalid username of password")
+
+    # password_valid = verify_password(user_data.password, user)
+    # print(password_valid)
+    return {"response": "user successfully logged in"}
+
+@app.get("/test")
+def test(db: Session = Depends(get_db), dependencies = Depends(get_current_user)):
+    print(dependencies.username)
