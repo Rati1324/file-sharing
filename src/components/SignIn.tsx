@@ -1,7 +1,7 @@
 import React from 'react'
 
-export default function SignIn () {
+export default function SignIn(): React.ReactNode  {
   return (
-    <div>SignIn</div>
+    <div>HI</div>
   )
 }
