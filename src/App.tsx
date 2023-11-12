@@ -2,6 +2,7 @@ import Home from "./components/Home";
 import Navbar from "./components/Navbar";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+import Footer from "./components/Footer";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
       </Routes>
+      <Footer />
     </>
   );
 }
