@@ -27,7 +27,6 @@ export default function SignupCard() {
         throw new Error(`HTTP error. Status: ${response.status}. "Details: ${jsonResponse.detail}`)
       }
       const result = await response.json();
-      console.log(typeof result)
       return result;
     } catch (error: any) {
       console.error('Error sending data:', error);
@@ -57,8 +56,15 @@ export default function SignupCard() {
   }
 
   function passwordInputHandler(passwordInput: string) {
+    console.log(passwordInput)
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-    let errorMessage = passwordRegex.test(passwordInput) ? "" : "what is this";
+    let errorMessage = passwordRegex.test(passwordInput) ? "" 
+    : 
+    `Password must contain:
+    1) At least one lowercase letter
+    2) At least one uppercase letter
+    3) At least one digit
+    4) Minimum length of 8 characters`;
 
     setPasswordInput(passwordInput);
     setTimeout(() => {
@@ -85,19 +91,20 @@ export default function SignupCard() {
                 <Input type="text" onChange={(e) => setUsernameInput(e.target.value)}/>
               </FormControl>
               </HStack>
+
               <FormControl id="email" isInvalid={inputErrorMessages.email !== ""} isRequired>
                 <FormLabel>Email address</FormLabel>
                 <Input type="email" onChange={(e) => emailInputHandler(e.target.value)}/>
                 <FormErrorMessage>{inputErrorMessages.email}</FormErrorMessage>
               </FormControl>
-              <FormControl id="password" isRequired>
+
+              <FormControl id="password" isInvalid={inputErrorMessages.password !== ""} isRequired>
                 <FormLabel>Password</FormLabel>
                 <InputGroup>
                   <Input 
                     type={showPassword ? 'text' : 'password'} 
-                    onChange={(e) => setPasswordInput(e.target.value)}
+                    onChange={(e) => passwordInputHandler(e.target.value)}
                   />
-                  
                   <InputRightElement h={'full'}>
                     <Button
                       variant={'ghost'}
@@ -106,6 +113,8 @@ export default function SignupCard() {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
+
+                <FormHelperText whiteSpace="pre-wrap">{inputErrorMessages.password}</FormHelperText>
               </FormControl>
             <Stack spacing={10} pt={2}>
               <Button
