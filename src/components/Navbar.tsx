@@ -47,7 +47,7 @@ export default function WithSubnavigation() {
             color={useColorModeValue('gray.800', 'white')}>
             Logo
           </Text>
-
+          <div>test</div>
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
             <DesktopNav />
           </Flex>

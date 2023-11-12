@@ -1,15 +1,18 @@
 import { 
     Flex, Box, FormControl, FormLabel, Input, InputGroup, HStack, 
     InputRightElement, Stack, Button, Heading, Text, useColorModeValue, Link,
-} from '@chakra-ui/react'
-import { useState, ReactNode } from 'react'
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
-
+    FormHelperText, FormErrorMessage
+} from '@chakra-ui/react';
+import { useState, ReactNode } from 'react';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 
 export default function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
-  
+  const [inputErrorMessages, setInputErrorMessages] = useState({username: "", email: "", password: ""});
+
   async function sendData(data: Record<string, string>): Promise<any> {
     try {
       const response = await fetch("http://127.0.0.1:8000/signup", {
@@ -21,20 +24,46 @@ export default function SignupCard() {
       })
       if (!response.ok) {
         const jsonResponse = await response.json();
-        throw new Error(`HTTP error. Status: ${response.status}. Details: ${jsonResponse.detail}`)
+        throw new Error(`HTTP error. Status: ${response.status}. "Details: ${jsonResponse.detail}`)
       }
       const result = await response.json();
+      console.log(typeof result)
       return result;
     } catch (error: any) {
-      // console.error('Error sending data:', error);
-      throw error; // You may handle or rethrow the error based on your needs
+      console.error('Error sending data:', error);
     }
   }
 
   function signUpHandler(): ReactNode {
-    sendData({"email": "tempemail2", "password": "temp"})
+    const userData: Record<string, string> = {
+      username: usernameInput,
+      email: emailInput,
+      password: passwordInput,
+    }
+
+    sendData(userData)
       .then(res => console.log(res))
     return null;
+  }
+
+  function emailInputHandler(emailInput: string) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let errorMessage = emailRegex.test(emailInput) ? "" : "Invalid email";
+
+    setEmailInput(emailInput);
+    setTimeout(() => {
+      setInputErrorMessages((prev) => ({...prev, email: errorMessage}));
+    }, 2000)
+  }
+
+  function passwordInputHandler(passwordInput: string) {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    let errorMessage = passwordRegex.test(passwordInput) ? "" : "what is this";
+
+    setPasswordInput(passwordInput);
+    setTimeout(() => {
+      setInputErrorMessages((prev) => ({...prev, password: errorMessage}));
+    }, 2000)
   }
 
   return (
@@ -53,12 +82,13 @@ export default function SignupCard() {
             <HStack>
               <FormControl id="firstName" isRequired>
                 <FormLabel>Username</FormLabel>
-                <Input type="text" />
+                <Input type="text" onChange={(e) => setUsernameInput(e.target.value)}/>
               </FormControl>
               </HStack>
-              <FormControl id="email" isRequired>
+              <FormControl id="email" isInvalid={inputErrorMessages.email !== ""} isRequired>
                 <FormLabel>Email address</FormLabel>
-                <Input type="email" />
+                <Input type="email" onChange={(e) => emailInputHandler(e.target.value)}/>
+                <FormErrorMessage>{inputErrorMessages.email}</FormErrorMessage>
               </FormControl>
               <FormControl id="password" isRequired>
                 <FormLabel>Password</FormLabel>
@@ -67,17 +97,11 @@ export default function SignupCard() {
                     type={showPassword ? 'text' : 'password'} 
                     onChange={(e) => setPasswordInput(e.target.value)}
                   />
-                  {/* {!isError ? (
-                    <FormHelperText>
-                      Enter the email you'd like to receive the newsletter on.
-                    </FormHelperText>
-                  ) : (
-                    <FormErrorMessage>Email is required.</FormErrorMessage>
-                  )} */}
+                  
                   <InputRightElement h={'full'}>
                     <Button
                       variant={'ghost'}
-                      onClick={() => setShowPassword((showPassword) => !showPassword)}>
+                      onClick={() => {setShowPassword((showPassword) => !showPassword)}}>
                       {showPassword ? <ViewIcon /> : <ViewOffIcon />}
                     </Button>
                   </InputRightElement>
