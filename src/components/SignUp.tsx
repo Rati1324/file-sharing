@@ -33,18 +33,6 @@ export default function SignupCard() {
     }
   }
 
-  function signUpHandler(): ReactNode {
-    const userData: Record<string, string> = {
-      username: usernameInput,
-      email: emailInput,
-      password: passwordInput,
-    }
-
-    sendData(userData)
-      .then(res => console.log(res))
-    return null;
-  }
-
   function emailInputHandler(emailInput: string) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     let errorMessage = emailRegex.test(emailInput) ? "" : "Invalid email";
@@ -72,6 +60,31 @@ export default function SignupCard() {
     }, 2000)
   }
 
+  function usernameInputHandler(usernameInput: string) {
+    const usernameRegex = /^(?=.*[a-zA-Z])(?=.*[\d\W]).{6,}$/;
+    let errorMessage = usernameRegex.test(usernameInput) ? ""
+    : 
+    "Your username must contain at least one letter, one number or special character, and be at least 6 characters long"
+
+    setUsernameInput(usernameInput);
+    setTimeout(() => {
+      setInputErrorMessages((prev) => ({...prev, username: errorMessage}));
+    }, 2000)
+  }
+
+  function signUpHandler(): ReactNode {
+    const valid = (Object.values(inputErrorMessages).filter(val => val !== "")).length;
+    if (!valid) return;
+    const userData: Record<string, string> = {
+      username: usernameInput,
+      email: emailInput,
+      password: passwordInput,
+    }
+
+    sendData(userData)
+      .then(res => console.log(res))
+    return null;
+  }
   return (
     <Flex minH={'90vh'} align={'center'} justify={'center'} bg={useColorModeValue('gray.50', 'gray.800')}>
       <Stack w={"25%"} spacing={8} mx={'auto'} py={12} px={6}>
