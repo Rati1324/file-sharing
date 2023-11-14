@@ -19,6 +19,6 @@ def verify_password(password: str, hashed_pass: str) -> bool:
 
 def create_jwt_token(sub: str, expires_delta: timedelta | None = None):
     expire = datetime.utcnow() + expires_delta
-    data = {"username": sub, "exp": expire}
+    data = {"email": sub, "exp": expire}
     jwt_token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
     return jwt_token
