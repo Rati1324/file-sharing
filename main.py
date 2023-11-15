@@ -11,6 +11,7 @@ from jose import jwt
 from datetime import timedelta
 from core.schemas import UserSchema, TokenSchema, TokenDataSchema
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Union
 
 from core.utils import (
     get_hashed_password, 
@@ -37,10 +38,9 @@ async def get_db():
 
 app = FastAPI()
 
-origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all HTTP headers
@@ -93,8 +93,10 @@ async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
     return token_schema
 
 @app.post('/signin', response_model=TokenSchema)
-async def signin(db: Session = Depends(get_db), user_data: OAuth2PasswordRequestForm = Depends()):
-    user = db.query(User).filter_by(email=user_data.username).first()
+# async def signin(db: Session = Depends(get_db), user_data: OAuth2PasswordRequestForm = None):
+async def signin(db: Session = Depends(get_db), user_data: UserSchema = None):
+    print(type(user_data))
+    user = db.query(User).filter_by(email=user_data.email).first()
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid username of password")
 
