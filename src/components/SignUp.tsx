@@ -3,8 +3,8 @@ import {
     InputRightElement, Stack, Button, Heading, Text, useColorModeValue, Link,
     FormHelperText, FormErrorMessage
 } from '@chakra-ui/react';
-import { useState, ReactNode } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { useState, ReactNode } from 'react';
 
 export default function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);
@@ -44,7 +44,6 @@ export default function SignupCard() {
   }
 
   function passwordInputHandler(passwordInput: string) {
-    console.log(passwordInput)
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     let errorMessage = passwordRegex.test(passwordInput) ? "" 
     : 
@@ -75,16 +74,17 @@ export default function SignupCard() {
   function signUpHandler(): ReactNode {
     const valid = (Object.values(inputErrorMessages).filter(val => val !== "")).length;
     if (!valid) return;
+    
     const userData: Record<string, string> = {
       username: usernameInput,
       email: emailInput,
       password: passwordInput,
     }
-
     sendData(userData)
       .then(res => console.log(res))
     return null;
   }
+
   return (
     <Flex minH={'90vh'} align={'center'} justify={'center'} bg={useColorModeValue('gray.50', 'gray.800')}>
       <Stack w={"25%"} spacing={8} mx={'auto'} py={12} px={6}>
@@ -101,7 +101,7 @@ export default function SignupCard() {
             <HStack>
               <FormControl id="firstName" isRequired>
                 <FormLabel>Username</FormLabel>
-                <Input type="text" onChange={(e) => setUsernameInput(e.target.value)}/>
+                <Input type="text" onChange={(e) => usernameInputHandler(e.target.value)}/>
               </FormControl>
               </HStack>
 
