@@ -1,24 +1,8 @@
-import {
-  Box,
-  Flex,
-  Text,
-  IconButton,
-  Button,
-  Stack,
-  Collapse,
-  Icon,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  useColorModeValue,
-  useBreakpointValue,
-  useDisclosure,
+import { Box, Flex, Text, IconButton, Button, Stack, Collapse,
+  Icon, Popover, PopoverTrigger, PopoverContent, useColorModeValue,
+  useBreakpointValue, useDisclosure,
 } from '@chakra-ui/react'
-import {
-  HamburgerIcon,
-  CloseIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
+import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon,
 } from '@chakra-ui/icons'
 
 export default function WithSubnavigation() {
@@ -47,7 +31,6 @@ export default function WithSubnavigation() {
             color={useColorModeValue('gray.800', 'white')}>
             Logo
           </Text>
-          <div>test</div>
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
             <DesktopNav />
           </Flex>
@@ -240,8 +223,8 @@ const NAV_ITEMS: Array<NavItem> = [
     ],
     href: "/"
   },
-  {
-    label: 'Hire Designers',
-    href: '#',
-  },
+  // {
+  //   label: 'Hire Designers',
+  //   href: '#',
+  // },
 ]

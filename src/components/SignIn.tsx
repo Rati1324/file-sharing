@@ -4,35 +4,36 @@ import {
   Heading, Text, useColorModeValue,
 } from '@chakra-ui/react'
 import { useState, ReactNode } from 'react';
+import { useNavigate } from "react-router-dom";
 
 export default function SimpleCard() {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
+  const navigate = useNavigate();
 
   async function sendData(data: Record<string, string>): Promise<any> {
     try {
       const response = await fetch("http://127.0.0.1:8000/signin", {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: {
-            "Content-Type": "application/json",
-          }
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        }
       })
+      const responseJson = await response.json();
       if (!response.ok) {
-        const jsonResponse = await response.json();
-        throw new Error(`HTTP error. Status: ${response.status}. "Details: ${jsonResponse.detail}`)
+        throw new Error(`HTTP error. Status: ${response.status}. "Details: ${responseJson.detail}`)
       }
-      const result = await response.json();
-      return result;
+      sessionStorage.setItem("access_token", responseJson["access_token"]);
+      navigate("/");
     } catch (error: any) {
-      console.error('Error sending data:', error);
+      console.error('Error: ', error);
     }
   }
 
   function loginHandler() {
     const data = {email: emailInput, password: passwordInput};
-    sendData(data)
-      .then(res => console.log(res))
+    sendData(data);
   }
 
   return (

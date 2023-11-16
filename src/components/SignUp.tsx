@@ -26,11 +26,30 @@ export default function SignupCard() {
         const jsonResponse = await response.json();
         throw new Error(`HTTP error. Status: ${response.status}. "Details: ${jsonResponse.detail}`)
       }
-      const result = await response.json();
-      return result;
+      // const result = await response.json();
+      return response;
     } catch (error: any) {
       console.error('Error sending data:', error);
     }
+  }
+
+  function signUpHandler(): ReactNode {
+    const valid = (Object.values(inputErrorMessages).filter(val => val !== "")).length;
+    if (!valid) return;
+    
+    const userData: Record<string, string> = {
+      username: usernameInput,
+      email: emailInput,
+      password: passwordInput,
+    }
+    sendData(userData)
+      .then(res => {
+        if (res.ok) {
+          console.log("redirect");
+        } 
+      })
+      .catch(err => console.log("this is error:"))
+    return null;
   }
 
   function emailInputHandler(emailInput: string) {
@@ -71,19 +90,7 @@ export default function SignupCard() {
     }, 2000)
   }
 
-  function signUpHandler(): ReactNode {
-    const valid = (Object.values(inputErrorMessages).filter(val => val !== "")).length;
-    if (!valid) return;
-    
-    const userData: Record<string, string> = {
-      username: usernameInput,
-      email: emailInput,
-      password: passwordInput,
-    }
-    sendData(userData)
-      .then(res => console.log(res))
-    return null;
-  }
+  
 
   return (
     <Flex minH={'90vh'} align={'center'} justify={'center'} bg={useColorModeValue('gray.50', 'gray.800')}>
