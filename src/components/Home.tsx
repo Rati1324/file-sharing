@@ -1,7 +1,14 @@
-import { ReactNode } from 'react'
+import { useEffect, useState, ReactNode } from 'react'
 import { Stack, Container, Box, Flex, Text, Heading, SimpleGrid } from '@chakra-ui/react'
 
 export default function StatsGridWithImage() {
+  const [userToken, setUserToken] = useState<string>("");
+
+  useEffect(() => {
+    let token = localStorage.getItem("access_token");
+    setUserToken(token == null ? "" : token);
+  })
+
   return (
     <Box bg={'gray.800'} position={'relative'}>
       <Flex
@@ -27,15 +34,15 @@ export default function StatsGridWithImage() {
                 mb={3}
                 fontSize={'xl'}
                 color={'gray.500'}>
-                Technology
+                {/* file sharing platform */}
+                {userToken !== "" ? 'you are logged in' : 'you are not logged in'}
               </Text>
               <Heading color={'white'} mb={5} fontSize={{ base: '3xl', md: '5xl' }}>
-                21st century agriculture
+                file sharing platform
               </Heading>
               <Text fontSize={'xl'} color={'gray.400'}>
-                The NewLife™ technology allows you to monitor your crops and get complete
-                insights at real time. The proprietary software/hardware ecosystem
-                prevents your plants from getting neglected.
+                this platform allows you to share files with other user and also
+                have a place to store all your files and stuff...
               </Text>
             </Box>
 
@@ -67,11 +74,10 @@ const StatsText = ({ children }: { children: ReactNode }) => (
 
 const stats = [
   {
-    title: '10+',
+    title: 'free features',
     content: (
       <>
-        <StatsText>Software modules</StatsText> for detailed monitoring and real-time
-        analytics
+        <StatsText>up to 2 gbs without account</StatsText> supports most formats
       </>
     ),
   },
