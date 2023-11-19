@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 from passlib.context import CryptContext
 from jose import jwt
 from datetime import timedelta
-from core.schemas import UserSchema, TokenSchema, TokenDataSchema
+from core.schemas import UserSchema, UserLoginSchema, TokenSchema, TokenDataSchema
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Union
 
@@ -80,8 +80,10 @@ async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
         raise HTTPException(status_code=400, detail="Email already registered")
 
     db_user = User(
+        username = user_data.username,
         email = user_data.email,
-        password = get_hashed_password(user_data.password)
+        password = get_hashed_password(user_data.password),
+        disabled = False
     )
 
     db.add(db_user)
@@ -94,15 +96,14 @@ async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
 
 @app.post('/signin', response_model=TokenSchema)
 # async def signin(db: Session = Depends(get_db), user_data: OAuth2PasswordRequestForm = None):
-async def signin(db: Session = Depends(get_db), user_data: UserSchema = None):
-    print(type(user_data))
+async def signin(db: Session = Depends(get_db), user_data: UserLoginSchema = None):
     user = db.query(User).filter_by(email=user_data.email).first()
     if user is None:
-        raise HTTPException(status_code=401, detail="Invalid username of password")
+        raise HTTPException(status_code=401, detail="Invalid username or password")
 
     password_valid = verify_password(user_data.password, user.password)
     if not password_valid:
-        raise HTTPException(status_code=401, detail="Invalid username of password")
+        raise HTTPException(status_code=401, detail="Invalid username or password")
 
     expire_mins = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     token = create_jwt_token(user.email, expire_mins)

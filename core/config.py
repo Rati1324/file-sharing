@@ -5,12 +5,12 @@ from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
 load_dotenv()
-DB_NAME = os.getenv("DB_NAME")
-DB_USERNAME = os.getenv("DB_USERNAME")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
+# DB_NAME = os.getenv("DB_NAME")
+# DB_USERNAME = os.getenv("DB_USERNAME")
+# DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 # DATABASE_URL = f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@db/{DB_NAME}"
-DATABASE_URL = f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@127.0.0.1:5432/{DB_NAME}"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush = False)

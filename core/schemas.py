@@ -1,8 +1,14 @@
 from pydantic import BaseModel, Field
 
-class UserSchema(BaseModel):
+class UserLoginSchema(BaseModel):
     email: str = Field(default=None)
     password: str = Field(default=None)
+
+class UserSchema(BaseModel):
+    username: str = Field(default=None)
+    email: str = Field(default=None)
+    password: str = Field(default=None)
+    disabled: bool = Field(default=None)
 
 class TokenSchema(BaseModel):
     access_token: str = Field(default=None)

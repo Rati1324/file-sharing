@@ -4,7 +4,7 @@ from core.config import Base
 
 class User(Base):
     __tablename__ = "user"
-    user_id: int = Column(Integer, primary_key=True, index=True)
+    id: int = Column(Integer, primary_key=True, index=True)
     username: str = Column(String)
     email: str = Column(String)
     disabled: bool = Column(Boolean)
