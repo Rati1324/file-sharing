@@ -5,13 +5,19 @@ import {
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useState, ReactNode } from 'react';
+import { useNavigate } from "react-router-dom";
 
-export default function SignupCard() {
+interface PassedFunction {
+  setLoggedIn: (value: boolean) => void;
+}
+
+export default function SignupCard({ setLoggedIn }: PassedFunction) {
   const [showPassword, setShowPassword] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [inputErrorMessages, setInputErrorMessages] = useState({username: "", email: "", password: ""});
+  const navigate = useNavigate();
 
   async function sendData(data: Record<string, string>): Promise<any> {
     try {
@@ -19,15 +25,16 @@ export default function SignupCard() {
           method: "POST",
           body: JSON.stringify(data),
           headers: {
-          "Content-Type": "application/json",
-        }
+            "Content-Type": "application/json",
+          }
       })
+      const responseJson = await response.json();
       if (!response.ok) {
-        const jsonResponse = await response.json();
-        throw new Error(`HTTP error. Status: ${response.status}. "Details: ${jsonResponse.detail}`)
+        throw new Error(`HTTP error. Status: ${response.status}. "Details: ${responseJson.detail}`)
       }
-      // const result = await response.json();
-      return response;
+      sessionStorage.setItem("access_token", responseJson["access_token"]);
+      setLoggedIn(true)
+      navigate("/");
     } catch (error: any) {
       console.error('Error sending data:', error);
     }
@@ -43,12 +50,6 @@ export default function SignupCard() {
       password: passwordInput,
     }
     sendData(userData)
-      .then(res => {
-        if (res.ok) {
-          console.log("redirect");
-        } 
-      })
-      .catch(err => console.log("this is error:"))
     return null;
   }
 

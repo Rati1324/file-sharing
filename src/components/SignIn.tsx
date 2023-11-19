@@ -6,7 +6,11 @@ import {
 import { useState, ReactNode } from 'react';
 import { useNavigate } from "react-router-dom";
 
-export default function SimpleCard() {
+interface PassedFunction {
+  setLoggedIn: (value: boolean) => void;
+}
+
+export default function SimpleCard({ setLoggedIn }: PassedFunction) {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const navigate = useNavigate();
@@ -25,6 +29,7 @@ export default function SimpleCard() {
         throw new Error(`HTTP error. Status: ${response.status}. "Details: ${responseJson.detail}`)
       }
       sessionStorage.setItem("access_token", responseJson["access_token"]);
+      setLoggedIn(true);
       navigate("/");
     } catch (error: any) {
       console.error('Error: ', error);

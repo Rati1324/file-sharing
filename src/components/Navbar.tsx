@@ -5,7 +5,11 @@ import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from '@ch
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
-export default function WithSubnavigation() {
+interface Props {
+  loggedIn: boolean;
+}
+
+export default function WithSubnavigation({ loggedIn }: Props) {
   const { isOpen, onToggle } = useDisclosure()
   const [userToken, setUserToken] = useState<string>("");
   const navigate = useNavigate();
@@ -16,9 +20,9 @@ export default function WithSubnavigation() {
   }
 
   useEffect(() => {
-    let token = localStorage.getItem("access_token");
+    let token = sessionStorage.getItem("access_token");
     setUserToken(token == null ? "" : token);
-  }, [userToken])
+  }, [loggedIn])
   
   return (
     <Box>

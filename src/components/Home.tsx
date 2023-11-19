@@ -5,9 +5,9 @@ export default function StatsGridWithImage() {
   const [userToken, setUserToken] = useState<string>("");
 
   useEffect(() => {
-    let token = localStorage.getItem("access_token");
+    let token = sessionStorage.getItem("access_token");
     setUserToken(token == null ? "" : token);
-  })
+  }, [])
 
   return (
     <Box bg={'gray.800'} position={'relative'}>
