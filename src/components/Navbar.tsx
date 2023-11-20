@@ -5,11 +5,7 @@ import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from '@ch
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
-interface Props {
-  loggedIn: boolean;
-}
-
-export default function WithSubnavigation({ loggedIn }: Props) {
+export default function WithSubnavigation({ loggedIn }: { loggedIn: boolean}) {
   const { isOpen, onToggle } = useDisclosure()
   const [userToken, setUserToken] = useState<string>("");
   const navigate = useNavigate();
