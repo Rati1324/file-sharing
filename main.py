@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm 
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -20,7 +20,7 @@ from core.utils import (
 )
 
 from core.config import Base, engine, SessionLocal
-from core.models import User
+from core.models import User, File
 
 hash_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="signin")
@@ -109,6 +109,14 @@ async def signin(db: Session = Depends(get_db), user_data: UserLoginSchema = Non
     token = create_jwt_token(user.email, expire_mins)
     token_schema = TokenSchema(access_token=token, token_type="bearer")
     return token_schema
+
+@app.post("/uploadfile")
+async def create_upload_file(file: UploadFile, db: Session = Depends(get_db)):
+    content = await file.read()
+    db_file = File(name="file 2", binary_data=content)
+    db.add(db_file)
+    db.commit()
+    return {"status": "uploaded successfully"}
 
 @app.get("/test")
 def test(db: Session = Depends(get_db), dependencies = Depends(get_current_user)):
