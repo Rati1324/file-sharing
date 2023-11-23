@@ -32,6 +32,7 @@ export default function SimpleCard({ setLoggedIn }: PassedFunction) {
       setLoggedIn(true);
       navigate("/");
     } catch (error: any) {
+      alert(`Error: ${error}`);
       console.error('Error: ', error);
     }
   }

@@ -54,9 +54,15 @@ export default function WithSubnavigation({ loggedIn }: { loggedIn: boolean}) {
           spacing={6}>
           {
             userToken ? 
-            <Button as={'a'} fontSize={'md'} fontWeight={400} variant={'link'} color={'red'} onClick={signOut}>
-              Sign Out
-            </Button>
+            <>
+              <Button as={'a'} fontSize={'md'} fontWeight={400} variant={'link'} color={'red'} onClick={signOut}>
+                Sign Out
+              </Button>
+              <Button as={'a'} display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'} 
+                      fontWeight={600} color={'white'} bg={'blue.400'} href={'/file_manager'} _hover={{ bg: 'pink.300'}}>
+                My files 
+              </Button>
+            </>
             :
             <>
               <Button as={'a'} fontSize={'md'} fontWeight={400} variant={'link'} href={'/signin'} color={'white'}>
@@ -65,10 +71,6 @@ export default function WithSubnavigation({ loggedIn }: { loggedIn: boolean}) {
               <Button as={'a'} display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'} 
                       fontWeight={600} color={'white'} bg={'blue.400'} href={'/signup'} _hover={{ bg: 'pink.300'}}>
                 Sign Up
-              </Button>
-              <Button as={'a'} display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'} 
-                      fontWeight={600} color={'white'} bg={'blue.400'} href={'/file_manager'} _hover={{ bg: 'pink.300'}}>
-                My files 
               </Button>
             </>
           }
