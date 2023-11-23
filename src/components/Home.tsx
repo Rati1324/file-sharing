@@ -5,12 +5,12 @@ export default function StatsGridWithImage() {
   const [userToken, setUserToken] = useState<string>("");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   
-  async function uploadFile (file) {
+  async function uploadFile(file: File) {
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-      const response = await fetch('https://your-backend-url.com/upload', {
+      const response = await fetch('http://127.0.0.1:8000/uploadfile', {
         method: 'POST',
         body: formData,
       });
@@ -26,8 +26,10 @@ export default function StatsGridWithImage() {
   };
 
   function fileUploadHandler(e: ChangeEvent<HTMLInputElement>) {
+    let file: File;
     if (e.target.files && e.target.files.length > 0) {
-      setUploadedFile(e.target.files[0]);
+      file = e.target.files[0];
+      uploadFile(file);
     }
   }
 

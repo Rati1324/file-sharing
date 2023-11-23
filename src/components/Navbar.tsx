@@ -1,14 +1,13 @@
-import { Box, Flex, Text, IconButton, Button, Stack, Collapse,
+import { Box, Flex, Text, Button, Stack, Collapse,
   Icon, Popover, PopoverTrigger, PopoverContent, useColorModeValue,
   useBreakpointValue, useDisclosure, } from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon, ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import FilePresentIcon from '@mui/icons-material/FilePresent';
 import { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
 
 export default function WithSubnavigation({ loggedIn }: { loggedIn: boolean}) {
   const { isOpen, onToggle } = useDisclosure()
   const [userToken, setUserToken] = useState<string>("");
-  const navigate = useNavigate();
 
   function signOut() {
     sessionStorage.removeItem("access_token");
@@ -56,7 +55,6 @@ export default function WithSubnavigation({ loggedIn }: { loggedIn: boolean}) {
           {
             userToken ? 
             <Button as={'a'} fontSize={'md'} fontWeight={400} variant={'link'} color={'red'} onClick={signOut}>
-    
               Sign Out
             </Button>
             :
@@ -67,6 +65,10 @@ export default function WithSubnavigation({ loggedIn }: { loggedIn: boolean}) {
               <Button as={'a'} display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'} 
                       fontWeight={600} color={'white'} bg={'blue.400'} href={'/signup'} _hover={{ bg: 'pink.300'}}>
                 Sign Up
+              </Button>
+              <Button as={'a'} display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'} 
+                      fontWeight={600} color={'white'} bg={'blue.400'} href={'/file_manager'} _hover={{ bg: 'pink.300'}}>
+                My files 
               </Button>
             </>
           }

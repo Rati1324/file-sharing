@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Footer from "./components/Footer";
+import FileManager from "./components/FileManager";
 import { Routes, Route } from "react-router-dom";
 import { useState } from "react";
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<SignIn setLoggedIn={(value: boolean) => setLoggedIn(value)} />} />
         <Route path="/signup" element={<SignUp setLoggedIn={(value: boolean) => setLoggedIn(value)} />} />
+        <Route path="/file_manager" element={<FileManager />} />
       </Routes>
       <Footer />
     </>
