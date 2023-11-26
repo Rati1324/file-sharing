@@ -12,7 +12,7 @@ function App() {
 
   return (
     <>
-      <Navbar loggedIn={loggedIn} />
+      <Navbar loggedIn={loggedIn} setLoggedIn={(value: boolean) => setLoggedIn(value)} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<SignIn setLoggedIn={(value: boolean) => setLoggedIn(value)} />} />

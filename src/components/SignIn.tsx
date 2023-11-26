@@ -63,11 +63,21 @@ export default function SimpleCard({ setLoggedIn }: PassedFunction) {
           <Stack spacing={4}>
             <FormControl id="email">
               <FormLabel>Email address</FormLabel>
-              <Input type="email" onChange={(e) => setEmailInput(e.target.value)} />
+              <Input type="email" 
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") loginHandler()
+                }}
+                onChange={(e) => setEmailInput(e.target.value)} 
+              />
             </FormControl>
             <FormControl id="password">
               <FormLabel>Password</FormLabel>
-              <Input type="password" onChange={(e) => setPasswordInput(e.target.value)}/>
+              <Input type="password" 
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") loginHandler()
+                }}
+                onChange={(e) => setPasswordInput(e.target.value)}
+              />
             </FormControl>
             <Stack spacing={10}>
               <Stack

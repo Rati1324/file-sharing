@@ -4,9 +4,17 @@ import FilePresentIcon from '@mui/icons-material/FilePresent';
 import FolderIcon from '@mui/icons-material/Folder';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { useEffect } from 'react';
 
 export default function FileManager() {
   const navigate = useNavigate();
+
+  // check if the user is logged in if not redirect them
+  useEffect(() => {
+    if (sessionStorage.getItem("access_token") == null) {
+      navigate("/");
+    }
+  }, [])
 
   return (
     <Box textAlign="center" h="68vh">
