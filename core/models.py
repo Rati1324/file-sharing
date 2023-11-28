@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, LargeBinary
+from sqlalchemy import Column, Integer, String, Boolean, LargeBinary, ForeignKey
 from sqlalchemy.orm import relationship
 from core.config import Base
 
@@ -15,3 +15,6 @@ class File(Base):
     id: int = Column(Integer, primary_key=True, index=True)
     name: str = Column(String)
     binary_data = Column(LargeBinary)
+    owner_id = Column(Integer, ForeignKey("user.id"))
+
+    owner = relationship("User", backref="file")

@@ -12,6 +12,7 @@ from datetime import timedelta
 from core.schemas import UserSchema, UserLoginSchema, TokenSchema, TokenDataSchema
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Union
+import re
 
 from core.utils import (
     get_hashed_password, 
@@ -75,6 +76,19 @@ async def clear_users(db: Session = Depends(get_db)):
 
 @app.post("/signup")
 async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
+    password_regex = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
+    email_regex = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
+    username_regex = r"^(?=.*[a-zA-Z])(?=.*[\d\W]).{6,}$"
+
+    if not re.match(password_regex, user_data.password):
+        raise HTTPException(status_code=400, detail="Password is not secure")
+
+    if not re.match(email_regex, user_data.email):
+        raise HTTPException(status_code=400, detail="Invalid email")
+
+    if not re.match(username_regex, user_data.username):
+        raise HTTPException(status_code=400, detail="Your username must contain at least one letter, one number or special character, and be at least 6 characters long")
+
     check_user = db.query(User).filter_by(email=user_data.email).first()
     if check_user is not None:
         raise HTTPException(status_code=400, detail="Email already registered")
