@@ -1,15 +1,25 @@
-import { Box, Container, Flex, Text, HStack } from '@chakra-ui/react';
+import { Box, Container, Flex, Text, HStack, Button } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import FolderIcon from '@mui/icons-material/Folder';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { useEffect } from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import { useEffect, ChangeEvent } from 'react';
+import { uploadFile } from "../helperFunctions";
+import { Input } from '@chakra-ui/react'
 
 export default function FileManager() {
   const navigate = useNavigate();
 
-  // check if the user is logged in if not redirect them
+  function fileUploadHandler(e: ChangeEvent<HTMLInputElement>) {
+    let file: File;
+    if (e.target.files && e.target.files.length > 0) {
+      file = e.target.files[0];
+      uploadFile(file);
+    }
+  }
+
   useEffect(() => {
     if (sessionStorage.getItem("access_token") == null) {
       navigate("/");
@@ -37,7 +47,16 @@ export default function FileManager() {
             <FilePresentIcon style={{ fontSize: 80 }} />
             <Text>File name 3</Text>
           </Box>
+          <Box>
+            <Button
+              variant="contained"
+              leftIcon={<AddIcon />}
+            >
+              <Input type="file" onChange={(e: ChangeEvent<HTMLInputElement>) => fileUploadHandler(e)} style={{display: 'none'}}/>
+            </Button>
+          </Box>
         </HStack>
+        
       </Container>
     </Box>
 

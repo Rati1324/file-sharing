@@ -3,14 +3,10 @@ import {
   Input, Checkbox, Stack, Button,
   Heading, Text, useColorModeValue,
 } from '@chakra-ui/react'
-import { useState, ReactNode } from 'react';
+import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
-interface PassedFunction {
-  setLoggedIn: (value: boolean) => void;
-}
-
-export default function SimpleCard({ setLoggedIn }: PassedFunction) {
+export default function SimpleCard({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const navigate = useNavigate();

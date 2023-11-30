@@ -7,11 +7,7 @@ import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useState, ReactNode } from 'react';
 import { useNavigate } from "react-router-dom";
 
-interface PassedFunction {
-  setLoggedIn: (value: boolean) => void;
-}
-
-export default function SignupCard({ setLoggedIn }: PassedFunction) {
+export default function SignupCard({ setLoggedIn }: {setLoggedIn: (value: boolean) => void}) {
   const [showPassword, setShowPassword] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
