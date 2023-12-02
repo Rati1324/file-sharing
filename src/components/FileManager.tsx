@@ -1,4 +1,4 @@
-import { Box, Container, Flex, Text, HStack, Button } from '@chakra-ui/react';
+import { Box, Container, Flex, Text, HStack, Button, IconButton } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import FolderIcon from '@mui/icons-material/Folder';
@@ -48,12 +48,11 @@ export default function FileManager() {
             <Text>File name 3</Text>
           </Box>
           <Box>
-            <Button
-              variant="contained"
-              leftIcon={<AddIcon />}
-            >
-              <Input type="file" onChange={(e: ChangeEvent<HTMLInputElement>) => fileUploadHandler(e)} style={{display: 'none'}}/>
-            </Button>
+            <input 
+              id="file-upload" 
+              type="file" 
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {fileUploadHandler(e)}} 
+            />
           </Box>
         </HStack>
         

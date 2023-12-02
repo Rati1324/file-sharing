@@ -1,7 +1,10 @@
 
 export async function uploadFile(file: File) {
     const formData = new FormData();
+    const token:string = sessionStorage.getItem('access_token');
+
     formData.append('file', file);
+    formData.append('token', token);
 
     try {
       const response = await fetch('http://127.0.0.1:8000/uploadfile', {
