@@ -23,11 +23,3 @@ def create_jwt_token(sub: str, expires_delta: timedelta | None = None):
     data = {"email": sub, "exp": expire}
     jwt_token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
     return jwt_token
-
-def password_is_valid(password):
-    exp = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
-    return re.match(exp, password)
-
-def email_is_valid(email):
-    exp = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
-    return re.match(exp, email)

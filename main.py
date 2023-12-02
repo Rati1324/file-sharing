@@ -1,5 +1,5 @@
-import os
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
+import os, json, re
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm 
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -11,8 +11,7 @@ from jose import jwt
 from datetime import timedelta
 from core.schemas import UserSchema, UserLoginSchema, TokenSchema, TokenDataSchema
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Union
-import re
+from typing import Union, Annotated
 
 from core.utils import (
     get_hashed_password, 
@@ -125,11 +124,19 @@ async def signin(db: Session = Depends(get_db), user_data: UserLoginSchema = Non
     return token_schema
 
 @app.post("/uploadfile")
-async def create_upload_file(file: UploadFile, db: Session = Depends(get_db)):
-    content = await file.read()
-    db_file = File(name="file 2", binary_data=content)
-    db.add(db_file)
-    db.commit()
+# async def upload_file(token: Annotated[str, Form()], file: Annotated[bytes, Form()], db: Session = Depends(get_db)):
+async def upload_file(token: Annotated[str, Form()], 
+    file: Annotated[bytes, File()],
+    fileb: Annotated[UploadFile, File()],
+    db: Session = Depends(get_db)):
+    # form_obj = json.loads(token)
+    # print(token)
+    # user = get_current_user()
+    # print(form_obj)
+    # content = await file.read()
+    # db_file = File(name="file 2", binary_data=content)
+    # db.add(db_file)
+    # db.commit()
     return {"status": "uploaded successfully"}
 
 @app.get("/test")
