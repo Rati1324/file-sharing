@@ -58,31 +58,31 @@ export default function WithSubnavigation({ loggedIn, setLoggedIn }: { loggedIn:
           {
             loggedIn ? 
             <>
-              <Button fontSize={'md'} fontWeight={400} variant={'link'} color={'red'} onClick={signOut}>
-                <NavLink to="/signout">
+              <NavLink to="/signout">
+                <Button fontSize={'md'} fontWeight={400} variant={'link'} color={'red'} onClick={signOut}>
                   Sign Out
-                </NavLink>
-              </Button>
-              <Button display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'} 
-                      fontWeight={600} color={'white'} bg={'blue.400'} _hover={{ bg: 'pink.300'}}>
-                <NavLink to="/file_manager">
-                  My files
-                </NavLink>
-              </Button>
+                </Button>
+              </NavLink>
+              <NavLink to="/file_manager">
+                <Button display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'} 
+                    fontWeight={600} color={'white'} bg={'blue.400'} _hover={{ bg: 'pink.300'}}>
+                My files
+                </Button>
+              </NavLink>
             </>
             :
             <>
-              <Button fontSize={'md'} fontWeight={400} variant={'link'} color={'white'}>
-                <NavLink to="/signin">
+              <NavLink to="/signin">
+                <Button fontSize={'md'} fontWeight={400} variant={'link'} color={'white'}>
                   Sign In
-                </NavLink>
-              </Button>
-              <Button display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'} 
+                </Button>
+              </NavLink>
+              <NavLink to="/signin">
+                <Button display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'} 
                       fontWeight={600} color={'white'} bg={'blue.400'} _hover={{ bg: 'pink.300'}}>
-                <NavLink to="/signin">
                   Sign Up
-                </NavLink>
-              </Button>
+                </Button>
+              </NavLink>
             </>
           }
           

@@ -2,6 +2,10 @@
 export async function uploadFile(file: File) {
     const formData = new FormData();
     const token:string = sessionStorage.getItem('access_token');
+    if (token == null) {
+      // alert("You are not a")
+      throw new Error("You are not authorized");
+    }
 
     formData.append('file', file);
     formData.append('token', token);
