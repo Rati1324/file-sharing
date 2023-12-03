@@ -125,10 +125,10 @@ async def signin(db: Session = Depends(get_db), user_data: UserLoginSchema = Non
 
 @app.post("/uploadfile")
 # async def upload_file(token: Annotated[str, Form()], file: Annotated[bytes, Form()], db: Session = Depends(get_db)):
-async def upload_file(token: Annotated[str, Form()], 
-    file: Annotated[bytes, File()],
-    fileb: Annotated[UploadFile, File()],
-    db: Session = Depends(get_db)):
+async def upload_file(token: Annotated[str, Form()], file: UploadFile = File):
+    content = await file.read()
+    print(content)
+    print(token)
     # form_obj = json.loads(token)
     # print(token)
     # user = get_current_user()
