@@ -20,7 +20,7 @@ from core.utils import (
 )
 
 from core.config import Base, engine, SessionLocal
-from core.models import User, File
+from core.models import User, File as File_Model
 
 hash_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="signin")
@@ -57,6 +57,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(payload)
         email: str = payload.get("email")
         if email is None:
             raise credential_exception
@@ -125,10 +126,20 @@ async def signin(db: Session = Depends(get_db), user_data: UserLoginSchema = Non
 
 @app.post("/uploadfile")
 # async def upload_file(token: Annotated[str, Form()], file: Annotated[bytes, Form()], db: Session = Depends(get_db)):
-async def upload_file(token: Annotated[str, Form()], file: UploadFile = File):
-    content = await file.read()
-    print(content)
-    print(token)
+async def upload_file(token: Annotated[str, Form()], file: UploadFile = File, db: Session = Depends(get_db)):
+    file_content = await file.read()
+    user = await get_current_user(token)
+    print(user)
+    user_id = db.query(User).filter_by(email=user["email"]).first().id
+    db_file = File_Model(
+        name=file.filename,
+        binary_data=file_content, 
+        owner_id=user_id
+    )
+    db.add(db_file)
+    db.commit()
+    db.refresh(db_file)
+    # user = db.query(File).filter_by(email=user_email).first()
     # form_obj = json.loads(token)
     # print(token)
     # user = get_current_user()
