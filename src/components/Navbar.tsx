@@ -73,7 +73,7 @@ export default function WithSubnavigation({ loggedIn, setLoggedIn }: { loggedIn:
             :
             <>
               <NavLink to="/signin">
-                <Button fontSize={'md'} fontWeight={400} variant={'link'} color={'white'}>
+                <Button  fontSize={'md'} fontWeight={400} variant={'link'} color={'white'} style={{textAlign: 'center'}}>
                   Sign In
                 </Button>
               </NavLink>

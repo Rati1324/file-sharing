@@ -11,22 +11,48 @@ import { Input } from '@chakra-ui/react'
 
 export default function FileManager() {
   const navigate = useNavigate();
+  const token = sessionStorage.getItem("access_token");
 
   function fileUploadHandler(e: ChangeEvent<HTMLInputElement>) {
     let file: File;
     if (e.target.files && e.target.files.length > 0) {
       file = e.target.files[0];
-      uploadFile(file);
+      try {
+        uploadFile(file);
+      } 
+      catch (error: any) {
+        if (error.response && error.response.status === 401) {
+          console.log('This is a 401 error!');
+        } else {
+          console.log('This is an unexpected error:', error);
+        }
+      }
     }
+  }
+  
+  async function getFiles() {
+    const token: string | null = sessionStorage.getItem('access_token');
+    const files = await fetch("http://127.0.0.1:8000/get_files", {
+      method: "GET",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    })
+    const filesJson = await files.json();
+    return filesJson;
   }
 
   useEffect(() => {
-    if (sessionStorage.getItem("access_token") == null) {
-      navigate("/");
+    async function getData() {
+      const files = await getFiles();
+      console.log(files);
     }
-  }, [])
+    getData();
+  })
 
   return (
+    token != null 
+    ?
     <Box textAlign="center" h="68vh">
       <Text fontSize="30" m={4}>File Manager</Text>
       <Container p={5} maxW="60%" h="100%" mx="auto" bg="gray.200">
@@ -58,7 +84,7 @@ export default function FileManager() {
         
       </Container>
     </Box>
-
-      // <Container maxW="60%" h="80vh" mx="auto" bg="gray.200"></Container>
+    :
+    null
   )
 }

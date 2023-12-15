@@ -87,8 +87,6 @@ export default function SignupCard({ setLoggedIn }: {setLoggedIn: (value: boolea
     }, 2000)
   }
 
-  
-
   return (
     <Flex minH={'90vh'} align={'center'} justify={'center'} bg={useColorModeValue('gray.50', 'gray.800')}>
       <Stack w={"25%"} spacing={8} mx={'auto'} py={12} px={6}>
