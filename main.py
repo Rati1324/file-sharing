@@ -1,5 +1,6 @@
 import os, json, re
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form
+import base64
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, Header
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm 
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -124,12 +125,16 @@ async def signin(db: Session = Depends(get_db), user_data: UserLoginSchema = Non
     token_schema = TokenSchema(access_token=token, token_type="bearer")
     return token_schema
 
-@app.post("/uploadfile")
-# async def upload_file(token: Annotated[str, Form()], file: Annotated[bytes, Form()], db: Session = Depends(get_db)):
-async def upload_file(token: Annotated[str, Form()], file: UploadFile = File, db: Session = Depends(get_db)):
+@app.post("/upload_file")
+async def upload_file(authorization: str = Header(default=None), file: UploadFile = File, db: Session = Depends(get_db)):
+    token = authorization[7:]
     file_content = await file.read()
+    print(type(file_content))
+    print(file_content)
     user = await get_current_user(token)
-    print(user)
+    if not user_exists(user):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
     user_id = db.query(User).filter_by(email=user["email"]).first().id
     db_file = File_Model(
         name=file.filename,
@@ -139,16 +144,24 @@ async def upload_file(token: Annotated[str, Form()], file: UploadFile = File, db
     db.add(db_file)
     db.commit()
     db.refresh(db_file)
-    # user = db.query(File).filter_by(email=user_email).first()
-    # form_obj = json.loads(token)
-    # print(token)
-    # user = get_current_user()
-    # print(form_obj)
-    # content = await file.read()
-    # db_file = File(name="file 2", binary_data=content)
-    # db.add(db_file)
-    # db.commit()
     return {"status": "uploaded successfully"}
+
+@app.get("/get_files")
+async def get_files(authorization: str = Header(default=None), db: Session = Depends(get_db)):
+    token = authorization[7:]
+    user = await get_current_user(token)
+    if user is not None:
+        user_id = db.query(User).filter_by(email=user["email"]).first().id
+    files = db.query(File_Model).filter_by(owner_id=user_id).all()
+
+    result = []
+    for file in files:
+        file_data_b64 = base64.b64encode(file.binary_data).decode('utf-8')
+        result.append({
+            "name": file.name,
+            "file_data": file_data_b64,
+        })
+    return {"result": result}
 
 @app.get("/test")
 def test(db: Session = Depends(get_db), dependencies = Depends(get_current_user)):
