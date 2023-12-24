@@ -54,15 +54,15 @@ export default function WithSubnavigation({ loggedIn, setLoggedIn }: { loggedIn:
           flex={{ base: 1, md: 0 }}
           justify={'flex-end'}
           direction={'row'}
-          spacing={6}>
+          spacing={6}
+          align={'center'}
+        >
           {
             loggedIn ? 
             <>
-              <NavLink to="/signout">
-                <Button fontSize={'md'} fontWeight={400} variant={'link'} color={'red'} onClick={signOut}>
-                  Sign Out
-                </Button>
-              </NavLink>
+              <Button fontSize={'md'} fontWeight={400} variant={'link'} color={'red'} onClick={signOut}>
+                Sign Out
+              </Button>
               <NavLink to="/file_manager">
                 <Button display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'} 
                     fontWeight={600} color={'white'} bg={'blue.400'} _hover={{ bg: 'pink.300'}}>
