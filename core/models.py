@@ -16,5 +16,4 @@ class File(Base):
     name: str = Column(String)
     binary_data = Column(LargeBinary)
     owner_id = Column(Integer, ForeignKey("user.id"))
-
     owner = relationship("User", backref="file")

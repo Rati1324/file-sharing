@@ -30,6 +30,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+credential_exception = HTTPException(status_code=401, detail="Couldn't validate credentials")
+
 async def get_db():
     try:
         db = SessionLocal()
@@ -54,7 +56,6 @@ async def user_exists(db: Session = Depends(get_db), user_email: str = None):
     return user is not None
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
-    credential_exception = HTTPException(status_code=401, detail="Couldn't validate credentials")
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -158,10 +159,28 @@ async def get_files(authorization: str = Header(default=None), db: Session = Dep
     for file in files:
         file_data_b64 = base64.b64encode(file.binary_data).decode('utf-8')
         result.append({
+            "id": file.id,
             "name": file.name,
             "file_data": file_data_b64,
         })
     return {"result": result}
+
+@app.delete("/delete_file/{file_id}")
+async def delete_file(authorization: str = Header(default=None), db: Session = Depends(get_db), file_id: int = None):
+    token = authorization[7:]
+    user = await get_current_user(token)
+    if user is None:
+        raise credential_exception
+    user_id = db.query(User).filter_by(email=user["email"]).first().id
+
+    file = db.query(File_Model).filter_by(id=file_id).first()
+    if file.owner_id != user_id:
+        raise credential_exception
+
+    file = db.query(File_Model).filter_by(id=file_id).first()
+    db.delete(file)
+    db.commit()
+    return {"status": "deleted successfully"}
 
 @app.get("/test")
 def test(db: Session = Depends(get_db), dependencies = Depends(get_current_user)):
