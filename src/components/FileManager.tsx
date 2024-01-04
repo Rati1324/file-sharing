@@ -1,19 +1,24 @@
 import { Box, Container, Flex, Text, HStack, Button, Stack } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import FilePresentIcon from '@mui/icons-material/FilePresent';
+import DownloadIcon from '@mui/icons-material/Download';
 import FolderIcon from '@mui/icons-material/Folder';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect, ChangeEvent } from 'react';
 import { uploadFile } from "../helperFunctions";
-import { Input } from '@chakra-ui/react'
+import { useToast } from '@chakra-ui/react';
+import AlertDialogComponent from './AlertDialogComponent';
 
 export default function FileManager() {
+  const toast = useToast();
   const navigate = useNavigate();
   const token: string | null = sessionStorage.getItem("access_token");
   const [file, setFile] = useState<File>(new File([], ''));
-  const [files, setFiles] = useState<File[]>([]);
+  // create a state named files and set it to an empty array of objects, array of object not of File types
+  const [files, setFiles] = useState<any[]>([]);
+  // const [files, setFiles] = useState<File[]>([]);
 
   function setFileUploadHandler(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
@@ -33,7 +38,7 @@ export default function FileManager() {
       }
     }
   }
-  
+
   async function getFiles() {
     const token: string | null = sessionStorage.getItem('access_token');
     const files = await fetch("http://127.0.0.1:8000/get_files", {
@@ -45,11 +50,40 @@ export default function FileManager() {
     const filesJson = await files.json();
     return filesJson;
   }
+  
+  async function deleteFile(id: Number) {
+    const token: string | null = sessionStorage.getItem('access_token');
+    const res = await fetch(`http://127.0.01:8000/delete_file/${id}`, {
+      method: "DELETE",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    })
+
+    if (res.status === 200) {
+      const files = await getFiles();
+      setFiles(files.result);
+      toast({
+        title: 'Deleted successfully',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      })
+    }
+    else if (res.status === 401) {
+      toast({
+        title: 'Unauthorized request.',
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      })
+    }
+    // console.log(jsonRes.status)
+  }
 
   useEffect(() => {
     async function getData() {
       const files = await getFiles();
-      console.log(files)
       setFiles(files.result);
     }
     getData();
@@ -65,23 +99,31 @@ export default function FileManager() {
           <ArrowBackIosIcon style={{ fontSize: 40 }} />
           <ArrowForwardIosIcon style={{ fontSize: 40 }} />
         </Flex>
-        <HStack>
-          {files && files.map((f, i) => (
-            <Box key={i}>
-              <FilePresentIcon style={{ fontSize: 80 }} />
-              <Text>{f.name}</Text>
-            </Box>
-          ))}
-          <Stack>
-            <input 
-              id="file-upload" 
-              type="file" 
-              onChange={setFileUploadHandler}
-            />
-            <Button onClick={fileUploadHandler}>Upload</Button>
-          </Stack>
-        </HStack>
-        
+
+        <Flex height="400px" align="start">
+          <HStack>
+            {files && files.map((f, i) => (
+              <Stack key={i} align="center" justify="center">
+                <HStack align="center" justify="center">
+                  {/* <DeleteIcon style={{ cursor: "pointer" }} onClick={() => deleteFile(f.id)}/> */}
+                  <AlertDialogComponent deleteHandler={() => deleteFile(f.id)} />
+                  <DownloadIcon />
+                </HStack>
+                <FilePresentIcon style={{ fontSize: 80 }} />
+                <Text w="150px">{f.name}</Text>
+              </Stack>
+            ))}
+
+            <Stack>
+              <input 
+                id="file-upload" 
+                type="file" 
+                onChange={setFileUploadHandler}
+              />
+              <Button onClick={fileUploadHandler}>Upload</Button>
+            </Stack>
+          </HStack>
+        </Flex>
       </Container>
     </Box>
     :
