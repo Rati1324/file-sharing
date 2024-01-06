@@ -13,6 +13,7 @@ from datetime import timedelta
 from core.schemas import UserSchema, UserLoginSchema, TokenSchema, TokenDataSchema
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Union, Annotated
+from fastapi.responses import FileResponse
 
 from core.utils import (
     get_hashed_password, 
@@ -32,7 +33,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 credential_exception = HTTPException(status_code=401, detail="Couldn't validate credentials")
 
-async def get_db():
+def get_db():
     try:
         db = SessionLocal()
         yield db
@@ -51,24 +52,25 @@ app.add_middleware(
 
 Base.metadata.create_all(bind=engine)
 
-async def user_exists(db: Session = Depends(get_db), user_email: str = None):
+def user_exists(db: Session, user_email: str = None):
     user = db.query(User).filter_by(email=user_email).first()
     return user is not None
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-
+# async def get_current_user(token: str = Depends(oauth2_scheme)):
+def get_current_user(db: Session, token: str = None):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print(payload)
         email: str = payload.get("email")
         if email is None:
             raise credential_exception
-        
+      
     except jwt.JWTError:
         raise credential_exception
 
-    if not user_exists(user_email = email):
+    check_user = user_exists(db, user_email = email)
+    if not check_user:
         raise credential_exception
+
     return payload
 
 @app.get("/clear_users")
@@ -91,7 +93,7 @@ async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
     if not re.match(username_regex, user_data.username):
         raise HTTPException(status_code=400, detail="Your username must contain at least one letter, one number or special character, and be at least 6 characters long")
 
-    check_user = db.query(User).filter_by(email=user_data.email).first()
+    check_user = user_exists(db, user_data.email)
     if check_user is not None:
         raise HTTPException(status_code=400, detail="Email already registered")
 
@@ -115,11 +117,11 @@ async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
 async def signin(db: Session = Depends(get_db), user_data: UserLoginSchema = None):
     user = db.query(User).filter_by(email=user_data.email).first()
     if user is None:
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+        raise HTTPException(status_code=401, detail="Invalid email or password")
 
     password_valid = verify_password(user_data.password, user.password)
     if not password_valid:
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+        raise HTTPException(status_code=401, detail="Invalid email or password")
 
     expire_mins = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     token = create_jwt_token(user.email, expire_mins)
@@ -132,8 +134,8 @@ async def upload_file(authorization: str = Header(default=None), file: UploadFil
     file_content = await file.read()
     print(type(file_content))
     print(file_content)
-    user = await get_current_user(token)
-    if not user_exists(user):
+    user = get_current_user(db, token)
+    if not user_exists(db, user):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     user_id = db.query(User).filter_by(email=user["email"]).first().id
@@ -150,11 +152,11 @@ async def upload_file(authorization: str = Header(default=None), file: UploadFil
 @app.get("/get_files")
 async def get_files(authorization: str = Header(default=None), db: Session = Depends(get_db)):
     token = authorization[7:]
-    user = await get_current_user(token)
+    user = get_current_user(db, token)
     if user is not None:
         user_id = db.query(User).filter_by(email=user["email"]).first().id
-    files = db.query(File_Model).filter_by(owner_id=user_id).all()
 
+    files = db.query(File_Model).filter_by(owner_id=user_id).all()
     result = []
     for file in files:
         file_data_b64 = base64.b64encode(file.binary_data).decode('utf-8')
@@ -167,12 +169,8 @@ async def get_files(authorization: str = Header(default=None), db: Session = Dep
 
 @app.delete("/delete_file/{file_id}")
 async def delete_file(authorization: str = Header(default=None), db: Session = Depends(get_db), file_id: int = None):
-    token = authorization[7:]
-    user = await get_current_user(token)
-    if user is None:
-        raise credential_exception
-    user_id = db.query(User).filter_by(email=user["email"]).first().id
-
+    user = get_current_user(db, token=authorization[:7])
+    # print(user)
     file = db.query(File_Model).filter_by(id=file_id).first()
     if file.owner_id != user_id:
         raise credential_exception
@@ -182,6 +180,11 @@ async def delete_file(authorization: str = Header(default=None), db: Session = D
     db.commit()
     return {"status": "deleted successfully"}
 
-@app.get("/test")
-def test(db: Session = Depends(get_db), dependencies = Depends(get_current_user)):
-    print(dependencies)
+# @app.get("/download_file/{file_id}")
+# def download_file(file_id: int = None, db: Session = Depends(get_db)):
+#     file = db.query(File_Model).filter_by(id=file_id).first()
+#     return FileResponse(file.binary_data, media_type="application/octet-stream", filename=file.name)
+
+# @app.get("/test")
+# def test(db: Session = Depends(get_db), dependencies = Depends(get_current_user)):
+#     print(dependencies)
