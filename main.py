@@ -60,17 +60,18 @@ def user_exists(db: Session, user_email: str = None):
 def get_current_user(db: Session, token: str = None):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email: str = payload.get("email")
-        if email is None:
+        user_email: str = payload.get("email")
+        if user_email is None:
             raise credential_exception
       
     except jwt.JWTError:
         raise credential_exception
 
-    check_user = user_exists(db, user_email = email)
-    if not check_user:
+    user = db.query(User).filter_by(email=user_email).first()
+    if user is None:
         raise credential_exception
 
+    payload["user_id"] = user.id
     return payload
 
 @app.get("/clear_users")
@@ -131,18 +132,16 @@ async def signin(db: Session = Depends(get_db), user_data: UserLoginSchema = Non
 @app.post("/upload_file")
 async def upload_file(authorization: str = Header(default=None), file: UploadFile = File, db: Session = Depends(get_db)):
     token = authorization[7:]
-    file_content = await file.read()
-    print(type(file_content))
-    print(file_content)
     user = get_current_user(db, token)
-    if not user_exists(db, user):
+
+    file_content = await file.read()
+    if not user_exists(db, user["email"]):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    user_id = db.query(User).filter_by(email=user["email"]).first().id
     db_file = File_Model(
         name=file.filename,
         binary_data=file_content, 
-        owner_id=user_id
+        owner_id=user["user_id"]
     )
     db.add(db_file)
     db.commit()
@@ -169,13 +168,12 @@ async def get_files(authorization: str = Header(default=None), db: Session = Dep
 
 @app.delete("/delete_file/{file_id}")
 async def delete_file(authorization: str = Header(default=None), db: Session = Depends(get_db), file_id: int = None):
-    user = get_current_user(db, token=authorization[:7])
-    # print(user)
+    user = get_current_user(db, authorization[7:])
     file = db.query(File_Model).filter_by(id=file_id).first()
-    if file.owner_id != user_id:
+
+    if file.owner_id != user["user_id"]:
         raise credential_exception
 
-    file = db.query(File_Model).filter_by(id=file_id).first()
     db.delete(file)
     db.commit()
     return {"status": "deleted successfully"}
@@ -184,7 +182,3 @@ async def delete_file(authorization: str = Header(default=None), db: Session = D
 # def download_file(file_id: int = None, db: Session = Depends(get_db)):
 #     file = db.query(File_Model).filter_by(id=file_id).first()
 #     return FileResponse(file.binary_data, media_type="application/octet-stream", filename=file.name)
-
-# @app.get("/test")
-# def test(db: Session = Depends(get_db), dependencies = Depends(get_current_user)):
-#     print(dependencies)
