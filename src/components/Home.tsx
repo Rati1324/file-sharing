@@ -3,7 +3,6 @@ import { Stack, Container, Box, Flex, Text, Heading, SimpleGrid, Input } from '@
 
 export default function StatsGridWithImage() {
   const [userToken, setUserToken] = useState<string>("");
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   
   async function uploadFile(file: File) {
     const formData = new FormData();

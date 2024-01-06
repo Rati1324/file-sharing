@@ -26,19 +26,6 @@ export default function FileManager() {
     }
   }
 
-  function fileUploadHandler() {
-    try {
-      uploadFile(file);
-    } 
-    catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        console.log('This is a 401 error!');
-      } else {
-        console.log('This is an unexpected error:', error);
-      }
-    }
-  }
-
   async function getFiles() {
     const token: string | null = sessionStorage.getItem('access_token');
     const files = await fetch("http://127.0.0.1:8000/get_files", {
@@ -49,6 +36,20 @@ export default function FileManager() {
     })
     const filesJson = await files.json();
     return filesJson;
+  }
+
+  async function fileUploadHandler() {
+    try {
+      uploadFile(file);
+      getData();
+    } 
+    catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        console.log('This is a 401 error!');
+      } else {
+        console.log('This is an unexpected error:', error);
+      }
+    }
   }
   
   async function deleteFile(id: Number) {
@@ -81,11 +82,12 @@ export default function FileManager() {
     // console.log(jsonRes.status)
   }
 
+  async function getData() {
+    const files = await getFiles();
+    setFiles(files.result);
+  }
+
   useEffect(() => {
-    async function getData() {
-      const files = await getFiles();
-      setFiles(files.result);
-    }
     getData();
   }, [])
 
@@ -104,13 +106,12 @@ export default function FileManager() {
           <HStack>
             {files && files.map((f, i) => (
               <Stack key={i} align="center" justify="center">
+                <FilePresentIcon style={{ fontSize: 80 }} />
+                <Text w="150px">{f.name}</Text>
                 <HStack align="center" justify="center">
-                  {/* <DeleteIcon style={{ cursor: "pointer" }} onClick={() => deleteFile(f.id)}/> */}
                   <AlertDialogComponent deleteHandler={() => deleteFile(f.id)} />
                   <DownloadIcon />
                 </HStack>
-                <FilePresentIcon style={{ fontSize: 80 }} />
-                <Text w="150px">{f.name}</Text>
               </Stack>
             ))}
 
