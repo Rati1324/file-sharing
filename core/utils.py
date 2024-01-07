@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
+from core.models import User, File as File_Model
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -26,27 +27,22 @@ def create_jwt_token(sub: str, expires_delta: timedelta | None = None):
     jwt_token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
     return jwt_token
 
-def verify_jwt_token(token: str):
+def get_current_user(db: Session, token: str = None):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print("here")
+        user_email: str = payload.get("email")
+
         if payload["email"] is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
+            raise crendential_exception
+
+        user = db.query(User).filter_by(email=user_email).first()
+        if user is None:
+            raise credential_exception
+
+        payload["user_id"] = user.id
         return payload
     except jwt.JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-def get_current_user(db: Session, token: str = None):
-    print(token)
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    user_email: str = payload.get("email")
-
-    user = db.query(User).filter_by(email=user_email).first()
-    if user is None:
         raise credential_exception
-
-    payload["user_id"] = user.id
-    return payload
 
 def user_exists(db: Session, user_email: str = None):
     user = db.query(User).filter_by(email=user_email).first()

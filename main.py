@@ -17,7 +17,6 @@ from fastapi.responses import FileResponse
 
 from core.utils import (
     create_jwt_token,
-    verify_jwt_token,
     get_hashed_password, 
     verify_password,
     get_current_user,
@@ -55,7 +54,7 @@ Base.metadata.create_all(bind=engine)
 
 @app.post("/verify_token")
 async def verify_token(authorization: str = Header(default=None)):
-    return verify_jwt_token(authorization[7:])
+    return get_current_user(authorization[7:])
 
 @app.post("/signup")
 async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
@@ -156,7 +155,15 @@ async def delete_file(authorization: str = Header(default=None), db: Session = D
     db.commit()
     return {"status": "deleted successfully"}
 
-# @app.get("/download_file/{file_id}")
-# def download_file(file_id: int = None, db: Session = Depends(get_db)):
-#     file = db.query(File_Model).filter_by(id=file_id).first()
-#     return FileResponse(file.binary_data, media_type="application/octet-stream", filename=file.name)
+@app.get("/download_file/{file_id}")
+def download_file(authorization: str = Header(default=None), file_id: int = None, db: Session = Depends(get_db)):
+    # file = db.query(File_Model).filter_by(id=file_id).first()
+    # get user from token and check if the file belongs to the user
+    # do it now stop commenting
+    token = authorization[7:]
+    user = get_current_user(db, token)
+    file = db.query(File_Model).filter_by(id=file_id).first()
+    if file.owner_id != user["user_id"]:
+        raise credential_exception
+    
+    return FileResponse(file.binary_data, media_type="application/octet-stream", filename=file.name)
