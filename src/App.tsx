@@ -10,14 +10,18 @@ import { useState } from "react";
 function App() {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
+  function setLoggedInHandler(value: boolean): void {
+    setLoggedIn(value);
+  }
+
   return (
     <>
-      <Navbar loggedIn={loggedIn} setLoggedIn={(value: boolean) => setLoggedIn(value)} />
+      <Navbar loggedIn={loggedIn} setLoggedIn={setLoggedInHandler} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<SignIn setLoggedIn={(value: boolean) => setLoggedIn(value)} />} />
         <Route path="/signup" element={<SignUp setLoggedIn={(value: boolean) => setLoggedIn(value)} />} />
-        <Route path="/file_manager" element={<FileManager />} />
+        <Route path="/file_manager" element={<FileManager loggedIn={loggedIn} setLoggedIn={setLoggedInHandler} />}  />
       </Routes>
       <Footer />
     </>

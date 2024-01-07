@@ -11,14 +11,12 @@ import { uploadFile } from "../helperFunctions";
 import { useToast } from '@chakra-ui/react';
 import AlertDialogComponent from './AlertDialogComponent';
 
-export default function FileManager() {
+export default function FileManager({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedIn: Function }) {
   const toast = useToast();
   const navigate = useNavigate();
   const token: string | null = sessionStorage.getItem("access_token");
   const [file, setFile] = useState<File>(new File([], ''));
-  // create a state named files and set it to an empty array of objects, array of object not of File types
   const [files, setFiles] = useState<any[]>([]);
-  // const [files, setFiles] = useState<File[]>([]);
 
   function setFileUploadHandler(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
@@ -40,10 +38,18 @@ export default function FileManager() {
 
   async function fileUploadHandler() {
     try {
-      uploadFile(file);
-      getData();
-    } 
-    catch (error: any) {
+      const res = await uploadFile(file);
+      if (res && res.status === 200) {
+        getData();
+        toast({
+          title: 'File uploaded successfully',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        })
+      }
+    }
+    catch(error: any) {
       if (error.response && error.response.status === 401) {
         console.log('This is a 401 error!');
       } else {
@@ -53,33 +59,33 @@ export default function FileManager() {
   }
   
   async function deleteFile(id: Number) {
+    // TODO use try catch block
     const token: string | null = sessionStorage.getItem('access_token');
-    const res = await fetch(`http://127.0.01:8000/delete_file/${id}`, {
-      method: "DELETE",
-      headers: {
-        'Authorization': `Bearer ${token}`,
+    try {
+      const res = await fetch(`http://127.0.01:8000/delete_file/${id}`, {
+        method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      })
+      if (res.status === 200) {
+        const files = await getFiles();
+        setFiles(files.result);
+        toast({ title: 'Deleted successfully', status: 'success',
+          duration: 2000, isClosable: true,
+        })
       }
-    })
-
-    if (res.status === 200) {
-      const files = await getFiles();
-      setFiles(files.result);
-      toast({
-        title: 'Deleted successfully',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      })
     }
-    else if (res.status === 401) {
-      toast({
-        title: 'Unauthorized request.',
-        status: 'error',
-        duration: 2000,
-        isClosable: true,
-      })
+    catch(error: any) {
+      if (error.response && error.response.status === 401) {
+        toast({
+          title: 'Unauthorized request.',
+          status: 'error',
+          duration: 2000,
+          isClosable: true,
+        })
+      } 
     }
-    // console.log(jsonRes.status)
   }
 
   async function getData() {
@@ -87,9 +93,28 @@ export default function FileManager() {
     setFiles(files.result);
   }
 
-  useEffect(() => {
+  async function verifyToken() {
+    const token: string | null = sessionStorage.getItem('access_token');
+    if (token === null) {
+      setLoggedIn(false);
+      return;
+    }
+    const res = await fetch("http://localhost:8000/verify_token", {
+      method: "POST",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    })
+    if (res.status === 401) { 
+      setLoggedIn(false); 
+      return; 
+    }
     getData();
-  }, [])
+  }
+
+  useEffect(() => {
+    verifyToken();
+  }, [loggedIn])
 
   return (
     token != null 

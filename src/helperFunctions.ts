@@ -1,4 +1,4 @@
-export async function uploadFile(file: File) {
+export async function uploadFile(file: File): Promise<Response | undefined> {
     const formData = new FormData();
     const token: string | null = sessionStorage.getItem('access_token');
     if (token == null) {
@@ -14,12 +14,8 @@ export async function uploadFile(file: File) {
           'Authorization': `Bearer ${token}`,
         }
       });
+      return response
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log(data);
     } catch (error) {
       console.error('There was a problem with the fetch operation: ', error);
     }
