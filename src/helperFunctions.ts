@@ -1,4 +1,4 @@
-export async function uploadFile(file: File): Promise<Response | undefined> {
+async function uploadFile(file: File): Promise<Response | undefined> {
     const formData = new FormData();
     const token: string | null = sessionStorage.getItem('access_token');
     if (token == null) {
@@ -20,3 +20,16 @@ export async function uploadFile(file: File): Promise<Response | undefined> {
       console.error('There was a problem with the fetch operation: ', error);
     }
 };
+
+
+async function verifyToken(token: string | null): Promise<Response | undefined> {
+  const res = await fetch("http://localhost:8000/verify_token/", {
+    method: "POST",
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    }
+  })
+  return res;
+}
+
+export { uploadFile, verifyToken };

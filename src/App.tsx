@@ -5,14 +5,32 @@ import SignUp from "./components/SignUp";
 import Footer from "./components/Footer";
 import FileManager from "./components/FileManager";
 import { Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { verifyToken } from "./helperFunctions";
+import { useNavigate } from "react-router-dom";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   function setLoggedInHandler(value: boolean): void {
     setLoggedIn(value);
   }
+  
+  useEffect(() => {
+    const token: string | null = sessionStorage.getItem('access_token');
+    async function checkToken() {
+      const response = await verifyToken(token);
+      if (response && response.status === 200) {
+        setLoggedIn(true);
+      }
+      else {
+        setLoggedIn(false);
+        navigate('/signin');
+      }
+    }
+    checkToken();
+  }, [])
 
   return (
     <>
