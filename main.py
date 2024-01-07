@@ -16,22 +16,23 @@ from typing import Union, Annotated
 from fastapi.responses import FileResponse
 
 from core.utils import (
+    create_jwt_token,
+    verify_jwt_token,
     get_hashed_password, 
     verify_password,
-    create_jwt_token
+    get_current_user,
+    user_exists,
+    credential_exception,
 )
 
 from core.config import Base, engine, SessionLocal
 from core.models import User, File as File_Model
 
-hash_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="signin")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-credential_exception = HTTPException(status_code=401, detail="Couldn't validate credentials")
 
 def get_db():
     try:
@@ -52,32 +53,9 @@ app.add_middleware(
 
 Base.metadata.create_all(bind=engine)
 
-def user_exists(db: Session, user_email: str = None):
-    user = db.query(User).filter_by(email=user_email).first()
-    return user is not None
-
-# async def get_current_user(token: str = Depends(oauth2_scheme)):
-def get_current_user(db: Session, token: str = None):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_email: str = payload.get("email")
-        if user_email is None:
-            raise credential_exception
-      
-    except jwt.JWTError:
-        raise credential_exception
-
-    user = db.query(User).filter_by(email=user_email).first()
-    if user is None:
-        raise credential_exception
-
-    payload["user_id"] = user.id
-    return payload
-
-@app.get("/clear_users")
-async def clear_users(db: Session = Depends(get_db)):
-    db.query(User).delete()
-    db.commit()
+@app.post("/verify_token")
+async def verify_token(authorization: str = Header(default=None)):
+    return verify_jwt_token(authorization[7:])
 
 @app.post("/signup")
 async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):

@@ -1,15 +1,17 @@
 import os
 from passlib.context import CryptContext
-from jose import jwt
+from jose import jwt, ExpiredSignatureError, JWTError
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
-import re
+from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 EXPIRATION_MINUTES = os.getenv("EXPIRATION_MINUTER")
 
+credential_exception = HTTPException(status_code=401, detail="Couldn't validate credentials")
 hash_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_hashed_password(password: str) -> str:
@@ -23,3 +25,29 @@ def create_jwt_token(sub: str, expires_delta: timedelta | None = None):
     data = {"email": sub, "exp": expire}
     jwt_token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
     return jwt_token
+
+def verify_jwt_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print("here")
+        if payload["email"] is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        return payload
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+def get_current_user(db: Session, token: str = None):
+    print(token)
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    user_email: str = payload.get("email")
+
+    user = db.query(User).filter_by(email=user_email).first()
+    if user is None:
+        raise credential_exception
+
+    payload["user_id"] = user.id
+    return payload
+
+def user_exists(db: Session, user_email: str = None):
+    user = db.query(User).filter_by(email=user_email).first()
+    return user is not None
