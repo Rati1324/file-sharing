@@ -13,7 +13,9 @@ from datetime import timedelta
 from core.schemas import UserSchema, UserLoginSchema, TokenSchema, TokenDataSchema
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Union, Annotated
-from fastapi.responses import FileResponse
+from starlette.responses import FileResponse
+from io import BytesIO
+from fastapi.responses import StreamingResponse
 
 from core.utils import (
     create_jwt_token,
@@ -160,8 +162,9 @@ def download_file(authorization: str = Header(default=None), file_id: int = None
     token = authorization[7:]
     user = get_current_user(db, token)
     file = db.query(File_Model).filter_by(id=file_id).first()
-    print("here")
     if file.owner_id != user["user_id"]:
         raise credential_exception
 
-    return FileResponse(file.binary_data, media_type="application/octet-stream", filename=file.name)
+    file_data_io = BytesIO(file.binary_data)
+
+    return StreamingResponse(file_data_io, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file_id}'})
