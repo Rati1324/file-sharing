@@ -72,12 +72,12 @@ export default function FileManager({ loggedIn, setLoggedIn } : { loggedIn: bool
           'Authorization': `Bearer ${token}`,
         }
       })
-      // const blob = await res.blob();
-      // const url = window.URL.createObjectURL(blob);
-      // const a = document.createElement('a');
-      // a.href = url;
-      // a.setAttribute('download', 'file.txt');
-      // a.click();
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download', 'file.png');
+      a.click();
     }
     catch(error: any) {
       if (error.response && error.response.status === 401) {

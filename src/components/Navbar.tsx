@@ -17,10 +17,10 @@ export default function WithSubnavigation({ loggedIn, setLoggedIn }: { loggedIn:
     navigate("/");
   }
 
-  useEffect(() => {
-    let token = sessionStorage.getItem("access_token");
-    setLoggedIn(token == null ? false : true);
-  }, [loggedIn])
+  // useEffect(() => {
+    // let token = sessionStorage.getItem("access_token");
+    // setLoggedIn(token == null ? false : true);
+  // }, [loggedIn])
   
   return (
     <Box>

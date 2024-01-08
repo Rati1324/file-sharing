@@ -23,6 +23,7 @@ function App() {
       const response = await verifyToken(token);
       if (response && response.status === 200) {
         setLoggedIn(true);
+        console.log("hi")
       }
       else {
         setLoggedIn(false);
