@@ -1,5 +1,4 @@
-import os, json, re
-import base64
+import os, json, re, base64
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, Header
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm 
 from sqlalchemy import create_engine, Column, Integer, String
@@ -16,14 +15,12 @@ from typing import Union, Annotated
 from starlette.responses import FileResponse
 from io import BytesIO
 from fastapi.responses import StreamingResponse
+from core.user_services import router as user_services
 
 from core.utils import (
-    create_jwt_token,
-    get_hashed_password, 
-    verify_password,
-    get_current_user,
-    user_exists,
-    credential_exception,
+    create_jwt_token, get_hashed_password, 
+    verify_password, get_current_user, user_exists,
+    credential_exception, get_db
 )
 
 from core.config import Base, engine, SessionLocal
@@ -35,14 +32,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
-
 app = FastAPI()
+app.include_router(user_services)
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,60 +44,6 @@ app.add_middleware(
 )
 
 Base.metadata.create_all(bind=engine)
-
-@app.post("/verify_token")
-async def verify_token(db: Session = Depends(get_db), authorization: str = Header(default=None)):
-    return get_current_user(db, authorization[7:])
-
-@app.post("/signup")
-async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
-    password_regex = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
-    email_regex = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
-    username_regex = r"^(?=.*[a-zA-Z])(?=.*[\d\W]).{6,}$"
-
-    if not re.match(password_regex, user_data.password):
-        raise HTTPException(status_code=400, detail="Password is not secure")
-
-    if not re.match(email_regex, user_data.email):
-        raise HTTPException(status_code=400, detail="Invalid email")
-
-    if not re.match(username_regex, user_data.username):
-        raise HTTPException(status_code=400, detail="Your username must contain at least one letter, one number or special character, and be at least 6 characters long")
-
-    check_user = user_exists(db, user_data.email)
-    if check_user is not None:
-        raise HTTPException(status_code=400, detail="Email already registered")
-
-    db_user = User(
-        username = user_data.username,
-        email = user_data.email,
-        password = get_hashed_password(user_data.password),
-        disabled = False
-    )
-
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    expire_mins = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    token = create_jwt_token(user_data.email, expire_mins)
-    token_schema = TokenSchema(access_token=token, token_type="bearer")
-    return token_schema
-
-@app.post('/signin', response_model=TokenSchema)
-# async def signin(db: Session = Depends(get_db), user_data: OAuth2PasswordRequestForm = None):
-async def signin(db: Session = Depends(get_db), user_data: UserLoginSchema = None):
-    user = db.query(User).filter_by(email=user_data.email).first()
-    if user is None:
-        raise HTTPException(status_code=401, detail="Invalid email or password")
-
-    password_valid = verify_password(user_data.password, user.password)
-    if not password_valid:
-        raise HTTPException(status_code=401, detail="Invalid email or password")
-
-    expire_mins = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    token = create_jwt_token(user.email, expire_mins)
-    token_schema = TokenSchema(access_token=token, token_type="bearer")
-    return token_schema
 
 @app.post("/upload_file")
 async def upload_file(authorization: str = Header(default=None), file: UploadFile = File, db: Session = Depends(get_db)):
@@ -141,6 +78,7 @@ async def get_files(authorization: str = Header(default=None), db: Session = Dep
         result.append({
             "id": file.id,
             "name": file.name,
+            # this is stupid i dont need this here
             "file_data": file_data_b64,
         })
     return {"result": result}

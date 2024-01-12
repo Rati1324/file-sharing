@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from core.models import User, File as File_Model
+from .models import User, File as File_Model
+from .config import Base, engine, SessionLocal
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -14,6 +15,13 @@ EXPIRATION_MINUTES = os.getenv("EXPIRATION_MINUTER")
 
 credential_exception = HTTPException(status_code=401, detail="Couldn't validate credentials")
 hash_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def get_db():
+    try:
+        db = SessionLocal()
+        yield db
+    finally:
+        db.close()
 
 def get_hashed_password(password: str) -> str:
     return hash_context.hash(password)
