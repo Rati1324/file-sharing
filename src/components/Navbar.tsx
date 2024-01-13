@@ -1,14 +1,20 @@
 import { Box, Flex, Text, Button, Stack, Collapse,
-  Icon, Popover, PopoverTrigger, PopoverContent, useColorModeValue,
-  useBreakpointValue, useDisclosure, } from '@chakra-ui/react';
-import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import FilePresentIcon from '@mui/icons-material/FilePresent';
-import { useEffect, useState } from 'react';
+   Popover, PopoverTrigger, useColorModeValue,
+  useBreakpointValue, useDisclosure,
+  textDecoration, } from '@chakra-ui/react';
 import { useNavigate, NavLink } from "react-router-dom";
+
+const navLinkStyle = {
+  textDecoration: 'none',
+
+  color: 'white',
+  fontSize: "1.2rem",
+  fontWeight: 600,
+  _hover: { color: 'red' },
+}
 
 export default function WithSubnavigation({ loggedIn, setLoggedIn }: { loggedIn: boolean, setLoggedIn: (value: boolean) => void }) {
   const { isOpen, onToggle } = useDisclosure();
-  // const [userToken, setUserToken] = useState<string>("");
   const navigate = useNavigate();
 
   function signOut() {
@@ -17,15 +23,9 @@ export default function WithSubnavigation({ loggedIn, setLoggedIn }: { loggedIn:
     navigate("/");
   }
 
-  // useEffect(() => {
-    // let token = sessionStorage.getItem("access_token");
-    // setLoggedIn(token == null ? false : true);
-  // }, [loggedIn])
-  
   return (
     <Box>
-      <Flex
-        bg={useColorModeValue('#2e6f7e', '#2e6f7e')} color={useColorModeValue('gray.600', 'white')} minH={'60px'}
+      <Flex bg="#587f8c" color={useColorModeValue('gray.600', 'white')} minH={'60px'}
         py={{ base: 2 }} px={{ base: 4 }} align={'center'}>
         {/* <Flex
           flex={{ base: 1, md: 'auto' }}
@@ -50,36 +50,30 @@ export default function WithSubnavigation({ loggedIn, setLoggedIn }: { loggedIn:
           </Flex>
         </Flex>
 
-        <Stack
-          flex={{ base: 1, md: 0 }}
-          justify={'flex-end'}
-          direction={'row'}
-          spacing={6}
-          align={'center'}
-        >
+        <Stack flex={{ base: 1, md: 0 }} justify={'flex-end'} direction={'row'} spacing={6} align={'center'}>
           {
             loggedIn ? 
             <>
-              <Button fontSize={'md'} fontWeight={400} variant={'link'} color={'red'} onClick={signOut}>
+              <Button fontSize={'1.2rem'} fontWeight={600} variant={'link'} color={'red'} onClick={signOut} style={{textDecoration: 'none'}}>
                 Sign Out
               </Button>
               <NavLink to="/file_manager">
-                <Button display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'} 
-                    fontWeight={600} color={'white'} bg={'blue.400'} _hover={{ bg: 'pink.300'}}>
-                My files
+                <Button display={{ base: 'none', md: 'inline-flex' }} fontSize={'1.2rem'} 
+                    fontWeight={600} color={'white'} bg={'blue.400'} _hover={{ bg: 'gray.800'}}>
+                  My files
                 </Button>
               </NavLink>
             </>
             :
             <>
               <NavLink to="/signin">
-                <Button  fontSize={'md'} fontWeight={400} variant={'link'} color={'white'} style={{textAlign: 'center'}}>
+                <Button fontSize={'md'} fontWeight={400} variant={'link'} color={'white'} style={{...navLinkStyle }}>
                   Sign In
                 </Button>
               </NavLink>
               <NavLink to="/signin">
                 <Button display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'} 
-                      fontWeight={600} color={'white'} bg={'blue.400'} _hover={{ bg: 'pink.300'}}>
+                      fontWeight={600} color={'white'} bg={'blue.400'} _hover={{ bg: 'pink.300'}} style={{...navLinkStyle, textAlign: "center"}}>
                   Sign Up
                 </Button>
               </NavLink>
@@ -107,10 +101,8 @@ const DesktopNav = () => {
         <Box key={navItem.label}>
           <Popover trigger={'hover'} placement={'bottom-start'}>
             <PopoverTrigger>
-              <NavLink
-                to={navItem.to ?? '#'}
-              >
-                <Text color={"white"}>
+              <NavLink to={navItem.to ?? '#'} >
+                <Text color={"white"} style={navLinkStyle}>
                   {navItem.label}
                 </Text>
               </NavLink>

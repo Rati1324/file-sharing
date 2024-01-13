@@ -145,15 +145,16 @@ export default function FileManager({ loggedIn, setLoggedIn } : { loggedIn: bool
   return (
     token != null 
     ?
-    <Box textAlign="center" h="68vh">
-      <Text fontSize="30" m={4}>File Manager</Text>
-      <Container p={5} maxW="60%" h="100%" mx="auto" bg="gray.200">
+    // <Flex textAlign="center" h="60vh" justify="space-between" direction="column" border="1px solid">
+    <Box textAlign="center" h="60vh" border="1px solid">
+      <Text fontSize="30">File Manager</Text>
+      <Container p={5} maxW="60%" h="90%" mx="auto" bg="gray.100">
         <Flex align="center" mb={4}>
           <ArrowBackIosIcon style={{ fontSize: 40 }} />
           <ArrowForwardIosIcon style={{ fontSize: 40 }} />
         </Flex>
 
-        <Flex height="400px" align="start">
+        <Flex align="start">
           <HStack>
             {files && files.map((f, i) => (
               <Stack key={i} align="center" justify="center">

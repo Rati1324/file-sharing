@@ -8,6 +8,7 @@ import { Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { verifyToken } from "./helperFunctions";
 import { useNavigate } from "react-router-dom";
+import { Container, Box, Flex } from "@chakra-ui/react";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
@@ -34,7 +35,10 @@ function App() {
   }, [])
 
   return (
-    <>
+    <Flex flexDirection="column" justify="space-between" height="100vh">
+      {/* <div style={{border: "1px solid"}}>1</div>
+      <div style={{border: "1px solid"}}>2</div>
+      <div style={{border: "1px solid"}}>3</div> */}
       <Navbar loggedIn={loggedIn} setLoggedIn={setLoggedInHandler} />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -42,8 +46,8 @@ function App() {
         <Route path="/signup" element={<SignUp setLoggedIn={(value: boolean) => setLoggedIn(value)} />} />
         <Route path="/file_manager" element={<FileManager loggedIn={loggedIn} setLoggedIn={setLoggedInHandler} />}  />
       </Routes>
-      <Footer />
-    </>
+      <Footer /> 
+    </Flex>
   );
 }
 
