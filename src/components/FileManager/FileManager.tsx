@@ -80,10 +80,13 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
         <SearchBar setFiles={(data: Array<File>) => setFiles(data)} />
         <Flex align="start">
           <HStack>
-            {files && files.map((f, i) => (
-              <FileView fileData={f} key={i} setFiles={(data: Array<File>) => setFiles(data)} />
-            ))}
-
+            {files.length ? 
+              files.map((f, i) => (
+                <FileView fileData={f} key={i} setFiles={(data: Array<File>) => setFiles(data)} />
+              ))
+              :
+              <Text fontSize="xl" fontWeight={700}>No files found</Text>
+            }
             <Stack>
               <input type="file"  onChange={setFileUploadHandler} />
               <Button onClick={uploadFileHandler}>Upload</Button>
