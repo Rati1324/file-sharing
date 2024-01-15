@@ -16,6 +16,7 @@ from starlette.responses import FileResponse
 from io import BytesIO
 from fastapi.responses import StreamingResponse
 from core.user_services import router as user_services
+from typing import Optional
 
 from core.utils import (
     create_jwt_token, get_hashed_password, 
@@ -65,21 +66,24 @@ async def upload_file(authorization: str = Header(default=None), file: UploadFil
     return {"status": "uploaded successfully"}
 
 @app.get("/get_files")
-async def get_files(authorization: str = Header(default=None), db: Session = Depends(get_db)):
+async def get_files(authorization: str = Header(default=None), search: Optional[str] = None, db: Session = Depends(get_db)):
     token = authorization[7:]
     user = get_current_user(db, token)
     if user is not None:
         user_id = db.query(User).filter_by(email=user["email"]).first().id
 
-    files = db.query(File_Model).filter_by(owner_id=user_id).all()
+    if search is not None:
+        files = db.query(File_Model).filter_by(owner_id=user_id).filter(File_Model.name.ilike(f"%{search}%")).all()
+    else:
+        files = db.query(File_Model).filter_by(owner_id=user_id).all()
+
     result = []
     for file in files:
         file_data_b64 = base64.b64encode(file.binary_data).decode('utf-8')
         result.append({
             "id": file.id,
             "name": file.name,
-            # this is stupid i dont need this here
-            "file_data": file_data_b64,
+            # add size here
         })
     return {"result": result}
 
