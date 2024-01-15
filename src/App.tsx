@@ -20,12 +20,9 @@ function App() {
   
   return (
     <Flex flexDirection="column" justify="space-between" height="100vh">
-      {/* <div style={{border: "1px solid"}}>1</div>
-      <div style={{border: "1px solid"}}>2</div>
-      <div style={{border: "1px solid"}}>3</div> */}
       <Navbar loggedIn={loggedIn} setLoggedIn={setLoggedInHandler} />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home userLoggedIn={loggedIn} />} />
         <Route path="/signin" element={<SignIn setLoggedIn={(value: boolean) => setLoggedIn(value)} />} />
         <Route path="/signup" element={<SignUp setLoggedIn={(value: boolean) => setLoggedIn(value)} />} />
         <Route path="/file_manager" element={<FileManager loggedIn={loggedIn} setLoggedIn={setLoggedInHandler} />}  />

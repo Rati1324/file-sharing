@@ -37,8 +37,8 @@ const WithSubnavigation = ({ loggedIn, setLoggedIn }: { loggedIn: boolean, setLo
   }, [loggedIn]) 
 
   return (
-    <Box>
-      <Flex bg="#587f8c" color={useColorModeValue('gray.600', 'white')} minH={'60px'} py={{ base: 2 }} 
+    <Box display="flex" alignItems="center" justifyContent="center" bg="#587f8c" >
+      <Flex width="70%" color={useColorModeValue('gray.600', 'white')} minH={'60px'} py={{ base: 2 }} 
       px={{ base: 4 }} align={'center'} justify="center">
 
         <Flex flex={{ base: 2 }} >
