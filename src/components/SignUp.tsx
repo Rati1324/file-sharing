@@ -7,7 +7,7 @@ import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useState, ReactNode } from 'react';
 import { useNavigate } from "react-router-dom";
 
-export default function SignupCard({ setLoggedIn }: {setLoggedIn: (value: boolean) => void}) {
+export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void}) => {
   const [showPassword, setShowPassword] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
@@ -150,3 +150,5 @@ export default function SignupCard({ setLoggedIn }: {setLoggedIn: (value: boolea
     </Flex>
   )
 }
+
+export default SignUp;

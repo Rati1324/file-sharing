@@ -1,7 +1,7 @@
 import { useEffect, useState, ReactNode, ChangeEvent } from 'react'
 import { Stack, Container, Box, Flex, Text, Heading, SimpleGrid, Input } from '@chakra-ui/react'
 
-export default function StatsGridWithImage() {
+const Home = () => {
   const [userToken, setUserToken] = useState<string>("");
   
   async function uploadFile(file: File) {
@@ -31,11 +31,6 @@ export default function StatsGridWithImage() {
       uploadFile(file);
     }
   }
-
-  useEffect(() => {
-    let token = sessionStorage.getItem("access_token");
-    setUserToken(token == null ? "" : token);
-  }, [])
 
   return (
     <Box bg={'gray.800'} position={'relative'}>
@@ -136,3 +131,5 @@ const stats = [
     ),
   },
 ]
+
+export default Home

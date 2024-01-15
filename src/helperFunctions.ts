@@ -32,4 +32,18 @@ async function verifyToken(token: string | null): Promise<Response | undefined> 
   return res;
 }
 
-export { uploadFile, verifyToken };
+async function getFiles(keyword: string = "") {
+  const token: string | null = sessionStorage.getItem('access_token');
+  const searchKeyword = keyword.length ? `?search=${keyword}` : "";
+
+  const files = await fetch(`http://127.0.0.1:8000/get_files${searchKeyword}`, {
+    method: "GET",
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    }
+  })
+  const filesJson = await files.json();
+  return filesJson;
+}
+
+export { uploadFile, verifyToken, getFiles };

@@ -3,12 +3,12 @@ import Navbar from "./components/Navbar";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Footer from "./components/Footer";
-import FileManager from "./components/FileManager";
+import FileManager from "./components/FileManager/FileManager";
 import { Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { verifyToken } from "./helperFunctions";
 import { useNavigate } from "react-router-dom";
-import { Container, Box, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
@@ -18,22 +18,6 @@ function App() {
     setLoggedIn(value);
   }
   
-  useEffect(() => {
-    const token: string | null = sessionStorage.getItem('access_token');
-    async function checkToken() {
-      const response = await verifyToken(token);
-      if (response && response.status === 200) {
-        setLoggedIn(true);
-        console.log("hi")
-      }
-      else {
-        setLoggedIn(false);
-        navigate('/signin');
-      }
-    }
-    checkToken();
-  }, [])
-
   return (
     <Flex flexDirection="column" justify="space-between" height="100vh">
       {/* <div style={{border: "1px solid"}}>1</div>

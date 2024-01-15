@@ -6,7 +6,7 @@ import {
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
-export default function SimpleCard({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) {
+const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const navigate = useNavigate();
@@ -100,3 +100,5 @@ export default function SimpleCard({ setLoggedIn }:{setLoggedIn: (value: boolean
     </Flex>
   )
 }
+
+export default SignIn;

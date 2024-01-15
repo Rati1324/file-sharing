@@ -17,7 +17,7 @@ const ListHeader = ({ children }: { children: ReactNode }) => {
   )
 }
 
-export default function LargeWithLogoLeft() {
+export const Footer = () => {
   return (
     <Box
       bg={useColorModeValue('gray.50', 'gray.900')}
@@ -106,3 +106,5 @@ export default function LargeWithLogoLeft() {
     </Box>
   )
 }
+
+export default Footer;
