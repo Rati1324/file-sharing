@@ -1,6 +1,4 @@
 import { Flex } from '@chakra-ui/react';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Input } from '@chakra-ui/react'
 import { useState } from 'react';
 import { getFiles } from '../../helperFunctions';
@@ -14,9 +12,7 @@ const SearchBar = ({setFiles}:{setFiles: (data: Array<File>) => void}) => {
 	}
 
   return (
-    <Flex align="center" mb={4}>
-			<ArrowBackIosIcon style={{ fontSize: 40 }} />
-			<ArrowForwardIosIcon style={{ fontSize: 40 }} />
+    <Flex align="center" >
 			<Input placeholder="Search" 
 				onChange={(e) => setSearchInput(e.target.value)}
 				onKeyDown={(e) => {
@@ -24,6 +20,8 @@ const SearchBar = ({setFiles}:{setFiles: (data: Array<File>) => void}) => {
 						searchFiles();
 					}
 				}}
+				borderColor="grey.500"
+				width="80%"
 			/>
     </Flex>
   )

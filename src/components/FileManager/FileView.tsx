@@ -4,6 +4,8 @@ import AlertDialogComponent from '../AlertDialogComponent';
 import DownloadIcon from '@mui/icons-material/Download';
 import { getFiles } from "../../helperFunctions";
 import { useToast } from '@chakra-ui/react';
+import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
+import { useNavigate } from 'react-router-dom';
 
 type FileProps = {
   fileData: {
@@ -15,6 +17,7 @@ type FileProps = {
 
 const FileView = ({ fileData, setFiles }: FileProps) => {
   const toast = useToast();
+  const navigate = useNavigate();
 
   async function downloadFile(fileId: number) {
     const token: string | null = sessionStorage.getItem('access_token');
@@ -58,19 +61,25 @@ const FileView = ({ fileData, setFiles }: FileProps) => {
           duration: 2000, isClosable: true,
         })
       }
-    }
-    catch(error: any) {
-      if (error.response && error.response.status === 401) {
+      else if (res.status === 401) {
+        navigate("/signin")
         toast({ 
           title: 'Unauthorized request.', status: 'error',
           duration: 2000, isClosable: true,
         })
-      } 
+      }
+    }
+    catch(error: any) {
+      toast({ 
+        title: 'Unknown error has occured', status: 'error',
+        duration: 2000, isClosable: true,
+      })
     }
   }
 
   return (
     <Stack align="center" justify="center">
+      <Checkbox borderColor="blue.700"/>
       <FilePresentIcon style={{ fontSize: 60 }} />
       <Text w="150px">{fileData.name}</Text>
       <HStack align="center" justify="center">

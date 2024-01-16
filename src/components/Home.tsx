@@ -17,16 +17,16 @@ const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
       <Container maxW={'7xl'} zIndex={10} position={'relative'}>
         <Stack direction={{ base: 'column', lg: 'row' }}>
           <Stack flex={1} color={'gray.400'} justify={{ lg: 'center' }} py={{ base: 4, md: 20, xl: 60 }}>
-            <Stack spacing={3} mb={{ base: 8, md: 20 }}>
+            <Stack spacing={4} mb={{ base: 8, md: 20 }}>
               <Text fontFamily={'heading'} fontWeight={700}
-                textTransform={'uppercase'} mb={3}
+                textTransform={'uppercase'} 
                 fontSize={'xl'} color={'gray.500'}>
-                {userLoggedIn ? 'you are logged in' : 'you are not logged in'}
+                {userLoggedIn ? 'Welcome' : 'you are not logged in'}
               </Text>
-              <Heading color={'white'} mb={5} fontSize={{ base: '3xl', md: '5xl' }}>
-                file sharing platform
+              <Heading color={'white'} fontSize={{ base: '3xl', md: '5xl' }}>
+                File sharing platform
               </Heading>
-              <Text fontSize={'xl'} color={'gray.400'}>
+              <Text fontSize={'xl'} color={'gray.400'} mb={5}>
                 this platform allows you to share files with other user and also
                 have a place to store all your files and stuff...
               </Text>

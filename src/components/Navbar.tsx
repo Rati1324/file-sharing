@@ -37,7 +37,7 @@ const WithSubnavigation = ({ loggedIn, setLoggedIn }: { loggedIn: boolean, setLo
   }, [loggedIn]) 
 
   return (
-    <Box display="flex" alignItems="center" justifyContent="center" bg="#587f8c" >
+    <Flex display="flex" alignItems="center" justifyContent="center" bg="#587f8c">
       <Flex width="70%" color={useColorModeValue('gray.600', 'white')} minH={'60px'} py={{ base: 2 }} 
       px={{ base: 4 }} align={'center'} justify="center">
 
@@ -82,7 +82,7 @@ const WithSubnavigation = ({ loggedIn, setLoggedIn }: { loggedIn: boolean, setLo
       <Collapse in={isOpen} animateOpacity>
         {/* <MobileNav /> */}
       </Collapse>
-    </Box>
+    </Flex>
   )
 }
 

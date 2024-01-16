@@ -5,6 +5,8 @@ import { uploadFile, verifyToken, getFiles } from "../../helperFunctions";
 import { useToast } from '@chakra-ui/react';
 import FileView from './FileView';
 import SearchBar from './SearchBar';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedIn: Function }) => {
   const toast = useToast();
@@ -76,10 +78,17 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     ?
     <Stack h="60vh" textAlign="center">
       <Text fontSize="30">File Manager</Text>
-      <Container p={5} maxW="55%" h="90%" mx="auto" bg="gray.100">
+
+      <Stack p={5} width="50%" h="90%" mx="auto" bg="gray.100" spacing={4}>
+        <HStack>
+          <ArrowBackIosIcon style={{ fontSize: 40 }} />
+          <ArrowForwardIosIcon style={{ fontSize: 40 }} />
+        </HStack>
+
         <SearchBar setFiles={(data: Array<File>) => setFiles(data)} />
-        <Flex align="start">
-          <HStack>
+
+        <Stack align="start">
+          <HStack align="start" border="1px solid" >
             {files.length ? 
               files.map((f, i) => (
                 <FileView fileData={f} key={i} setFiles={(data: Array<File>) => setFiles(data)} />
@@ -92,8 +101,8 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
               <Button onClick={uploadFileHandler}>Upload</Button>
             </Stack>
           </HStack>
-        </Flex>
-      </Container>
+        </Stack>
+      </Stack>
     </Stack>
     :
     null
