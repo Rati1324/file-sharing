@@ -78,22 +78,22 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   return (
     token != null 
     ?
-    <Stack h="60vh" textAlign="center">
+    <Stack minH="60vh" textAlign="center" mt={10}>
       <Text fontSize="30">File Manager</Text>
 
-      <Stack p={5} width="50%" h="90%" mx="auto" bg="gray.100" spacing={4}>
+      <Stack p={5} width="50%" mx="auto" bg="gray.100" spacing={4}>
         <HStack>
           <ArrowBackIosIcon style={{ fontSize: 40 }} />
           <ArrowForwardIosIcon style={{ fontSize: 40 }} />
         </HStack>
 
-        <HStack border="1px solid">
+        <HStack>
           <SearchBar setFiles={(data: Array<File>) => setFiles(data)} />
           <DownloadIcon style={{cursor: "pointer"}} />
           <AlertDialogComponent deleteHandler={() => console.log("oi")} />
         </HStack>
 
-        <Stack align="start" border="1px solid">
+        <Stack align="start">
           {files.length ? 
             files.map((f, i) => (
               <FileView fileData={f} key={i} setFiles={(data: Array<File>) => setFiles(data)} />

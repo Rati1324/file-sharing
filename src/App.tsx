@@ -19,7 +19,7 @@ function App() {
   }
   
   return (
-    <Flex flexDirection="column" justify="space-between" height="100vh">
+    <Flex flexDirection="column" minH="100vh">
       <Navbar loggedIn={loggedIn} setLoggedIn={setLoggedInHandler} />
       <Routes>
         <Route path="/" element={<Home userLoggedIn={loggedIn} />} />
@@ -27,7 +27,7 @@ function App() {
         <Route path="/signup" element={<SignUp setLoggedIn={(value: boolean) => setLoggedIn(value)} />} />
         <Route path="/file_manager" element={<FileManager loggedIn={loggedIn} setLoggedIn={setLoggedInHandler} />}  />
       </Routes>
-      <Footer /> 
+      <Footer  /> 
     </Flex>
   );
 }
