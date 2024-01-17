@@ -12,18 +12,16 @@ const SearchBar = ({setFiles}:{setFiles: (data: Array<File>) => void}) => {
 	}
 
   return (
-    <Flex align="center" >
-			<Input placeholder="Search" 
-				onChange={(e) => setSearchInput(e.target.value)}
-				onKeyDown={(e) => {
-					if (e.key === 'Enter') {
-						searchFiles();
-					}
-				}}
-				borderColor="grey.500"
-				width="80%"
-			/>
-    </Flex>
+		<Input placeholder="Search" 
+			onChange={(e) => setSearchInput(e.target.value)}
+			onKeyDown={(e) => {
+				if (e.key === 'Enter') {
+					searchFiles();
+				}
+			}}
+			borderColor="grey.500"
+			width="80%"
+		/>
   )
 }
 

@@ -1,4 +1,4 @@
-import { Text, Stack, HStack } from '@chakra-ui/react';
+import { Text, HStack } from '@chakra-ui/react';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import AlertDialogComponent from '../AlertDialogComponent';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -78,15 +78,15 @@ const FileView = ({ fileData, setFiles }: FileProps) => {
   }
 
   return (
-    <Stack align="center" justify="center">
-      <Checkbox borderColor="blue.700"/>
+    <HStack align="center" w="100%">
       <FilePresentIcon style={{ fontSize: 60 }} />
-      <Text w="150px">{fileData.name}</Text>
+      <Text>{fileData.name.length > 34 ? fileData.name.slice(0, 34) + ".." : fileData.name}</Text>
       <HStack align="center" justify="center">
         <AlertDialogComponent deleteHandler={() => deleteFile(fileData.id)} />
         <DownloadIcon style={{cursor: "pointer"}} onClick={() => downloadFile(fileData.id)} />
       </HStack>
-    </Stack>
+      <Checkbox borderColor="blue.700"/>
+    </HStack>
   )
 }
 

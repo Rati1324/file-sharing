@@ -1,4 +1,4 @@
-import {  Container, Flex, Text, Button, Stack, HStack } from '@chakra-ui/react';
+import {  Flex, Text, Button, Stack, HStack } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, ChangeEvent } from 'react';
 import { uploadFile, verifyToken, getFiles } from "../../helperFunctions";
@@ -7,6 +7,8 @@ import FileView from './FileView';
 import SearchBar from './SearchBar';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import AlertDialogComponent from '../AlertDialogComponent';
+import DownloadIcon from '@mui/icons-material/Download';
 
 const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedIn: Function }) => {
   const toast = useToast();
@@ -85,9 +87,13 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
           <ArrowForwardIosIcon style={{ fontSize: 40 }} />
         </HStack>
 
-        <SearchBar setFiles={(data: Array<File>) => setFiles(data)} />
+        <HStack border="1px solid">
+          <SearchBar setFiles={(data: Array<File>) => setFiles(data)} />
+          <DownloadIcon style={{cursor: "pointer"}} />
+          <AlertDialogComponent deleteHandler={() => console.log("oi")} />
+        </HStack>
 
-        <Flex direction={{ base: 'column', md: 'row'}} wrap="wrap" align="start" border="1px solid">
+        <Stack align="start" border="1px solid">
           {files.length ? 
             files.map((f, i) => (
               <FileView fileData={f} key={i} setFiles={(data: Array<File>) => setFiles(data)} />
@@ -99,7 +105,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
             <input type="file"  onChange={setFileUploadHandler} />
             <Button onClick={uploadFileHandler}>Upload</Button>
           </Stack>
-        </Flex>
+        </Stack>
       </Stack>
     </Stack>
     :
