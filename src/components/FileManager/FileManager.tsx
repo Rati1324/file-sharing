@@ -87,21 +87,19 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
 
         <SearchBar setFiles={(data: Array<File>) => setFiles(data)} />
 
-        <Stack align="start">
-          <HStack align="start" border="1px solid" >
-            {files.length ? 
-              files.map((f, i) => (
-                <FileView fileData={f} key={i} setFiles={(data: Array<File>) => setFiles(data)} />
-              ))
-              :
-              <Text fontSize="xl" fontWeight={700}>No files found</Text>
-            }
-            <Stack>
-              <input type="file"  onChange={setFileUploadHandler} />
-              <Button onClick={uploadFileHandler}>Upload</Button>
-            </Stack>
-          </HStack>
-        </Stack>
+        <Flex direction={{ base: 'column', md: 'row'}} wrap="wrap" align="start" border="1px solid">
+          {files.length ? 
+            files.map((f, i) => (
+              <FileView fileData={f} key={i} setFiles={(data: Array<File>) => setFiles(data)} />
+            ))
+            :
+            <Text fontSize="xl" fontWeight={700}>No files found</Text>
+          }
+          <Stack mt={20}>
+            <input type="file"  onChange={setFileUploadHandler} />
+            <Button onClick={uploadFileHandler}>Upload</Button>
+          </Stack>
+        </Flex>
       </Stack>
     </Stack>
     :
