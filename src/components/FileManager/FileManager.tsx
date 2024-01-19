@@ -1,4 +1,4 @@
-import {  Flex, Text, Button, Stack, HStack } from '@chakra-ui/react';
+import { Text, Button, Stack, HStack } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, ChangeEvent } from 'react';
 import { uploadFile, verifyToken, getFiles } from "../../helperFunctions";
@@ -78,7 +78,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   return (
     token != null 
     ?
-    <Stack minH="60vh" textAlign="center" mt={10}>
+    <Stack minH="60vh" textAlign="center" mt={6}>
       <Text fontSize="30">File Manager</Text>
 
       <Stack p={5} width="50%" mx="auto" bg="gray.100" spacing={4}>
