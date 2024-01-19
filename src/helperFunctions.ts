@@ -46,4 +46,40 @@ async function getFiles(keyword: string = "") {
   return filesJson;
 }
 
-export { uploadFile, verifyToken, getFiles };
+async function deleteFiles(fileIds: number[], setFiles: (files: any) => void) {
+  const token: string | null = sessionStorage.getItem('access_token');
+  console.log("hi")
+  try {
+    const res = await fetch(`http://127.0.01:8000/delete_files`, {
+      method: "DELETE",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(fileIds)
+    })
+    if (res.status === 200) {
+      const files = await getFiles();
+      setFiles(files.result);
+      return res.status
+      // toast({
+      //   title: 'Deleted successfully', status: 'success',
+      //   duration: 2000, isClosable: true,
+      // })
+    }
+    else if (res.status === 401) {
+      // navigate("/signin")
+      // toast({
+      //   title: 'Unauthorized request.', status: 'error',
+      //   duration: 2000, isClosable: true,
+      // })
+    }
+  }
+  catch (error: any) {
+    // toast({
+    //   title: 'Unknown error has occured', status: 'error',
+    //   duration: 2000, isClosable: true,
+    // })
+  }
+}
+
+export { uploadFile, verifyToken, getFiles, deleteFiles };

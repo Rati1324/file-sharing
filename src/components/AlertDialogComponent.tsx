@@ -21,18 +21,18 @@ export default function AlertDialogComponenet({ deleteHandler } : {deleteHandler
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize='lg' fontWeight='bold'>
-              Delete Customer
+              Delete item
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              Are you sure? You can't undo this action afterwards.
+              Are you sure? You can't undo this action afterwards
             </AlertDialogBody>
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme='red' onClick={() => {deleteHandler(); onClose}} ml={3}>
+              <Button colorScheme='red' onClick={() => {deleteHandler(); onClose()}} ml={3}>
                 Delete
               </Button>
             </AlertDialogFooter>

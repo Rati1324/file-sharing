@@ -3,7 +3,7 @@ import { Text, HStack } from '@chakra-ui/react';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import AlertDialogComponent from '../AlertDialogComponent';
 import DownloadIcon from '@mui/icons-material/Download';
-import { getFiles } from "../../helperFunctions";
+import { getFiles, deleteFiles } from "../../helperFunctions";
 import { useToast } from '@chakra-ui/react';
 import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom';
@@ -14,10 +14,11 @@ type FileProps = {
 		name: string;
 		size: string;
 	}
-	setFiles: Function;
+	setFiles: (files: any) => void;
+	selectFile: (id: number) => void;
 };
 
-const FileView = ({ fileData, setFiles }: FileProps) => {
+const FileView = ({ fileData, setFiles, selectFile }: FileProps) => {
 	const toast = useToast();
 	const navigate = useNavigate();
 	const [curFileName, setCurFileName] = useState<string>("");
@@ -26,6 +27,7 @@ const FileView = ({ fileData, setFiles }: FileProps) => {
 		setCurFileName(fileData.name);
 		console.log(fileData.name)
 		const token: string | null = sessionStorage.getItem('access_token');
+
 		try {
 			const res = await fetch(`http://localhost:8000/download_file/${fileData.id}`, {
 				method: "GET",
@@ -49,38 +51,9 @@ const FileView = ({ fileData, setFiles }: FileProps) => {
 			}
 		}
 	}
-
-	async function deleteFile() {
-		const token: string | null = sessionStorage.getItem('access_token');
-		try {
-			const res = await fetch(`http://127.0.01:8000/delete_file/${fileData.id}`, {
-				method: "DELETE",
-				headers: {
-					'Authorization': `Bearer ${token}`,
-				}
-			})
-			if (res.status === 200) {
-				const files = await getFiles();
-				setFiles(files.result);
-				toast({
-					title: 'Deleted successfully', status: 'success',
-					duration: 2000, isClosable: true,
-				})
-			}
-			else if (res.status === 401) {
-				navigate("/signin")
-				toast({
-					title: 'Unauthorized request.', status: 'error',
-					duration: 2000, isClosable: true,
-				})
-			}
-		}
-		catch (error: any) {
-			toast({
-				title: 'Unknown error has occured', status: 'error',
-				duration: 2000, isClosable: true,
-			})
-		}
+	
+	function selectFileHandler(e: React.ChangeEvent<HTMLInputElement>) {
+		e.target.checked ? selectFile(fileData.id) : null;
 	}
 
 	return (
@@ -88,11 +61,13 @@ const FileView = ({ fileData, setFiles }: FileProps) => {
 			<FilePresentIcon style={{ fontSize: 60 }} />
 			<Text>{fileData.name.length > 34 ? fileData.name.slice(0, 34) + ".." : fileData.name}</Text>
 			<Text>{fileData.size}</Text>
+
 			<HStack align="center" justify="center">
-				<AlertDialogComponent deleteHandler={deleteFile} />
+				<AlertDialogComponent deleteHandler={() => deleteFiles([fileData.id], setFiles)} />
 				<DownloadIcon style={{ cursor: "pointer" }} onClick={downloadFile} />
 			</HStack>
-			<Checkbox borderColor="blue.700" />
+
+			<Checkbox borderColor="blue.700" onChange={selectFileHandler} />
 		</HStack>
 	)
 }

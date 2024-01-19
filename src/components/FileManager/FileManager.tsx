@@ -1,7 +1,7 @@
 import { Text, Button, Stack, HStack } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, ChangeEvent } from 'react';
-import { uploadFile, verifyToken, getFiles } from "../../helperFunctions";
+import { uploadFile, verifyToken, getFiles, deleteFiles } from "../../helperFunctions";
 import { useToast } from '@chakra-ui/react';
 import FileView from './FileView';
 import SearchBar from './SearchBar';
@@ -16,6 +16,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   const token: string | null = sessionStorage.getItem("access_token");
   const [file, setFile] = useState<File>(new File([], ''));
   const [files, setFiles] = useState<any[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
 
   function setFileUploadHandler(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
@@ -90,13 +91,16 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
         <HStack>
           <SearchBar setFiles={(data: Array<File>) => setFiles(data)} />
           <DownloadIcon style={{cursor: "pointer"}} />
-          <AlertDialogComponent deleteHandler={() => console.log("oi")} />
+          <AlertDialogComponent deleteHandler={() => deleteFiles(selectedFiles, setFiles)} />
         </HStack>
 
         <Stack align="start">
-          {files.length ? 
-            files.map((f, i) => (
-              <FileView fileData={f} key={i} setFiles={(data: Array<File>) => setFiles(data)} />
+          {files.length ?
+            files.map((f) => (
+              <FileView fileData={f} key={f.id} 
+                setFiles={(data: Array<File>) => setFiles(data)}
+                selectFile={() => setSelectedFiles([...selectedFiles, f.id])}
+              />
             ))
             :
             <Text fontSize="xl" fontWeight={700}>No files found</Text>
