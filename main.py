@@ -1,5 +1,5 @@
 import os, json, re, base64
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, Header
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, Header, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm 
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -96,15 +96,18 @@ async def get_files(authorization: str = Header(default=None), search: Optional[
         })
     return {"result": result}
 
-@app.delete("/delete_file/{file_id}")
-async def delete_file(authorization: str = Header(default=None), db: Session = Depends(get_db), file_id: int = None):
+@app.delete("/delete_files")
+async def delete_files(authorization: str = Header(default=None), db: Session = Depends(get_db), res: Request = None):
     user = get_current_user(db, authorization[7:])
-    file = db.query(File_Model).filter_by(id=file_id).first()
+    file_ids = json.loads(await res.body())
 
-    if file.owner_id != user["user_id"]:
-        raise credential_exception
+    files = db.query(File_Model).filter(File_Model.id.in_(file_ids)).all()
+    for file in files:
+        if file.owner_id != user["user_id"]:
+            raise credential_exception
 
-    db.delete(file)
+    for file in files:
+        db.delete(file)
     db.commit()
     return {"status": "deleted successfully"}
 
