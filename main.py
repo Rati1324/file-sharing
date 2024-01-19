@@ -77,13 +77,22 @@ async def get_files(authorization: str = Header(default=None), search: Optional[
     else:
         files = db.query(File_Model).filter_by(owner_id=user_id).all()
 
+    sizes = {"KB": 1024, "MB": 1048576, "GB": 1073741824}
+
     result = []
     for file in files:
-        file_data_b64 = base64.b64encode(file.binary_data).decode('utf-8')
+        suffix = " KB"
+        size = (round(len(file.binary_data)/1024, 2))
+        if sizes["MB"] < size < sizes["GB"]:
+            suffix = " MB"
+        elif size > sizes["GB"]:
+            suffix = " GB"
+        size = str(size) + suffix
+
         result.append({
             "id": file.id,
             "name": file.name,
-            # add size here
+            "size": size
         })
     return {"result": result}
 
@@ -109,4 +118,4 @@ def download_file(authorization: str = Header(default=None), file_id: int = None
 
     file_data_io = BytesIO(file.binary_data)
 
-    return StreamingResponse(file_data_io, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file_id}'})
+    return StreamingResponse(file_data_io, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file.name}'})
