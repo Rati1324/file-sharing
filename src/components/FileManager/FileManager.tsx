@@ -49,7 +49,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
       }
     }
   }
-  
+
   async function getData() {
     const files = await getFiles();
     setFiles(files.result);
@@ -76,6 +76,32 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     checkToken();
   }, [loggedIn])
 
+  async function deleteFilesHandler() {
+    try {
+      deleteFiles(selectedFiles);
+      const newFiles = await getFiles();
+      setFiles(newFiles.result);
+      toast({
+        title: 'Deleted successfully', status: 'success',
+        duration: 2000, isClosable: true,
+      })
+    }
+    catch(error: any) {
+      if (error.response && error.response.status === 401) {
+        navigate("/signin")
+        toast({
+          title: 'Unauthorized request.', status: 'error',
+          duration: 2000, isClosable: true,
+        })
+      } else {
+        toast({
+          title: 'Unknown error has occured', status: 'error',
+          duration: 2000, isClosable: true,
+        })
+      }
+    }
+  }
+
   return (
     token != null 
     ?
@@ -91,7 +117,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
         <HStack>
           <SearchBar setFiles={(data: Array<File>) => setFiles(data)} />
           <DownloadIcon style={{cursor: "pointer"}} />
-          <AlertDialogComponent deleteHandler={() => deleteFiles(selectedFiles, setFiles)} />
+          <AlertDialogComponent deleteHandler={deleteFilesHandler} />
         </HStack>
 
         <Stack align="start">

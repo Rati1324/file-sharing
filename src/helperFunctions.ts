@@ -21,7 +21,6 @@ async function uploadFile(file: File): Promise<Response | undefined> {
     }
 };
 
-
 async function verifyToken(token: string | null): Promise<Response | undefined> {
   const res = await fetch("http://localhost:8000/verify_token/", {
     method: "POST",
@@ -46,40 +45,16 @@ async function getFiles(keyword: string = "") {
   return filesJson;
 }
 
-async function deleteFiles(fileIds: number[], setFiles: (files: any) => void) {
+async function deleteFiles(fileIds: number[]) {
   const token: string | null = sessionStorage.getItem('access_token');
-  console.log("hi")
-  try {
-    const res = await fetch(`http://127.0.01:8000/delete_files`, {
-      method: "DELETE",
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(fileIds)
-    })
-    if (res.status === 200) {
-      const files = await getFiles();
-      setFiles(files.result);
-      return res.status
-      // toast({
-      //   title: 'Deleted successfully', status: 'success',
-      //   duration: 2000, isClosable: true,
-      // })
-    }
-    else if (res.status === 401) {
-      // navigate("/signin")
-      // toast({
-      //   title: 'Unauthorized request.', status: 'error',
-      //   duration: 2000, isClosable: true,
-      // })
-    }
-  }
-  catch (error: any) {
-    // toast({
-    //   title: 'Unknown error has occured', status: 'error',
-    //   duration: 2000, isClosable: true,
-    // })
-  }
+  const res = await fetch(`http://127.0.01:8000/delete_files`, {
+    method: "DELETE",
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(fileIds)
+  })
+  return res.status;
 }
 
 export { uploadFile, verifyToken, getFiles, deleteFiles };
