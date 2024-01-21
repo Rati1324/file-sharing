@@ -30,7 +30,6 @@ async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
     if not re.match(password_regex, user_data.password):
         raise HTTPException(status_code=400, detail="Password is not secure")
 
-
     if not re.match(email_regex, user_data.email):
         raise HTTPException(status_code=400, detail="Invalid email")
 
