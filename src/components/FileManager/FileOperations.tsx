@@ -3,15 +3,16 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { deleteFiles } from '../../helperFunctions';
 import { useToast } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
+import ShareModal from './ShareModal';
 
-const FileOperations = ({ selectedFiles, getData }: { selectedFiles: number[], getData: Function }) => {
+const FileOperations = ({ fileId, fileName, selectedFiles, refreshData }: { fileId: number, fileName: string, selectedFiles: number[], refreshData: Function }) => {
   const toast = useToast();
   const navigate = useNavigate();
 
   async function deleteFilesHandler() {
     try {
       deleteFiles(selectedFiles);
-      getData();
+      refreshData();
       toast({
         title: 'Deleted successfully', status: 'success',
         duration: 2000, isClosable: true,
@@ -33,10 +34,38 @@ const FileOperations = ({ selectedFiles, getData }: { selectedFiles: number[], g
     }
   }
 
+	async function downloadFile() {
+		const token: string | null = sessionStorage.getItem('access_token');
+
+		try {
+			const res = await fetch(`http://localhost:8000/download_file/${fileId}`, {
+				method: "GET",
+				headers: {
+					'Authorization': `Bearer ${token}`,
+				}
+			})
+			const blob = await res.blob();
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.setAttribute('download', fileName);
+			a.click();
+		}
+
+		catch (error: any) {
+			if (error.response && error.response.status === 401) {
+				console.log('This is a 401 error!');
+			} else {
+				console.log('This is an unexpected error:', error);
+			}
+		}
+	}
+
   return (
     <>
-      <DownloadIcon style={{cursor: "pointer"}} />
+      <DownloadIcon onClick={downloadFile} style={{cursor: "pointer"}} />
       <DeleteFile deleteHandler={deleteFilesHandler} />
+      <ShareModal />
     </>
   )
 }

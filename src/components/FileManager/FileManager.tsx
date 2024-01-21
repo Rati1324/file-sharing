@@ -1,7 +1,7 @@
 import { Text, Button, Stack, HStack } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, ChangeEvent } from 'react';
-import { uploadFile, verifyToken, getFiles, deleteFiles } from "../../helperFunctions";
+import { uploadFile, verifyToken, getData, deleteFiles } from "../../helperFunctions";
 import { useToast } from '@chakra-ui/react';
 import FileView from './FileView';
 import SearchBar from './SearchBar';
@@ -24,7 +24,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   }
 
   async function uploadFileHandler() {
-    if (file === null) {
+    if (file.size === 0) {
       toast({ 
         title: 'Please select a file', status: 'error',
         duration: 2000, isClosable: true,
@@ -34,7 +34,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     try {
       const res = await uploadFile(file);
       if (res && res.status === 200) {
-        getData();
+        refreshData();
         toast({
           title: 'File uploaded successfully', status: 'success',
           duration: 2000, isClosable: true,
@@ -57,8 +57,8 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     }
   }
 
-  async function getData() {
-    const files = await getFiles();
+  async function refreshData() {
+    const files = await getData("files");
     setFiles(files.result);
   }
 
@@ -73,7 +73,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
       const response = await verifyToken(token);
       if (response && response.status === 200) {
         setLoggedIn(true);
-        getData();
+        refreshData();
       }
       else {
         setLoggedIn(false);
@@ -89,15 +89,15 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     <Stack minH="60vh" textAlign="center" mt={6}>
       <Text fontSize="30">File Manager</Text>
 
-      <Stack p={5} width="50%" mx="auto" bg="gray.100" spacing={4}>
+      <Stack p={5} minH="50vh" width="50%" mx="auto" bg="gray.100" spacing={4}>
         <HStack>
           <ArrowBackIosIcon style={{ fontSize: 40 }} />
           <ArrowForwardIosIcon style={{ fontSize: 40 }} />
         </HStack>
 
         <HStack>
-          <SearchBar setFiles={(data: Array<File>) => setFiles(data)} />
-          <FileOperations selectedFiles={selectedFiles} getData={getData} />
+          <SearchBar tableName={"files"} setData={(data: Array<File>) => setFiles(data)} />
+          <FileOperations selectedFiles={selectedFiles} refreshData={refreshData} fileId={0} fileName={""} />
         </HStack>
 
         <Stack align="start">
@@ -105,7 +105,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
             files.map((f) => (
               <FileView fileData={f} key={f.id} 
                 selectFile={() => setSelectedFiles([...selectedFiles, f.id])} 
-                getData={getData}
+                refreshData={refreshData}
               />
             ))
             :

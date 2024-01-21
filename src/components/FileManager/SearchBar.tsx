@@ -1,13 +1,13 @@
-import { Input } from '@chakra-ui/react'
 import { useState } from 'react';
-import { getFiles } from '../../helperFunctions';
+import { Input } from '@chakra-ui/react'
+import { getData } from '../../helperFunctions';
 
-const SearchBar = ({setFiles}:{setFiles: (data: Array<File>) => void}) => {
+const SearchBar = ({ tableName, setData }:{ tableName: string, setData: (data: Array<File>) => void }) => {
   const [searchInput, setSearchInput] = useState<string>('');
 
-	async function searchFiles() {
-		const files = await getFiles(searchInput);
-		setFiles(files.result);
+	async function searchData() {
+		const data = await getData(tableName, searchInput);
+		setData(data.result);
 	}
 
   return (
@@ -15,7 +15,7 @@ const SearchBar = ({setFiles}:{setFiles: (data: Array<File>) => void}) => {
 			onChange={(e) => setSearchInput(e.target.value)}
 			onKeyDown={(e) => {
 				if (e.key === 'Enter') {
-					searchFiles();
+					searchData();
 				}
 			}}
 			borderColor="grey.500"

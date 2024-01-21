@@ -31,11 +31,11 @@ async function verifyToken(token: string | null): Promise<Response | undefined> 
   return res;
 }
 
-async function getFiles(keyword: string = "") {
+async function getData(data: string, keyword: string = "") {
   const token: string | null = sessionStorage.getItem('access_token');
   const searchKeyword = keyword.length ? `?search=${keyword}` : "";
 
-  const files = await fetch(`http://127.0.0.1:8000/get_files${searchKeyword}`, {
+  const files = await fetch(`http://127.0.0.1:8000/get_${data}${searchKeyword}`, {
     method: "GET",
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -44,7 +44,6 @@ async function getFiles(keyword: string = "") {
   const filesJson = await files.json();
   return filesJson;
 }
-
 
 async function deleteFiles(fileIds: number[]) {
   const token: string | null = sessionStorage.getItem('access_token');
@@ -58,4 +57,4 @@ async function deleteFiles(fileIds: number[]) {
   return res.status;
 }
 
-export { uploadFile, verifyToken, getFiles, deleteFiles };
+export { uploadFile, verifyToken, getData, deleteFiles };
