@@ -45,6 +45,7 @@ async function getFiles(keyword: string = "") {
   return filesJson;
 }
 
+
 async function deleteFiles(fileIds: number[]) {
   const token: string | null = sessionStorage.getItem('access_token');
   const res = await fetch(`http://127.0.01:8000/delete_files`, {

@@ -5,10 +5,9 @@ import { uploadFile, verifyToken, getFiles, deleteFiles } from "../../helperFunc
 import { useToast } from '@chakra-ui/react';
 import FileView from './FileView';
 import SearchBar from './SearchBar';
+import FileOperations from './FileOperations';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import AlertDialogComponent from '../AlertDialogComponent';
-import DownloadIcon from '@mui/icons-material/Download';
 
 const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedIn: Function }) => {
   const toast = useToast();
@@ -25,6 +24,13 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   }
 
   async function uploadFileHandler() {
+    if (file === null) {
+      toast({ 
+        title: 'Please select a file', status: 'error',
+        duration: 2000, isClosable: true,
+      })
+      return;
+    }
     try {
       const res = await uploadFile(file);
       if (res && res.status === 200) {
@@ -35,6 +41,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
         })
       }
       else {
+        navigate('/signin');
         toast({ 
           title: 'File upload failed', status: 'error',
           duration: 2000, isClosable: true,
@@ -76,32 +83,6 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     checkToken();
   }, [loggedIn])
 
-  async function deleteFilesHandler() {
-    try {
-      deleteFiles(selectedFiles);
-      const newFiles = await getFiles();
-      setFiles(newFiles.result);
-      toast({
-        title: 'Deleted successfully', status: 'success',
-        duration: 2000, isClosable: true,
-      })
-    }
-    catch(error: any) {
-      if (error.response && error.response.status === 401) {
-        navigate("/signin")
-        toast({
-          title: 'Unauthorized request.', status: 'error',
-          duration: 2000, isClosable: true,
-        })
-      } else {
-        toast({
-          title: 'Unknown error has occured', status: 'error',
-          duration: 2000, isClosable: true,
-        })
-      }
-    }
-  }
-
   return (
     token != null 
     ?
@@ -116,16 +97,15 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
 
         <HStack>
           <SearchBar setFiles={(data: Array<File>) => setFiles(data)} />
-          <DownloadIcon style={{cursor: "pointer"}} />
-          <AlertDialogComponent deleteHandler={deleteFilesHandler} />
+          <FileOperations selectedFiles={selectedFiles} getData={getData} />
         </HStack>
 
         <Stack align="start">
-          {files.length ?
+          {files ?
             files.map((f) => (
               <FileView fileData={f} key={f.id} 
-                setFiles={(data: Array<File>) => setFiles(data)}
-                selectFile={() => setSelectedFiles([...selectedFiles, f.id])}
+                selectFile={() => setSelectedFiles([...selectedFiles, f.id])} 
+                getData={getData}
               />
             ))
             :

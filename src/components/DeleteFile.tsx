@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import React from 'react';  
 
-export default function AlertDialogComponenet({ deleteHandler } : {deleteHandler: () => void}) {
+const DeleteFile = ({ deleteHandler } : { deleteHandler: () => void }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 	const cancelRef = React.useRef<HTMLButtonElement>(null)
 
@@ -42,3 +42,5 @@ export default function AlertDialogComponenet({ deleteHandler } : {deleteHandler
     </>
   )
 }
+
+export default DeleteFile;

@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Text, HStack } from '@chakra-ui/react';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
-import AlertDialogComponent from '../AlertDialogComponent';
 import DownloadIcon from '@mui/icons-material/Download';
 import { getFiles, deleteFiles } from "../../helperFunctions";
 import { useToast } from '@chakra-ui/react';
 import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom';
+import FileOperations from './FileOperations';
+import DeleteFile from '../DeleteFile';
 
 type FileProps = {
 	fileData: {
@@ -14,18 +15,17 @@ type FileProps = {
 		name: string;
 		size: string;
 	}
-	setFiles: (files: any) => void;
+	getData: () => void;
 	selectFile: (id: number) => void;
 };
 
-const FileView = ({ fileData, setFiles, selectFile }: FileProps) => {
+const FileView = ({ fileData, selectFile, getData }: FileProps) => {
 	const toast = useToast();
 	const navigate = useNavigate();
 	const [curFileName, setCurFileName] = useState<string>("");
 
 	async function downloadFile() {
 		setCurFileName(fileData.name);
-		console.log(fileData.name)
 		const token: string | null = sessionStorage.getItem('access_token');
 
 		try {
@@ -62,10 +62,7 @@ const FileView = ({ fileData, setFiles, selectFile }: FileProps) => {
 			<Text>{fileData.name.length > 34 ? fileData.name.slice(0, 34) + ".." : fileData.name}</Text>
 			<Text>{fileData.size}</Text>
 
-			<HStack align="center" justify="center">
-				<AlertDialogComponent deleteHandler={() => deleteFiles([fileData.id], setFiles)} />
-				<DownloadIcon style={{ cursor: "pointer" }} onClick={downloadFile} />
-			</HStack>
+			<FileOperations selectedFiles={[fileData.id]} getData={getData} />
 
 			<Checkbox borderColor="blue.700" onChange={selectFileHandler} />
 		</HStack>
