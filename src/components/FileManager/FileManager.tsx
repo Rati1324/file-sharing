@@ -83,6 +83,10 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     checkToken();
   }, [loggedIn])
 
+  // useEffect(() => {
+  //   console.log(selectedFiles);
+  // }, [selectedFiles])
+  
   return (
     token != null 
     ?
@@ -101,7 +105,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
         </HStack>
 
         <Stack align="start">
-          {files ?
+          {files && files.length ?
             files.map((f) => (
               <FileView fileData={f} key={f.id} 
                 selectFile={() => setSelectedFiles([...selectedFiles, f.id])} 

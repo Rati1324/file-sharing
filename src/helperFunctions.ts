@@ -31,11 +31,11 @@ async function verifyToken(token: string | null): Promise<Response | undefined> 
   return res;
 }
 
-async function getData(data: string, keyword: string = "") {
+async function getData(tableName: string, keyword: string = "") {
   const token: string | null = sessionStorage.getItem('access_token');
   const searchKeyword = keyword.length ? `?search=${keyword}` : "";
 
-  const files = await fetch(`http://127.0.0.1:8000/get_${data}${searchKeyword}`, {
+  const files = await fetch(`http://127.0.0.1:8000/get_${tableName}${searchKeyword}`, {
     method: "GET",
     headers: {
       'Authorization': `Bearer ${token}`,

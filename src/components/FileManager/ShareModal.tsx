@@ -2,16 +2,23 @@ import {
   Modal, ModalOverlay, ModalContent, 
   ModalHeader, ModalFooter, ModalBody, 
   ModalCloseButton, Button, useDisclosure,
+  VStack, HStack, Text
 } from '@chakra-ui/react'
+import { useState, useEffect } from 'react';
 import ShareIcon from '@mui/icons-material/Share';
 import SearchBar from './SearchBar';
 
 const ShareModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-
+  const [users, setUsers] = useState<any[]>([]);
+  
   function shareFile() {
-
+    return;
   }
+
+  useEffect(() => {
+    console.log(users)
+  }, [users])
 
   return (
     <>
@@ -22,8 +29,14 @@ const ShareModal = () => {
           <ModalHeader>Share files with users</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            hi
-            {/* <SearchBar /> */}
+            <SearchBar tableName={"users"} setData={(data) => setUsers(data)}/>
+            <VStack>
+              {users && users.map((user, index) => (
+                <HStack key={user.id}>
+                  <Text>{user.username}</Text>
+                </HStack>
+              ))}
+            </VStack>
           </ModalBody>
 
           <ModalFooter>
