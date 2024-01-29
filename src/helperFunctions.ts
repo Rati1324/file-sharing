@@ -15,7 +15,6 @@ async function uploadFile(file: File): Promise<Response | undefined> {
         }
       });
       return response
-
     } catch (error) {
       console.error('There was a problem with the fetch operation: ', error);
     }

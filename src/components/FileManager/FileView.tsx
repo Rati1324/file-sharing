@@ -15,7 +15,7 @@ type FileProps = {
 
 const FileView = ({ fileData, selectFile, refreshData }: FileProps) => {
 	function selectFileHandler(e: React.ChangeEvent<HTMLInputElement>) {
-		e.target.checked ? selectFile(fileData.id) : null;
+		e.target.checked ? selectFile(fileData.id) : selectFile(-1);
 	}
 
 	return (

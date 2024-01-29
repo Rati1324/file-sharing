@@ -2,16 +2,22 @@ import {
   Modal, ModalOverlay, ModalContent, 
   ModalHeader, ModalFooter, ModalBody, 
   ModalCloseButton, Button, useDisclosure,
-  VStack, HStack, Text
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react';
 import ShareIcon from '@mui/icons-material/Share';
 import SearchBar from './SearchBar';
+import UsersTable from './UsersTable';
+
+export type User = {
+  id: number,
+  email: string,
+  username: string,
+}
 
 const ShareModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [users, setUsers] = useState<any[]>([]);
-  
+  const [users, setUsers] = useState<User[]>([]);
+ 
   function shareFile() {
     return;
   }
@@ -23,20 +29,14 @@ const ShareModal = () => {
   return (
     <>
       <ShareIcon onClick={() => {onOpen(), shareFile()}} style={{cursor: "pointer"}} />
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} >
         <ModalOverlay />
-        <ModalContent mt={150}>
+        <ModalContent mt={150} maxW="30%" minH="30%">
           <ModalHeader>Share files with users</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <SearchBar tableName={"users"} setData={(data) => setUsers(data)}/>
-            <VStack>
-              {users && users.map((user, index) => (
-                <HStack key={user.id}>
-                  <Text>{user.username}</Text>
-                </HStack>
-              ))}
-            </VStack>
+            <SearchBar tableName={"users"} setData={(data) => setUsers(data)} width={"90%"} />
+            <UsersTable users={users} />
           </ModalBody>
 
           <ModalFooter>

@@ -1,7 +1,7 @@
 import { Text, Button, Stack, HStack } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, ChangeEvent } from 'react';
-import { uploadFile, verifyToken, getData, deleteFiles } from "../../helperFunctions";
+import { uploadFile, verifyToken, getData } from "../../helperFunctions";
 import { useToast } from '@chakra-ui/react';
 import FileView from './FileView';
 import SearchBar from './SearchBar';
@@ -71,13 +71,23 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
 
     async function checkToken() {
       const response = await verifyToken(token);
-      if (response && response.status === 200) {
-        setLoggedIn(true);
-        refreshData();
+      try {
+        if (response && response.status === 200) {
+          setLoggedIn(true);
+          refreshData();
+        }
+        else {
+          setLoggedIn(false);
+          navigate('/signin');
+        }
       }
-      else {
-        setLoggedIn(false);
-        navigate('/signin');
+      catch(error: any) {
+        if (error.response && error.response.status === 401) {
+          setLoggedIn(false);
+          navigate('/signin');
+        } else {
+          console.log('This is an unexpected error:', error);
+        }
       }
     }
     checkToken();
@@ -100,7 +110,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
         </HStack>
 
         <HStack>
-          <SearchBar tableName={"files"} setData={(data: Array<File>) => setFiles(data)} />
+          <SearchBar tableName={"files"} setData={(data: Array<File>) => setFiles(data)} width={"30%"} />
           <FileOperations selectedFiles={selectedFiles} refreshData={refreshData} fileId={0} fileName={""} />
         </HStack>
 
@@ -108,7 +118,10 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
           {files && files.length ?
             files.map((f) => (
               <FileView fileData={f} key={f.id} 
-                selectFile={() => setSelectedFiles([...selectedFiles, f.id])} 
+                selectFile={(action: number) => {
+                  if (action === -1) setSelectedFiles(selectedFiles.filter((id) => id !== f.id));
+                  else setSelectedFiles([...selectedFiles, f.id])
+                }}
                 refreshData={refreshData}
               />
             ))
@@ -120,6 +133,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
             <Button onClick={uploadFileHandler}>Upload</Button>
           </Stack>
         </Stack>
+
       </Stack>
     </Stack>
     :
