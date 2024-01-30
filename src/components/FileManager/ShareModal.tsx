@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import {
   Modal, ModalOverlay, ModalContent, 
   ModalHeader, ModalFooter, ModalBody, 
@@ -7,6 +8,7 @@ import { useState, useEffect } from 'react';
 import ShareIcon from '@mui/icons-material/Share';
 import SearchBar from './SearchBar';
 import UsersTable from './UsersTable';
+import { SelectedFilesContext } from './FileManagerContext';
 
 export type User = {
   id: number,
@@ -17,14 +19,15 @@ export type User = {
 const ShareModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [users, setUsers] = useState<User[]>([]);
+  const { selectedFiles } = useContext(SelectedFilesContext);
  
   function shareFile() {
     return;
   }
 
   useEffect(() => {
-    console.log(users)
-  }, [users])
+    console.log(selectedFiles)
+  }, [])
 
   return (
     <>

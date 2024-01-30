@@ -1,3 +1,4 @@
+import React from 'react';
 import { Text, Button, Stack, HStack } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, ChangeEvent } from 'react';
@@ -8,6 +9,7 @@ import SearchBar from './SearchBar';
 import FileOperations from './FileOperations';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { SelectedFilesContext } from './FileManagerContext';
 
 const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedIn: Function }) => {
   const toast = useToast();
@@ -16,7 +18,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   const [file, setFile] = useState<File>(new File([], ''));
   const [files, setFiles] = useState<any[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
-
+  
   function setFileUploadHandler(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
@@ -100,42 +102,44 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   return (
     token != null 
     ?
-    <Stack minH="60vh" textAlign="center" mt={6}>
-      <Text fontSize="30">File Manager</Text>
+    <SelectedFilesContext.Provider value={{ selectedFiles, setSelectedFiles }}>
+      <Stack minH="60vh" textAlign="center" mt={6}>
+        <Text fontSize="30">File Manager</Text>
 
-      <Stack p={5} minH="50vh" width="50%" mx="auto" bg="gray.100" spacing={4}>
-        <HStack>
-          <ArrowBackIosIcon style={{ fontSize: 40 }} />
-          <ArrowForwardIosIcon style={{ fontSize: 40 }} />
-        </HStack>
+        <Stack p={5} minH="50vh" width="50%" mx="auto" bg="gray.100" spacing={4}>
+          <HStack>
+            <ArrowBackIosIcon style={{ fontSize: 40 }} />
+            <ArrowForwardIosIcon style={{ fontSize: 40 }} />
+          </HStack>
 
-        <HStack>
-          <SearchBar tableName={"files"} setData={(data: Array<File>) => setFiles(data)} width={"30%"} />
-          <FileOperations selectedFiles={selectedFiles} refreshData={refreshData} fileId={0} fileName={""} />
-        </HStack>
+          <HStack>
+            <SearchBar tableName={"files"} setData={(data: Array<File>) => setFiles(data)} width={"30%"} />
+            <FileOperations selectedFiles={selectedFiles} refreshData={refreshData} fileId={0} fileName={""} />
+          </HStack>
 
-        <Stack align="start">
-          {files && files.length ?
-            files.map((f) => (
-              <FileView fileData={f} key={f.id} 
-                selectFile={(action: number) => {
-                  if (action === -1) setSelectedFiles(selectedFiles.filter((id) => id !== f.id));
-                  else setSelectedFiles([...selectedFiles, f.id])
-                }}
-                refreshData={refreshData}
-              />
-            ))
-            :
-            <Text fontSize="xl" fontWeight={700}>No files found</Text>
-          }
-          <Stack mt={20}>
-            <input type="file"  onChange={setFileUploadHandler} />
-            <Button onClick={uploadFileHandler}>Upload</Button>
+          <Stack align="start">
+            {files && files.length ?
+              files.map((f) => (
+                <FileView fileData={f} key={f.id} 
+                  selectFile={(action: number) => {
+                    if (action === -1) setSelectedFiles(selectedFiles.filter((id) => id !== f.id));
+                    else setSelectedFiles([...selectedFiles, f.id])
+                  }}
+                  refreshData={refreshData}
+                />
+              ))
+              :
+              <Text fontSize="xl" fontWeight={700}>No files found</Text>
+            }
+            <Stack mt={20}>
+              <input type="file"  onChange={setFileUploadHandler} />
+              <Button onClick={uploadFileHandler}>Upload</Button>
+            </Stack>
           </Stack>
-        </Stack>
 
+        </Stack>
       </Stack>
-    </Stack>
+    </SelectedFilesContext.Provider>
     :
     null
   )
