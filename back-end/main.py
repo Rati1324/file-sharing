@@ -29,7 +29,6 @@ from core.models import User, File as File_Model
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="signin")
 
-
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
