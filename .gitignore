@@ -1,17 +1,19 @@
 # Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+front-endlogs
+front-end*.log
+front-endnpm-debug.log*
+front-endyarn-debug.log*
+front-endyarn-error.log*
+front-endpnpm-debug.log*
+front-endlerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+front-end/node_modules
+front-end/dist
+front-end/dist-ssr
+front-end/*.local
 
+back-end/venv
+back-end/.env
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
