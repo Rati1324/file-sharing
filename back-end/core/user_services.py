@@ -1,7 +1,7 @@
 import os, json, re, base64
 from fastapi import Depends, Header
 from sqlalchemy.orm import Session
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from .utils import get_db
 from .schemas import UserSchema, UserLoginSchema, TokenSchema, TokenDataSchema
 from .models import User, File as File_Model

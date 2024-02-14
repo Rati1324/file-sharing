@@ -10,6 +10,7 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const navigate = useNavigate();
+  const [message, setMessage] = useState<string>("");
 
   async function sendData(data: Record<string, string>): Promise<any> {
     try {
@@ -28,7 +29,7 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
       setLoggedIn(true);
       navigate("/");
     } catch (error: any) {
-      alert(`Error: ${error}`);
+      setMessage("Invalid email or password");
       console.error('Error: ', error);
     }
   }
@@ -75,6 +76,7 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
                 onChange={(e) => setPasswordInput(e.target.value)}
               />
             </FormControl>
+
             <Stack spacing={10}>
               <Stack
                 direction={{ base: 'column', sm: 'row' }}
@@ -83,16 +85,11 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
                 <Checkbox>Remember me</Checkbox>
                 <Text color={'blue.400'}>Forgot password?</Text>
               </Stack>
-              <Button
-                bg={'blue.400'}
-                color={'white'}
-                _hover={{
-                  bg: 'blue.500',
-                }}
-                onClick={loginHandler}
-                >
+              <Text color={'red.400'}>{message}</Text>
+              <Button bg={'blue.400'} color={'white'} _hover={{bg: 'blue.500'}} onClick={loginHandler}>
                 Sign in
               </Button>
+
             </Stack>
           </Stack>
         </Box>

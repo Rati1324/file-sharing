@@ -65,7 +65,8 @@ const WithSubnavigation = ({ loggedIn, setLoggedIn }: { loggedIn: boolean, setLo
 								Sign In
 							</Button>
 						</NavLink>
-						<NavLink to="/signin">
+
+						<NavLink to="/signup">
 							<Button display={{ base: 'none', md: 'inline-flex' }} fontSize={'sm'}
 								fontWeight={600} color={'white'} bg={'blue.400'} _hover={{ bg: 'pink.300' }} style={{ ...navLinkStyle, textAlign: "center" }}>
 								Sign Up
