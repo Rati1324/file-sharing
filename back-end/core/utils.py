@@ -11,7 +11,7 @@ from .config import Base, engine, SessionLocal
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-EXPIRATION_MINUTES = os.getenv("EXPIRATION_MINUTER")
+EXPIRATION_MINUTES = os.getenv("EXPIRATION_MINUTE")
 
 credential_exception = HTTPException(status_code=401, detail="Couldn't validate credentials")
 hash_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -54,4 +54,5 @@ def get_current_user(db: Session, token: str = None):
 
 def user_exists(db: Session, user_email: str = None):
     user = db.query(User).filter_by(email=user_email).first()
+    print(user)
     return user is not None

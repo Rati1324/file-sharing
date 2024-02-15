@@ -16,6 +16,7 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
   const navigate = useNavigate();
 
   async function sendData(data: Record<string, string>): Promise<any> {
+    console.log("sds")
     try {
       const response = await fetch("http://127.0.0.1:8000/signup", {
           method: "POST",
@@ -37,8 +38,9 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
   }
 
   function signUpHandler(): ReactNode {
-    const valid = (Object.values(inputErrorMessages).filter(val => val !== "")).length;
-    if (!valid) return;
+    console.log((Object.values(inputErrorMessages).filter(val => val !== "")).length)
+    const inValid = (Object.values(inputErrorMessages).filter(val => val !== "")).length;
+    if (inValid) return;
     
     const userData: Record<string, string> = {
       username: usernameInput,

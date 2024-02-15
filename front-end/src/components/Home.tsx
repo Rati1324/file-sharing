@@ -3,6 +3,15 @@ import { Stack, Container, Box, Flex, Heading, SimpleGrid, Text, Button } from '
 import { NavLink } from 'react-router-dom';
 
 const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
+	
+	function onClickHandler() {
+		// make request to /home
+		async function testReq() {
+			const res = await fetch("http://127.0.0.1:8000/test");
+			console.log(res)
+		}
+		testReq();
+	}
 
 	return (
 		<Box bg={'gray.800'} position={'relative'}>
@@ -15,6 +24,7 @@ const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
 				<Flex bgGradient={'linear(to-r, gray.800 10%, transparent)'} w={'full'} h={'full'} />
 			</Flex>
 			<Container maxW={'7xl'} zIndex={10} position={'relative'}>
+				<Button onClick={onClickHandler}>Test</Button>
 				<Stack direction={{ base: 'column', lg: 'row' }}>
 					<Stack flex={1} color={'gray.400'} justify={{ lg: 'center' }} py={{ base: 4, md: 20, xl: 60 }}>
 						<Stack spacing={4} mb={{ base: 8, md: 20 }}>

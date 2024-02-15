@@ -46,6 +46,10 @@ app.add_middleware(
 
 Base.metadata.create_all(bind=engine)
 
+@app.get("/test")
+async def test():
+    return {"status": "ok"}
+
 @app.post("/upload_file")
 async def upload_file(authorization: str = Header(default=None), file: UploadFile = File, db: Session = Depends(get_db)):
     token = authorization[7:]
