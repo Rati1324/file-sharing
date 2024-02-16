@@ -12,15 +12,16 @@ const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
 	
 	return (
 		<Box bg="#f6f6f6">
-			<Container maxW={'7xl'}>
+			<Container maxW={'5xl'}>
 				<Stack display="flex" align="center">
-					<Stack flex={4} color={'gray.100'} justify={{ lg: 'center' }} px={98} py={{ base: 4, md: 20, xl: 60 }}>
+					<Stack flex={4} justify={{ lg: 'center' }} px={90} py={{ base: 2, md: 20, xl: 60 }}>
 						<Stack spacing={4} mb={{ base: 4, md: 20 }}>
 							<Text fontFamily={'heading'} fontWeight={700}
 								textTransform={'uppercase'}
 								fontSize={'xl'} color={'gray.500'} style={{... textStyles}}>
 								{userLoggedIn ? 'Welcome' : 'you are not logged in'}
 							</Text>
+
 							<Heading color={'gray.500'} fontSize={{ base: '3xl', md: '5xl' }} style={{... textStyles}}>
 								File sharing platform
 							</Heading>
