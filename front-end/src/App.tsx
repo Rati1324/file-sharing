@@ -14,7 +14,7 @@ function App() {
   function setLoggedInHandler(value: boolean): void {
     setLoggedIn(value);
   }
-  
+ 
   return (
     <Flex flexDirection="column" minH="100vh" justify="space-between">
       <Navbar loggedIn={loggedIn} setLoggedIn={setLoggedInHandler} />

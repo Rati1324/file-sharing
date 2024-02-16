@@ -1,49 +1,38 @@
-import { useEffect, useState, ReactNode, ChangeEvent } from 'react'
+import { ReactNode } from 'react'
 import { Stack, Container, Box, Flex, Heading, SimpleGrid, Text, Button } from '@chakra-ui/react'
 import { NavLink } from 'react-router-dom';
 
+const textStyles = {
+	color: '#343A40',
+	// fontSize: "1.2rem",
+	// fontWeight: 500,
+}
+
 const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
 	
-	function onClickHandler() {
-		// make request to /home
-		async function testReq() {
-			const res = await fetch("http://127.0.0.1:8000/test");
-			console.log(res)
-		}
-		testReq();
-	}
-
 	return (
-		<Box bg={'gray.800'} position={'relative'}>
-			<Flex
-				flex={1} zIndex={0} display={{ base: 'none', lg: 'flex' }}
-				backgroundImage="url('/templates/stats-grid-with-image.png')" backgroundSize={'cover'}
-				backgroundPosition="center" backgroundRepeat="no-repeat"
-				position={'absolute'} width={'50%'}
-				insetY={0} right={0}>
-				<Flex bgGradient={'linear(to-r, gray.800 10%, transparent)'} w={'full'} h={'full'} />
-			</Flex>
-			<Container maxW={'7xl'} zIndex={10} position={'relative'}>
-				<Button onClick={onClickHandler}>Test</Button>
-				<Stack direction={{ base: 'column', lg: 'row' }}>
-					<Stack flex={1} color={'gray.400'} justify={{ lg: 'center' }} py={{ base: 4, md: 20, xl: 60 }}>
-						<Stack spacing={4} mb={{ base: 8, md: 20 }}>
+		<Box bg="#f6f6f6">
+			<Container maxW={'7xl'}>
+				<Stack display="flex" align="center">
+					<Stack flex={4} color={'gray.100'} justify={{ lg: 'center' }} px={98} py={{ base: 4, md: 20, xl: 60 }}>
+						<Stack spacing={4} mb={{ base: 4, md: 20 }}>
 							<Text fontFamily={'heading'} fontWeight={700}
 								textTransform={'uppercase'}
-								fontSize={'xl'} color={'gray.500'}>
+								fontSize={'xl'} color={'gray.500'} style={{... textStyles}}>
 								{userLoggedIn ? 'Welcome' : 'you are not logged in'}
 							</Text>
-							<Heading color={'white'} fontSize={{ base: '3xl', md: '5xl' }}>
+							<Heading color={'gray.500'} fontSize={{ base: '3xl', md: '5xl' }} style={{... textStyles}}>
 								File sharing platform
 							</Heading>
-							<Text fontSize={'xl'} color={'gray.400'} mb={5}>
-								this platform allows you to share files with other user and also
+
+							<Text fontSize={'xl'} mb={5} style={{... textStyles}}>
+								this platform allows you to share files with other users and also
 								have a place to store all your files and stuff...
 							</Text>
 							{userLoggedIn ?
 								<Button width="200px" _hover={{ backgroundColor: 'gray.400' }}>
-									<NavLink to="/file_manager">
-										<Text fontSize="xl">Go to file manager</Text>
+									<NavLink to="/file_manager" >
+										<Text fontSize="xl" style={{...textStyles}}>Go to file manager</Text>
 									</NavLink>
 								</Button>
 								:
@@ -54,10 +43,10 @@ const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
 						<SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
 							{stats.map((stat) => (
 								<Box key={stat.title}>
-									<Text fontFamily={'heading'} fontSize={'3xl'} color={'white'} mb={3}>
+									<Text fontFamily={'heading'} fontSize={'3xl'} mb={3} style={{...textStyles}}>
 										{stat.title}
 									</Text>
-									<Text fontSize={'xl'} color={'gray.400'}>
+									<Text fontSize={'xl'}>
 										{stat.content}
 									</Text>
 								</Box>
@@ -66,13 +55,13 @@ const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
 					</Stack>
 					<Flex flex={1} />
 				</Stack>
-			</Container>
+			</Container> 
 		</Box>
 	)
 }
 
 const StatsText = ({ children }: { children: ReactNode }) => (
-	<Text as={'span'} fontWeight={700} color={'white'}>
+	<Text as={'span'} fontWeight={700} style={{...textStyles}}>
 		{children}
 	</Text>
 )
@@ -82,37 +71,12 @@ const stats = [
 		title: 'free features',
 		content: (
 			<>
-				<StatsText>up to 2 gbs without account</StatsText> supports most formats
+				<StatsText>up to 2 gbs without account supports most formats</StatsText> 
 			</>
 		),
 	},
-	{
-		title: '24/7',
-		content: (
-			<>
-				<StatsText>Analytics</StatsText> enabled right in your dashboard without history
-				limitations
-			</>
-		),
-	},
-	{
-		title: '13%',
-		content: (
-			<>
-				<StatsText>Farms</StatsText> in North America has chosen NewLife™ as their
-				management solution
-			</>
-		),
-	},
-	{
-		title: '250M+',
-		content: (
-			<>
-				<StatsText>Plants</StatsText> currently connected and monitored by the NewLife™
-				software
-			</>
-		),
-	},
+
+
 ]
 
 export default Home

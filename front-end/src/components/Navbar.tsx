@@ -9,25 +9,19 @@ import { useEffect } from 'react';
 import { useNavigate, NavLink } from "react-router-dom";
 
 const navLinkStyle = {
-	textDecoration: 'none',
-	color: 'white',
+	extDecoration: 'none',
+	color: '#343A40',
 	fontSize: "1.2rem",
-	fontWeight: 600,
-	_hover: { color: 'red' },
+	fontWeight: 500,
+	display: "flex",
+	alignItems: "center",
+	variant: 'link',
 }
-
-const navLinkStyle2 = {
-	textDecoration: 'none',
-	color: 'white',
-	fontSize: "1.2rem",
-	fontWeight: 600,
-	// _hover: { color: 'red' },
-}
-
+    
 const WithSubnavigation = ({ loggedIn, setLoggedIn }: { loggedIn: boolean, setLoggedIn: (value: boolean) => void }) => {
 	const { isOpen, onToggle } = useDisclosure();
 	const navigate = useNavigate();
-
+  
 	function signOut() {
 		sessionStorage.removeItem("access_token");
 		setLoggedIn(false);
@@ -35,13 +29,15 @@ const WithSubnavigation = ({ loggedIn, setLoggedIn }: { loggedIn: boolean, setLo
 	}
 
 	return (
-		<Flex display="flex" alignItems="center" justifyContent="center" bg="#587f8c" >
-			<Flex width="70%" color={useColorModeValue('gray.600', 'white')} minH={'60px'} py={{ base: 2 }}
+		<Flex display="flex" alignItems="center" justifyContent="center" bg="rgba(249, 249, 249)" borderBottom="1px solid rgba(52, 58, 64, 0.2)">
+			<Flex width="50%" color={useColorModeValue('gray.600', 'white')} minH={'60px'} py={{ base: 2 }}
 				px={{ base: 4 }} align={'center'} justify="center">
 
 				<Flex flex={{ base: 2 }} >
-					<NavLink to="/" style={{ ...navLinkStyle2 }}>
-						Home
+					<NavLink to="/" >
+						<Button bg="none" style={navLinkStyle}>
+							Home
+						</Button>
 					</NavLink>
 				</Flex>
 
@@ -50,18 +46,19 @@ const WithSubnavigation = ({ loggedIn, setLoggedIn }: { loggedIn: boolean, setLo
 					loggedIn ?
 						<>
 						<NavLink to="/file_manager">
-							<Button style={{ ...navLinkStyle2 }} bg='transparent' _hover={{ bg: 'gray.800' }}>
+							<Button style={{ ...navLinkStyle }} bg='transparent' _hover={{ bg: 'gray.800' }}>
 								My files
 							</Button>
 						</NavLink>
-						<Button style={{ ...navLinkStyle2 }} onClick={signOut} bg={'blue.400'} _hover={{ bg: 'red.800' }}>
-							Sign Out
+
+						<Button style={navLinkStyle} onClick={signOut} >
+							<Text>Sign Out</Text>
 						</Button>
 						</>
 						:
 						<>
 						<NavLink to="/signin">
-							<Button fontSize={'md'} fontWeight={400} variant={'link'} color={'white'} style={{ ...navLinkStyle }}>
+							<Button  style={{ ...navLinkStyle }}>
 								Sign In
 							</Button>
 						</NavLink>
@@ -74,7 +71,6 @@ const WithSubnavigation = ({ loggedIn, setLoggedIn }: { loggedIn: boolean, setLo
 						</NavLink>
 						</>
 					}
-
 				</Stack>
 			</Flex>
 
