@@ -90,8 +90,8 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
   }
 
   return (
-    <Flex minH={'90vh'} align={'center'} justify={'center'} bg={useColorModeValue('gray.50', 'gray.800')}>
-      <Stack w={"25%"} spacing={8} mx={'auto'} py={12} px={6}>
+    <Flex minH={'90vh'} align={'center'} justify={'center'} bg="rgba(54, 55, 64, 0.2)">
+      <Stack w={"30%"} spacing={8} mx={'auto'} py={12} px={6}>
         <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
             Sign up
@@ -100,39 +100,40 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
             to enjoy all of our cool features ✌️
           </Text>
         </Stack>
+
         <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={10}> 
           <Stack spacing={4}>
-            <HStack>
-              <FormControl id="firstName" isRequired>
-                <FormLabel>Username</FormLabel>
-                <Input type="text" onChange={(e) => usernameInputHandler(e.target.value)}/>
-              </FormControl>
-              </HStack>
+            <FormControl id="firstName" isRequired>
+              <FormLabel>Username</FormLabel>
+              <Input type="text" borderColor="gray.500" onChange={(e) => usernameInputHandler(e.target.value)}/>
+            </FormControl>
 
-              <FormControl id="email" isInvalid={inputErrorMessages.email !== ""} isRequired>
-                <FormLabel>Email address</FormLabel>
-                <Input type="email" onChange={(e) => emailInputHandler(e.target.value)}/>
-                <FormErrorMessage>{inputErrorMessages.email}</FormErrorMessage>
-              </FormControl>
+            <FormControl id="email" isInvalid={inputErrorMessages.email !== ""} isRequired>
+              <FormLabel>Email address</FormLabel>
+              <Input type="email" borderColor="gray.500" onChange={(e) => emailInputHandler(e.target.value)}/>
+                  
+              <FormErrorMessage>{inputErrorMessages.email}</FormErrorMessage>
+            </FormControl>
 
-              <FormControl id="password" isInvalid={inputErrorMessages.password !== ""} isRequired>
-                <FormLabel>Password</FormLabel>
-                <InputGroup>
-                  <Input 
-                    type={showPassword ? 'text' : 'password'} 
-                    onChange={(e) => passwordInputHandler(e.target.value)}
-                  />
-                  <InputRightElement h={'full'}>
-                    <Button
-                      variant={'ghost'}
-                      onClick={() => {setShowPassword((showPassword) => !showPassword)}}>
-                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
+            <FormControl id="password" isInvalid={inputErrorMessages.password !== ""} isRequired>
+              <FormLabel>Password</FormLabel>
+              <InputGroup>
+                <Input 
+                  borderColor="gray.500"
+                  type={showPassword ? 'text' : 'password'} 
+                  onChange={(e) => passwordInputHandler(e.target.value)}
+                />
+                <InputRightElement h={'full'}>
+                  <Button
+                    variant={'ghost'}
+                    onClick={() => {setShowPassword((showPassword) => !showPassword)}}>
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
 
-                <FormHelperText whiteSpace="pre-wrap">{inputErrorMessages.password}</FormHelperText>
-              </FormControl>
+            <FormHelperText whiteSpace="pre-wrap">{inputErrorMessages.password}</FormHelperText>
+            </FormControl>
             <Stack spacing={10} pt={2}>
               <Button
                 loadingText="Submitting" size="lg" bg={'blue.400'}

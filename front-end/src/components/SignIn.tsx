@@ -40,11 +40,8 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
   }
 
   return (
-    <Flex
-      minH={'100vh'}
-      align={'center'}
-      justify={'center'}
-      bg={useColorModeValue('gray.50', 'gray.800')}>
+    <Flex minH={'100vh'} align={'center'} justify={'center'}
+      bg="rgba(54, 55, 64, 0.2)">
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
           <Heading fontSize={'4xl'}>Sign in to your account</Heading>
@@ -61,6 +58,7 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
             <FormControl id="email">
               <FormLabel>Email address</FormLabel>
               <Input type="email" 
+                borderColor="gray.500"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") loginHandler()
                 }}
@@ -70,6 +68,7 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
             <FormControl id="password">
               <FormLabel>Password</FormLabel>
               <Input type="password" 
+                borderColor="gray.500"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") loginHandler()
                 }}

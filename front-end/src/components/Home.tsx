@@ -11,10 +11,10 @@ const textStyles = {
 const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
 	
 	return (
-		<Box bg="#f6f6f6">
+		<Box bg="rgba(54, 55, 64, 0.2)">
 			<Container maxW={'5xl'}>
 				<Stack display="flex" align="center">
-					<Stack flex={4} justify={{ lg: 'center' }} px={90} py={{ base: 2, md: 20, xl: 60 }}>
+					<Stack flex={4} justify={{ lg: 'center' }} px={90} py={{ base: 20, md: 30, xl: 40 }}>
 						<Stack spacing={4} mb={{ base: 4, md: 20 }}>
 							<Text fontFamily={'heading'} fontWeight={700}
 								textTransform={'uppercase'}
