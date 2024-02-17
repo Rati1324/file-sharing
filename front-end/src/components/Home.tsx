@@ -11,7 +11,8 @@ const textStyles = {
 const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
 	
 	return (
-		<Box bg="rgba(54, 55, 64, 0.2)">
+		<Flex minH={'83vh'} bg="rgba(54, 55, 64, 0.2)">
+		{/* <Box> */}
 			<Container maxW={'5xl'}>
 				<Stack display="flex" align="center">
 					<Stack flex={4} justify={{ lg: 'center' }} px={90} py={{ base: 20, md: 30, xl: 40 }}>
@@ -57,7 +58,7 @@ const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
 					<Flex flex={1} />
 				</Stack>
 			</Container> 
-		</Box>
+		</Flex>
 	)
 }
 

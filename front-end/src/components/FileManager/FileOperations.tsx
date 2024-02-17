@@ -34,32 +34,32 @@ const FileOperations = ({ fileId, fileName, selectedFiles, refreshData }: { file
     }
   }
 
-	async function downloadFile() {
-		const token: string | null = sessionStorage.getItem('access_token');
+  async function downloadFile() {
+    const token: string | null = sessionStorage.getItem('access_token');
 
-		try {
-			const res = await fetch(`http://localhost:8000/download_file/${fileId}`, {
-				method: "GET",
-				headers: {
-					'Authorization': `Bearer ${token}`,
-				}
-			})
-			const blob = await res.blob();
-			const url = window.URL.createObjectURL(blob);
-			const a = document.createElement('a');
-			a.href = url;
-			a.setAttribute('download', fileName);
-			a.click();
-		}
+    try {
+      const res = await fetch(`http://localhost:8000/download_file/${fileId}`, {
+        method: "GET",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      })
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download', fileName);
+      a.click();
+    }
 
-		catch (error: any) {
-			if (error.response && error.response.status === 401) {
-				console.log('This is a 401 error!');
-			} else {
-				console.log('This is an unexpected error:', error);
-			}
-		}
-	}
+    catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        console.log('This is a 401 error!');
+      } else {
+        console.log('This is an unexpected error:', error);
+      }
+    }
+  }
 
   return (
     <>

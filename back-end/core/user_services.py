@@ -1,4 +1,4 @@
-import os, json, re, base64
+import os, re
 from fastapi import Depends, Header
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, HTTPException
@@ -6,6 +6,7 @@ from .utils import get_db
 from .schemas import UserSchema, UserLoginSchema, TokenSchema, TokenDataSchema
 from .models import User, File as File_Model
 from datetime import timedelta
+from typing import Optional
 from .utils import (
     create_jwt_token, get_hashed_password, 
     verify_password, get_current_user, user_exists,
@@ -70,3 +71,9 @@ async def signin(db: Session = Depends(get_db), user_data: UserLoginSchema = Non
     token = create_jwt_token(user.email, expire_mins)
     token_schema = TokenSchema(access_token=token, token_type="bearer")
     return token_schema
+
+# write an endpoint for finding users based on email
+@router.get("/get_users")
+async def signin(db: Session = Depends(get_db), search: Optional[str] = None):
+    user = db.query(User).filter(User.email.like(f"%{search}%")).all()
+    return user

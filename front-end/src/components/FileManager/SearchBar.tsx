@@ -3,25 +3,30 @@ import { Input } from '@chakra-ui/react'
 import { getData } from '../../helperFunctions';
 
 const SearchBar = ({ tableName, setData, width }:{ tableName: string, setData: (data: Array<File>) => void, width: string }) => {
-	const [searchInput, setSearchInput] = useState<string>("");
+  const [searchInput, setSearchInput] = useState<string>("");
 
-	useEffect(() => {
-		if (searchInput === "") return;
-		const timeout = setTimeout(async () => {
-			const data = await getData(tableName, searchInput);
-			setData(data.users);
-		}, 2000)
-		return () => clearTimeout(timeout);
-	}, [searchInput])
+  useEffect(() => {
+    if (searchInput === "") return;
+    const timeout = setTimeout(async () => {
+      try {
+        const data = await getData(tableName, searchInput);
+        setData(data);
+      }
+      catch(error: any) {
+        console.log('Error finding user:', error);
+      }
+    }, 1300)
+    return () => clearTimeout(timeout);
+  }, [searchInput])
 
   return (
-		<Input placeholder="Search" 
-			onChange={(e) => {
-				setSearchInput(e.target.value);
-			}}
-			borderColor="grey.500"
-			width={width}
-		/>
+    <Input placeholder="Search" 
+      onChange={(e) => {
+        setSearchInput(e.target.value);
+      }}
+      borderColor="grey.500"
+      width={width}
+    />
   )
 }
 

@@ -26,8 +26,9 @@ const ShareModal = () => {
   }
 
   useEffect(() => {
+    console.log("hi")
     console.log(selectedFiles)
-  }, [])
+  }, [isOpen])
 
   return (
     <>

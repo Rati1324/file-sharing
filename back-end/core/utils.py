@@ -1,12 +1,12 @@
 import os
 from passlib.context import CryptContext
-from jose import jwt, ExpiredSignatureError, JWTError
+from jose import jwt 
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from .models import User, File as File_Model
-from .config import Base, engine, SessionLocal
+from .config import SessionLocal
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")

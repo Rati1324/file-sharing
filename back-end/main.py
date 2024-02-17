@@ -126,3 +126,8 @@ def download_file(authorization: str = Header(default=None), file_id: int = None
     file_data_io = BytesIO(file.binary_data)
 
     return StreamingResponse(file_data_io, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file.name}'})
+
+# @app.post("/share_files")
+# def share_files(authorization: str = Header(default=None), share_file_schema: int = None, db: Session = Depends(get_db)):
+# def share_files(share_files_schema: int = None):
+#     return {"result": share_files_schema}
