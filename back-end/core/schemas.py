@@ -17,7 +17,7 @@ class TokenSchema(BaseModel):
 class TokenDataSchema(BaseModel):
     username: str or None = None
 
-class ShareFilesSchema(BaseModel):
+class ShareFileSchema(BaseModel):
     email: str = Field(default=None)
     file_id: int = Field(default=None)
     

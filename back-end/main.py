@@ -1,31 +1,23 @@
-import os, json, re, base64
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, Header, Request
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm 
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
-from pydantic_settings import BaseSettings
-from pydantic import BaseModel, Field
-from passlib.context import CryptContext
-from jose import jwt
-from datetime import timedelta
-from core.schemas import UserSchema, UserLoginSchema, TokenSchema, TokenDataSchema
+import os, json
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Header, Request
+from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Union, Annotated
-from starlette.responses import FileResponse
 from io import BytesIO
 from fastapi.responses import StreamingResponse
 from core.user_services import router as user_services
 from typing import Optional
 
 from core.utils import (
-    create_jwt_token, get_hashed_password, 
-    verify_password, get_current_user, user_exists,
-    credential_exception, get_db
+    get_current_user, 
+    user_exists,
+    credential_exception,
+    get_db,
 )
 
-from core.config import Base, engine, SessionLocal
+from core.config import Base, engine
 from core.models import User, File as File_Model
+from core.schemas import ShareFileSchema
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="signin")
 
@@ -127,7 +119,10 @@ def download_file(authorization: str = Header(default=None), file_id: int = None
 
     return StreamingResponse(file_data_io, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file.name}'})
 
-# @app.post("/share_files")
-# def share_files(authorization: str = Header(default=None), share_file_schema: int = None, db: Session = Depends(get_db)):
-# def share_files(share_files_schema: int = None):
-#     return {"result": share_files_schema}
+
+@app.post("/share_files")
+def share_file(authorization: str = Header(default=None), share_files_data = None, db: Session = Depends(get_db)):
+    token = authorization[7:]
+    user = get_current_user(db, token)
+    print(share_files_data)
+    return {"result": share_files_data}

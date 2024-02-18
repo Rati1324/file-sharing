@@ -4,6 +4,7 @@ import { useState, useEffect, ChangeEvent } from 'react';
 import { uploadFile, verifyToken, getData } from "../../helperFunctions";
 import { useToast } from '@chakra-ui/react';
 import FileView from './FileView';
+import { User } from './ShareModal';
 import SearchBar from './SearchBar';
 import FileOperations from './FileOperations';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -16,7 +17,9 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   const token: string | null = sessionStorage.getItem("access_token");
   const [file, setFile] = useState<File>(new File([], ''));
   const [files, setFiles] = useState<any[]>([]);
+
   const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
+
   
   function setFileUploadHandler(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
@@ -101,7 +104,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   return (
     token != null 
     ?
-    <SelectedFilesContext.Provider value={{ selectedFiles, setSelectedFiles }}>
+    <SelectedFilesContext.Provider value={{ selectedFiles, setSelectedFiles, selectedUsers, setSelectedUsers }}>
       <Stack minH="60vh" textAlign="center" mt={6}>
         <Text fontSize="30">File Manager</Text>
 
@@ -112,7 +115,8 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
           </HStack>
 
           <HStack>
-            <SearchBar tableName={"files"} setData={(data: Array<File>) => setFiles(data)} width={"30%"} />
+            <SearchBar tableName={"files"} setData={(data: Array<File | User>) => setFiles(data)} width={"30%"} />
+            {/* im not supposed to be passing selectedfiles here because i chose to use useContext */}
             <FileOperations selectedFiles={selectedFiles} refreshData={refreshData} fileId={0} fileName={""} />
           </HStack>
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Input } from '@chakra-ui/react'
 import { getData } from '../../helperFunctions';
+import { User } from './ShareModal';
 
 const SearchBar = ({ tableName, setData, width }:{ tableName: string, setData: (data: Array<File | User>) => void, width: string }) => {
   const [searchInput, setSearchInput] = useState<string>("");

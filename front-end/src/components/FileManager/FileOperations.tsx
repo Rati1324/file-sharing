@@ -5,6 +5,8 @@ import { useToast } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import ShareModal from './ShareModal';
 
+// import { SelectedFilesContext, SelectedUsersContext } from './FileManagerContext';
+
 const FileOperations = ({ fileId, fileName, selectedFiles, refreshData }: { fileId: number, fileName: string, selectedFiles: number[], refreshData: Function }) => {
   const toast = useToast();
   const navigate = useNavigate();
