@@ -5,4 +5,18 @@ type SelectedFilesContextType = {
   setSelectedFiles: React.Dispatch<React.SetStateAction<number[]>>;
 };
 
-export const SelectedFilesContext = React.createContext<SelectedFilesContextType | undefined>(undefined);
+type SelectedUsersContextType = {
+  selectedUsers: number[];
+  setSelectedUsers: React.Dispatch<React.SetStateAction<number[]>>;
+};
+
+
+export const SelectedFilesContext = React.createContext<SelectedFilesContextType>({
+  selectedFiles: [],  
+  setSelectedFiles: () => {}
+});
+
+export const SelectedUsersContext = React.createContext<SelectedUsersContextType>({
+  selectedUsers: [],  
+  setSelectedUsers: () => {}
+});

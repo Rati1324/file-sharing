@@ -74,6 +74,9 @@ async def signin(db: Session = Depends(get_db), user_data: UserLoginSchema = Non
 
 # write an endpoint for finding users based on email
 @router.get("/get_users")
-async def signin(db: Session = Depends(get_db), search: Optional[str] = None):
+async def signin(authorization: str = Header(default=None), db: Session = Depends(get_db), search: Optional[str] = None):
+    token = authorization[7:]
+    current_user = get_current_user(db, token)
     user = db.query(User).filter(User.email.like(f"%{search}%")).all()
+    user = [i for i in user if i.email != current_user["email"]]
     return user

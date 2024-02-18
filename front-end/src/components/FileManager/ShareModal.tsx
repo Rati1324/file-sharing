@@ -39,15 +39,15 @@ const ShareModal = () => {
           <ModalHeader>Share files with users</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <SearchBar tableName={"users"} setData={(data) => setUsers(data)} width={"90%"} />
+            <SearchBar tableName={"users"} setData={(data: User[]) => setUsers(data)} width={"90%"} />
             <UsersTable users={users} />
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>
-              Close
+            <Button colorScheme='red' mr={3} onClick={onClose}>
+              Cancel
             </Button>
-            <Button variant='ghost'>Secondary Action</Button>
+            <Button variant='ghost'>Share</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

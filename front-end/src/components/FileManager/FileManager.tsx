@@ -1,4 +1,3 @@
-import React from 'react';
 import { Text, Button, Stack, HStack } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, ChangeEvent } from 'react';
@@ -106,7 +105,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
       <Stack minH="60vh" textAlign="center" mt={6}>
         <Text fontSize="30">File Manager</Text>
 
-        <Stack p={5} minH="50vh" width="50%" mx="auto" bg="gray.100" spacing={4}>
+        <Stack p={5} minH="50vh" width="50%" mx="auto" bg="gray.100" spacing={4} borderRadius="10">
           <HStack>
             <ArrowBackIosIcon style={{ fontSize: 40 }} />
             <ArrowForwardIosIcon style={{ fontSize: 40 }} />
@@ -123,7 +122,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
                 <FileView fileData={f} key={f.id} 
                   selectFile={(action: number) => {
                     if (action === -1) setSelectedFiles(selectedFiles.filter((id) => id !== f.id));
-                    else setSelectedFiles([...selectedFiles, f.id])
+                    else setSelectedFiles((prevState) => [...prevState, f.id])
                   }}
                   refreshData={refreshData}
                 />
