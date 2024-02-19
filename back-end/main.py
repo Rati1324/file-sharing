@@ -1,4 +1,5 @@
 import os, json
+import datetime
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Header, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -16,7 +17,7 @@ from core.utils import (
 )
 
 from core.config import Base, engine
-from core.models import User, File as File_Model, ShareFile
+from core.models import User, File as File_Model, UserFile
 from core.schemas import ShareFileSchema
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="signin")
@@ -132,10 +133,11 @@ def share_file(authorization: str = Header(default=None), share_files_data: Shar
 
     # users_file = [ShareFile(file_id: i.file_id, user_id: i.user_id) for i in share_files_data]
     print(share_files_data)
-    shareFile_models = []
+    userFile_models = []
+    now = datetime.datetime.now()
     for u in share_files_data.user_ids:
         for f in share_files_data.files:
-            shareFile_models.append(ShareFile(user_id=u, file_id=f))
-    db.add_all(shareFile_models)
+            userFile_models.append(UserFile(user_id=u, file_id=f, share_date=now))
+    db.add_all(userFile_models)
     db.commit()
     return {"result": share_files_data}

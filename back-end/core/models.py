@@ -18,8 +18,9 @@ class File(Base):
     owner_id = Column(Integer, ForeignKey("user.id"))
     owner = relationship("User", backref="file")
 
-class ShareFile(Base):
-    __tablename__ = "share_file"
+class UserFile(Base):
+    __tablename__ = "user_file"
     id: int = Column(Integer, primary_key=True, index=True)
     file_id = Column(Integer, ForeignKey("file.id"))
     user_id = Column(Integer, ForeignKey("user.id"))
+    share_date = Column(String)
