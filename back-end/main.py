@@ -66,12 +66,14 @@ async def get_files(authorization: str = Header(default=None), search: Optional[
     token = authorization[7:]
     user = get_current_user(db, token)
     if user is not None:
-        user_id = db.query(User).filter_by(email=user["email"]).first().id
+        cur_user_id = db.query(User).filter_by(email=user["email"]).first().id
 
     if search is not None:
-        files = db.query(File_Model).filter_by(owner_id=user_id).filter(File_Model.name.ilike(f"%{search}%")).all()
+        files = db.query(File_Model).filter_by(owner_id=cur_user_id).filter(File_Model.name.ilike(f"%{search}%")).all()
     else:
-        files = db.query(File_Model).filter_by(owner_id=user_id).all()
+        files = db.query(File_Model).filter_by(owner_id=cur_user_id).all()
+        shared_files = db.query(File_Model).join(ShareFile, File_Model.id == ShareFile.file_id).filter(ShareFile.user_id == cur_user_id).all()
+        files += shared_files
 
     sizes = {"KB": 1024, "MB": 1048576, "GB": 1073741824}
 
