@@ -17,3 +17,9 @@ class File(Base):
     binary_data = Column(LargeBinary)
     owner_id = Column(Integer, ForeignKey("user.id"))
     owner = relationship("User", backref="file")
+
+class ShareFile(Base):
+    __tablename__ = "share_file"
+    id: int = Column(Integer, primary_key=True, index=True)
+    file_id = Column(Integer, ForeignKey("file.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))

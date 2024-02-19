@@ -23,7 +23,7 @@ const ShareModal = () => {
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
  
   async function shareFiles() {
-    const data = {"users": selectedUsers, "files": selectedFiles};
+    const data = {"user_ids": selectedUsers, "files": selectedFiles};
     // fetch to share_files endpoint
     const res = await fetch('http://localhost:8000/share_files', {
       method: 'POST',
@@ -43,7 +43,7 @@ const ShareModal = () => {
 
   return (
     <>
-      <ShareIcon onClick={() => {onOpen(), shareFiles()}} style={{cursor: "pointer"}} />
+      <ShareIcon onClick={onOpen} style={{cursor: "pointer"}} />
       <Modal isOpen={isOpen} onClose={onClose} >
         <ModalOverlay />
         <ModalContent mt={150} maxW="30%" minH="30%">

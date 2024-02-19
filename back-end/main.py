@@ -16,7 +16,7 @@ from core.utils import (
 )
 
 from core.config import Base, engine
-from core.models import User, File as File_Model
+from core.models import User, File as File_Model, ShareFile
 from core.schemas import ShareFileSchema
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="signin")
@@ -121,8 +121,21 @@ def download_file(authorization: str = Header(default=None), file_id: int = None
 
 
 @app.post("/share_files")
-def share_file(authorization: str = Header(default=None), share_files_data = None, db: Session = Depends(get_db)):
+def share_file(authorization: str = Header(default=None), share_files_data: ShareFileSchema = None, db: Session = Depends(get_db)):
     token = authorization[7:]
-    user = get_current_user(db, token)
+    # current_user = get_current_user(db, token)
+
+    # for file in share_files_data.files:
+    #     db_file = db.query(File_Model).filter_by(id=file).first()
+    #     if db_file.owner_id != current_user["user_id"]:
+    #         raise credential_exception
+
+    # users_file = [ShareFile(file_id: i.file_id, user_id: i.user_id) for i in share_files_data]
     print(share_files_data)
+    shareFile_models = []
+    for u in share_files_data.user_ids:
+        for f in share_files_data.files:
+            shareFile_models.append(ShareFile(user_id=u, file_id=f))
+    db.add_all(shareFile_models)
+    db.commit()
     return {"result": share_files_data}

@@ -104,7 +104,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   return (
     token != null 
     ?
-    <SelectedFilesContext.Provider value={{ selectedFiles, setSelectedFiles, selectedUsers, setSelectedUsers }}>
+    <SelectedFilesContext.Provider value={{ selectedFiles, setSelectedFiles }}>
       <Stack minH="60vh" textAlign="center" mt={6}>
         <Text fontSize="30">File Manager</Text>
 
@@ -117,7 +117,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
           <HStack>
             <SearchBar tableName={"files"} setData={(data: Array<File | User>) => setFiles(data)} width={"30%"} />
             {/* im not supposed to be passing selectedfiles here because i chose to use useContext */}
-            <FileOperations selectedFiles={selectedFiles} refreshData={refreshData} fileId={0} fileName={""} />
+            <FileOperations refreshData={refreshData} fileId={0} fileName={""} />
           </HStack>
 
           <Stack align="start">

@@ -9,10 +9,12 @@ const rowStyles = {
 }
 
 const UserView = ({ data }: { data: User }) => {
-  const { setSelectedUsers } = useContext(SelectedUsersContext);
+  const { selectedUsers, setSelectedUsers } = useContext(SelectedUsersContext);
 
   function selectUserHandler(e: React.ChangeEvent<HTMLInputElement>, id: number) {
-    e.target.checked ? setSelectedUsers((prevValue) => [...prevValue, id]) : setSelectedUsers((prevValue) => prevValue.filter((userId) => userId !== id));
+    e.target.checked ? setSelectedUsers((prevValue) => [...prevValue, id]) : 
+    setSelectedUsers((prevValue) => prevValue.filter((userId) => userId !== id));
+    console.log(selectedUsers);
   }
   
   return (
