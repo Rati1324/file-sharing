@@ -48,6 +48,7 @@ const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
 									<Text fontFamily={'heading'} fontSize={'3xl'} mb={3} style={{...textStyles}}>
 										{stat.title}
 									</Text>
+
 									<Text fontSize={'xl'}>
 										{stat.content}
 									</Text>
@@ -69,16 +70,8 @@ const StatsText = ({ children }: { children: ReactNode }) => (
 )
 
 const stats = [
-	{
-		title: 'free features',
-		content: (
-			<>
-				<StatsText>up to 2 gbs without account supports most formats</StatsText> 
-			</>
-		),
-	},
-
-
+	{ title: 'free features', content: <StatsText>up to 2 gbs without account supports most formats</StatsText>},
+	{ title: 'premium features', content: <StatsText>upload more than 2gbs with any format, allows sharing</StatsText>},
 ]
 
 export default Home
