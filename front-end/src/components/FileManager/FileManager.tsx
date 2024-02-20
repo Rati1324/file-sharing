@@ -1,4 +1,4 @@
-import { Text, Button, Stack, HStack } from '@chakra-ui/react';
+import { Text, Button, Stack, HStack, Table, Tr, Thead, Th, Center } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, ChangeEvent } from 'react';
 import { uploadFile, verifyToken, getData } from "../../helperFunctions";
@@ -120,7 +120,16 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
             <FileOperations refreshData={refreshData} fileId={0} fileName={""} />
           </HStack>
 
-          <Stack align="start">
+          <Table>
+            <Thead>
+              <Tr>
+                {/* <Th></Th> */}
+                <Th>File Name</Th>
+                <Th>File Size</Th>
+                <Th>Operations</Th>
+                <Th display="flex" justifyContent="center">Select</Th>
+              </Tr>
+            </Thead>
             {files && files.length ?
               files.map((f) => (
                 <FileView fileData={f} key={f.id} 
@@ -138,7 +147,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
               <input type="file"  onChange={setFileUploadHandler} />
               <Button onClick={uploadFileHandler}>Upload</Button>
             </Stack>
-          </Stack>
+          </Table>
 
         </Stack>
       </Stack>

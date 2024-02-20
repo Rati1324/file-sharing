@@ -44,11 +44,16 @@ const ShareModal = () => {
   return (
     <>
       <ShareIcon onClick={onOpen} style={{cursor: "pointer"}} />
+
       <Modal isOpen={isOpen} onClose={onClose} >
         <ModalOverlay />
+
         <ModalContent mt={150} maxW="30%" minH="30%">
+
           <ModalHeader>Share files with users</ModalHeader>
+
           <ModalCloseButton />
+
           <ModalBody>
             <SearchBar tableName={"users"} setData={(data: Array<File | User>) => setUsers(data)} width={"90%"} />
             <SelectedUsersContext.Provider value={{ selectedUsers, setSelectedUsers }}>
@@ -60,6 +65,7 @@ const ShareModal = () => {
             <Button colorScheme='red' mr={3} onClick={onClose}>Cancel</Button>
             <Button variant='ghost' onClick={shareFiles}>Share</Button>
           </ModalFooter>
+
         </ModalContent>
       </Modal>
     </>
