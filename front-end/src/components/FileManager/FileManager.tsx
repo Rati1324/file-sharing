@@ -127,6 +127,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
                 <Th>File Name</Th>
                 <Th>File Size</Th>
                 <Th>Operations</Th>
+                <Th>Owner</Th>
                 <Th display="flex" justifyContent="center">Select</Th>
               </Tr>
             </Thead>

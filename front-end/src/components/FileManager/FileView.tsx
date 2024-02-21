@@ -8,6 +8,7 @@ type FileProps = {
 		id: number;
 		name: string;
 		size: string;
+		owner: string;
 	}
 	refreshData: () => void;
 	selectFile: (id: number) => void;
@@ -30,10 +31,16 @@ const FileView = ({ fileData, selectFile, refreshData }: FileProps) => {
 
 			<Td>
         <Text fontWeight="bold">{fileData.size}</Text>
-			</Td>
+      </Td>
 
 			<Td>
         <FileOperations selectedFiles={[fileData.id]} refreshData={refreshData} fileId={fileData.id} fileName={fileData.name} />
+			</Td>
+			<Td>
+        <Text>
+          {fileData.owner}
+        </Text>
+
 			</Td>
 			<Td>
         <Center>

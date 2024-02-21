@@ -87,10 +87,14 @@ async def get_files(authorization: str = Header(default=None), search: Optional[
             suffix = " GB"
         size = str(size) + suffix
 
+        owner = db.query(User).filter_by(id=file.owner_id).first()
+        owner.email = owner.email if user["email"] != owner.email else "Me"
+
         result.append({
             "id": file.id,
             "name": file.name,
-            "size": size
+            "size": size,
+            "owner": owner.email,
         })
     return {"result": result}
 
