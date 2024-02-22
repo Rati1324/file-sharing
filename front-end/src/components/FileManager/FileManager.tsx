@@ -79,18 +79,9 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
       try {
         if (response && response.status === 200) {
           setLoggedIn(true);
-          refreshData();
-          setRows(
-            files.map((r) => (
-              <FileView fileData={r}
-                selectFile={(action: number) => {
-                if (action === -1) setSelectedFiles(selectedFiles.filter((id) => id !== r.id));
-                else setSelectedFiles((prevState) => [...prevState, r.id])
-                }}
-                refreshData={refreshData}
-              />       
-            ))
-          )
+          await refreshData();
+          console.log("files", files)
+          
         }
         else {
           setLoggedIn(false);
@@ -109,9 +100,19 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     checkToken();
   }, [loggedIn])
 
-  // useEffect(() => {
-  //   console.log(selectedFiles);
-  // }, [selectedFiles])
+  useEffect(() => {
+    setRows(
+      files.map((r) => (
+        <FileView fileData={r}
+          selectFile={(action: number) => {
+          if (action === -1) setSelectedFiles(selectedFiles.filter((id) => id !== r.id));
+          else setSelectedFiles((prevState) => [...prevState, r.id])
+          }}
+          refreshData={refreshData}
+        />       
+      ))
+    )
+  }, [files])
  
   const columnNames: string[] = ["File Size", "Operations", "Owner", "Select"];
   
