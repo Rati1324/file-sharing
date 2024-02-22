@@ -1,15 +1,16 @@
-import { Text, Button, Stack, HStack, Table, Tr, Thead, Th, Center } from '@chakra-ui/react';
+import { Text, Stack, HStack } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { uploadFile, verifyToken, getData } from "../../helperFunctions";
 import { useToast } from '@chakra-ui/react';
-import FileView from './FileView';
 import { User } from './ShareModal';
 import SearchBar from './SearchBar';
 import FileOperations from './FileOperations';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { SelectedFilesContext } from './FileManagerContext';
+import Table from '../Table';
+import FileView from './FileView';
 
 const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedIn: Function }) => {
   const toast = useToast();
@@ -17,10 +18,10 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   const token: string | null = sessionStorage.getItem("access_token");
   const [file, setFile] = useState<File>(new File([], ''));
   const [files, setFiles] = useState<any[]>([]);
+  const [rows, setRows] = useState(Array<React.ReactElement>);
 
   const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
 
-  
   function setFileUploadHandler(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
@@ -79,6 +80,17 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
         if (response && response.status === 200) {
           setLoggedIn(true);
           refreshData();
+          setRows(
+            files.map((r) => (
+              <FileView fileData={r}
+                selectFile={(action: number) => {
+                if (action === -1) setSelectedFiles(selectedFiles.filter((id) => id !== r.id));
+                else setSelectedFiles((prevState) => [...prevState, r.id])
+                }}
+                refreshData={refreshData}
+              />       
+            ))
+          )
         }
         else {
           setLoggedIn(false);
@@ -100,6 +112,8 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   // useEffect(() => {
   //   console.log(selectedFiles);
   // }, [selectedFiles])
+ 
+  const columnNames: string[] = ["File Size", "Operations", "Owner", "Select"];
   
   return (
     token != null 
@@ -120,10 +134,10 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
             <FileOperations refreshData={refreshData} fileId={0} fileName={""} />
           </HStack>
 
-          <Table>
+          <Table columnNames={columnNames} rows={rows} />
+          {/* <Table>
             <Thead>
               <Tr>
-                {/* <Th></Th> */}
                 <Th>File Name</Th>
                 <Th>File Size</Th>
                 <Th>Operations</Th>
@@ -148,7 +162,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
               <input type="file"  onChange={setFileUploadHandler} />
               <Button onClick={uploadFileHandler}>Upload</Button>
             </Stack>
-          </Table>
+          </Table> */}
 
         </Stack>
       </Stack>
