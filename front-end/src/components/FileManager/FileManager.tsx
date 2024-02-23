@@ -103,11 +103,13 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   useEffect(() => {
     setRows(
       files.map((r) => (
-        <FileView fileData={r}
-          selectFile={(action: number) => {
-          if (action === -1) setSelectedFiles(selectedFiles.filter((id) => id !== r.id));
-          else setSelectedFiles((prevState) => [...prevState, r.id])
-          }}
+        <FileView 
+          fileData={r}
+          selectFile={setSelectedFiles}
+          // selectFile={(action: number) => {
+          //   if (action === -1) setSelectedFiles(selectedFiles.filter((id) => id !== r.id));
+          //   else setSelectedFiles((prevState) => [...prevState, r.id])
+          // }}
           refreshData={refreshData}
         />       
       ))

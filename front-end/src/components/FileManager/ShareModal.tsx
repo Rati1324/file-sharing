@@ -36,11 +36,6 @@ const ShareModal = () => {
     console.log(res)
   }
 
-  useEffect(() => {
-    console.log(selectedFiles)
-    console.log(selectedUsers)
-  }, [selectedUsers, selectedFiles])
-
   return (
     <>
       <ShareIcon onClick={onOpen} style={{cursor: "pointer"}} />

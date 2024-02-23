@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Text, HStack, Tr, Td, Center } from '@chakra-ui/react';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import { Checkbox } from '@chakra-ui/react'
@@ -11,12 +12,26 @@ type FileProps = {
 		owner: string;
 	}
 	refreshData: () => void;
-	selectFile: (id: number) => void;
+	// selectFile: (id: number) => void;
+  selectFile: React.Dispatch<React.SetStateAction<number[]>>
 };
 
 const FileView = ({ fileData, selectFile, refreshData }: FileProps) => {
-	function selectFileHandler(e: React.ChangeEvent<HTMLInputElement>) {
-		e.target.checked ? selectFile(fileData.id) : selectFile(-1);
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+
+	function selectFileHandler() {
+    // setIsChecked(true);
+    if (!isChecked) {
+      console.log("here", isChecked);
+      setIsChecked(true);
+      
+      // console.log(e.target.checked, fileData.id)
+      // selectFile((prevState: number[]) => [...prevState, fileData.id]);
+    }
+    else {
+      setIsChecked(false);
+      selectFile((prevState: number[]) => prevState.filter((id: number) => id !== fileData.id));
+    }
 	}
 
 	return (
@@ -44,7 +59,7 @@ const FileView = ({ fileData, selectFile, refreshData }: FileProps) => {
 			</Td>
 			<Td>
         <Center>
-          <Checkbox borderColor="blue.700" onChange={selectFileHandler} />
+          <Checkbox borderColor="blue.700" isChecked={isChecked} onChange={selectFileHandler} />
         </Center>
 			</Td>
 		</Tr>
