@@ -20,17 +20,13 @@ const FileView = ({ fileData, selectFile, refreshData }: FileProps) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
 	function selectFileHandler() {
-    // setIsChecked(true);
     if (!isChecked) {
-      console.log("here", isChecked);
       setIsChecked(true);
-      
-      // console.log(e.target.checked, fileData.id)
       // selectFile((prevState: number[]) => [...prevState, fileData.id]);
     }
     else {
       setIsChecked(false);
-      selectFile((prevState: number[]) => prevState.filter((id: number) => id !== fileData.id));
+      // selectFile((prevState: number[]) => prevState.filter((id: number) => id !== fileData.id));
     }
 	}
 
@@ -59,7 +55,7 @@ const FileView = ({ fileData, selectFile, refreshData }: FileProps) => {
 			</Td>
 			<Td>
         <Center>
-          <Checkbox borderColor="blue.700" isChecked={isChecked} onChange={selectFileHandler} />
+          <Checkbox borderColor="blue.700" checked={isChecked} onChange={selectFileHandler} />
         </Center>
 			</Td>
 		</Tr>
