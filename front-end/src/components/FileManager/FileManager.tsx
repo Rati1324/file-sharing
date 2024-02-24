@@ -105,7 +105,6 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
       files.map((r) => (
         <FileView 
           fileData={r}
-          selectFile={setSelectedFiles}
           // selectFile={(action: number) => {
           //   if (action === -1) setSelectedFiles(selectedFiles.filter((id) => id !== r.id));
           //   else setSelectedFiles((prevState) => [...prevState, r.id])

@@ -42,9 +42,7 @@ const ShareModal = () => {
 
       <Modal isOpen={isOpen} onClose={onClose} >
         <ModalOverlay />
-
         <ModalContent mt={150} maxW="30%" minH="30%">
-
           <ModalHeader>Share files with users</ModalHeader>
 
           <ModalCloseButton />

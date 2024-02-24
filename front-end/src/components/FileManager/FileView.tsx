@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, HStack, Tr, Td, Center } from '@chakra-ui/react';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import { Checkbox } from '@chakra-ui/react'
 import FileOperations from './FileOperations';
+import { SelectedFilesContext } from './FileManagerContext';
 
 type FileProps = {
 	fileData: {
@@ -12,23 +13,25 @@ type FileProps = {
 		owner: string;
 	}
 	refreshData: () => void;
-	// selectFile: (id: number) => void;
-  selectFile: React.Dispatch<React.SetStateAction<number[]>>
 };
 
-const FileView = ({ fileData, selectFile, refreshData }: FileProps) => {
+const FileView = ({ fileData, refreshData }: FileProps) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  const { selectedFiles, setSelectedFiles } = React.useContext(SelectedFilesContext);
 
-	function selectFileHandler() {
-    if (!isChecked) {
-      setIsChecked(true);
-      // selectFile((prevState: number[]) => [...prevState, fileData.id]);
+	function selectFileHandler(checked: boolean) {
+    if (checked) {
+      setSelectedFiles((prevState: number[]) => [...prevState, fileData.id]);
     }
     else {
-      setIsChecked(false);
-      // selectFile((prevState: number[]) => prevState.filter((id: number) => id !== fileData.id));
+      setSelectedFiles((prevState: number[]) => prevState.filter((id: number) => id !== fileData.id));
     }
 	}
+
+  useEffect(() => {
+    setIsChecked(selectedFiles.includes(fileData.id));
+    console.log("rendered", selectedFiles)
+  }, [])
 
 	return (
 		// <Tr justify="space-between" w="100%">
@@ -55,7 +58,7 @@ const FileView = ({ fileData, selectFile, refreshData }: FileProps) => {
 			</Td>
 			<Td>
         <Center>
-          <Checkbox borderColor="blue.700" checked={isChecked} onChange={selectFileHandler} />
+          <Checkbox borderColor="blue.700" isChecked={isChecked} onChange={(e: React.ChangeEvent<HTMLInputElement>) => selectFileHandler(e.target.checked)} />
         </Center>
 			</Td>
 		</Tr>

@@ -3,10 +3,10 @@ import React, { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 const Table = ({ columnNames, rows }: { columnNames: string[], rows: Array<React.ReactElement>}) => {
-
   useEffect(() => {
     console.log(rows)
   }, [rows])
+  
   return (
     <TableContainer>
       <ChTable variant='simple'>
