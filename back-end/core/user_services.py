@@ -34,6 +34,7 @@ async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
     if not re.match(email_regex, user_data.email):
         raise HTTPException(status_code=400, detail="Invalid email")
 
+    # wtf is this regex
     if not re.match(username_regex, user_data.username):
         raise HTTPException(status_code=400, detail="Your username must contain at least one letter, one number or special character, and be at least 6 characters long")
 

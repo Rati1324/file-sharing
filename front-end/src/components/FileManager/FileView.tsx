@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { Text, HStack, Tr, Td, Center } from '@chakra-ui/react';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import { Checkbox } from '@chakra-ui/react'
 import FileOperations from './FileOperations';
-import { SelectedFilesContext } from './FileManagerContext';
 
 type FileProps = {
 	fileData: {
@@ -15,23 +14,27 @@ type FileProps = {
 	refreshData: () => void;
 };
 
-const FileView = ({ fileData, refreshData }: FileProps) => {
+const FileView = memo(({ fileData, refreshData }: FileProps) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const { selectedFiles, setSelectedFiles } = React.useContext(SelectedFilesContext);
 
 	function selectFileHandler(checked: boolean) {
-    if (checked) {
-      setSelectedFiles((prevState: number[]) => [...prevState, fileData.id]);
+    if (checked == true) {
+      console.log(checked)
+      setIsChecked(true);
+      // setSelectedFiles([]);
     }
     else {
-      setSelectedFiles((prevState: number[]) => prevState.filter((id: number) => id !== fileData.id));
+      console.log(checked)
+      setIsChecked(false);
+      // setSelectedFiles((prevState: number[]) => prevState.filter((id: number) => id !== fileData.id));
     }
 	}
 
   useEffect(() => {
-    setIsChecked(selectedFiles.includes(fileData.id));
-    console.log("rendered", selectedFiles)
-  }, [])
+    // setIsChecked(selectedFiles.includes(fileData.id));
+    // console.log(isChecked);
+    console.log("render")
+  })
 
 	return (
 		// <Tr justify="space-between" w="100%">
@@ -54,15 +57,18 @@ const FileView = ({ fileData, refreshData }: FileProps) => {
         <Text>
           {fileData.owner}
         </Text>
-
 			</Td>
 			<Td>
         <Center>
-          <Checkbox borderColor="blue.700" isChecked={isChecked} onChange={(e: React.ChangeEvent<HTMLInputElement>) => selectFileHandler(e.target.checked)} />
+          <Checkbox 
+            borderColor="blue.700" 
+            isChecked={isChecked} 
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => selectFileHandler(e.target.checked)} 
+          />
         </Center>
 			</Td>
 		</Tr>
 	)
-}
+})
 
 export default FileView;

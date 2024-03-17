@@ -1,6 +1,6 @@
-import { Text, Stack, HStack } from '@chakra-ui/react';
+import { Text, Stack, HStack, Button, } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
 import { uploadFile, verifyToken, getData } from "../../helperFunctions";
 import { useToast } from '@chakra-ui/react';
 import { User } from './ShareModal';
@@ -8,7 +8,6 @@ import SearchBar from './SearchBar';
 import FileOperations from './FileOperations';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { SelectedFilesContext } from './FileManagerContext';
 import Table from '../Table';
 import FileView from './FileView';
 
@@ -80,7 +79,6 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
         if (response && response.status === 200) {
           setLoggedIn(true);
           await refreshData();
-          console.log("files", files)
           
         }
         else {
@@ -117,13 +115,17 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
  
   const columnNames: string[] = ["File Size", "Operations", "Owner", "Select"];
   
+  function temp() {
+    setSelectedFiles([]);
+  }
+
+
   return (
     token != null 
     ?
-    <SelectedFilesContext.Provider value={{ selectedFiles, setSelectedFiles }}>
       <Stack minH="60vh" textAlign="center" mt={6}>
         <Text fontSize="30">File Manager</Text>
-
+        <Button onClick={temp} />
         <Stack p={5} minH="50vh" width="50%" mx="auto" bg="gray.100" spacing={4} borderRadius="10">
           <HStack>
             <ArrowBackIosIcon style={{ fontSize: 40 }} />
@@ -160,15 +162,14 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
               :
               <Text fontSize="xl" fontWeight={700}>No files found</Text>
             }
+          </Table> */}
+
             <Stack mt={20}>
               <input type="file"  onChange={setFileUploadHandler} />
               <Button onClick={uploadFileHandler}>Upload</Button>
             </Stack>
-          </Table> */}
-
         </Stack>
       </Stack>
-    </SelectedFilesContext.Provider>
     :
     null
   )
