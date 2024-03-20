@@ -1,7 +1,7 @@
-import React, { ReactNode, memo, useState, useCallback, useEffect } from 'react'
+import React, { ReactNode, useEffect } from 'react'
 import { Stack, Container, Box, Flex, Heading, SimpleGrid, Text, Button, Checkbox as ChakraBox } from '@chakra-ui/react'
 import { NavLink } from 'react-router-dom';
-import Temp from './Temp';
+import { setSelectedFiles, selectedFiles } from '../redux/FileManagerSlice';
 
 const textStyles = {
 	color: '#343A40',
@@ -10,9 +10,12 @@ const textStyles = {
 }
 
 const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
+  useEffect(() => {
+    console.log('hi')
+  }, [])
+
 	return (
 		<Flex minH={'83vh'} bg="rgba(54, 55, 64, 0.2)">
-      <Temp />
 			<Container maxW={'5xl'}>
 				<Stack display="flex" align="center">
 					<Stack flex={4} justify={{ lg: 'center' }} px={90} py={{ base: 20, md: 30, xl: 40 }}>

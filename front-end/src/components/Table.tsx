@@ -2,8 +2,13 @@ import { TableContainer, Table as ChTable, Thead, Tr, Th, Tbody } from '@chakra-
 import React, { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-const Table = ({ columnNames, rows }: { columnNames: string[], rows: Array<React.ReactElement>}) => {
+// create interface for props
+interface TableProps {
+  columnNames: string[],
+  rows: Array<React.ReactElement>,
+}
 
+const Table = ({ columnNames, rows}: TableProps) => {
   return (
     <TableContainer>
       <ChTable variant='simple'>

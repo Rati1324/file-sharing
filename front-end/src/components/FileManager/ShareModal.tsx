@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react';
 import ShareIcon from '@mui/icons-material/Share';
 import SearchBar from './SearchBar';
 import UsersTable from './UsersTable';
-import { SelectedFilesContext, SelectedUsersContext } from './FileManagerContext';
 
 export type User = {
   id: number,
@@ -19,21 +18,20 @@ export type User = {
 const ShareModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [users, setUsers] = useState<User[]>([]);
-  const { selectedFiles } = useContext(SelectedFilesContext);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
  
   async function shareFiles() {
-    const data = {"user_ids": selectedUsers, "files": selectedFiles};
-    // fetch to share_files endpoint
-    const res = await fetch('http://localhost:8000/share_files', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessionStorage.getItem("access_token")}`
-      }
-    })
-    console.log(res)
+    // const data = {"user_ids": selectedUsers, "files": selectedFiles};
+    // // fetch to share_files endpoint
+    // const res = await fetch('http://localhost:8000/share_files', {
+    //   method: 'POST',
+    //   body: JSON.stringify(data),
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `Bearer ${sessionStorage.getItem("access_token")}`
+    //   }
+    // })
+    // console.log(res)
   }
 
   return (
@@ -49,9 +47,7 @@ const ShareModal = () => {
 
           <ModalBody>
             <SearchBar tableName={"users"} setData={(data: Array<File | User>) => setUsers(data)} width={"90%"} />
-            <SelectedUsersContext.Provider value={{ selectedUsers, setSelectedUsers }}>
-              <UsersTable users={users} />
-            </SelectedUsersContext.Provider>
+            <UsersTable users={users} />
           </ModalBody>
 
           <ModalFooter>

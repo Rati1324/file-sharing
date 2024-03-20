@@ -12,6 +12,7 @@ import Table from '../Table';
 import FileView from './FileView';
 
 const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedIn: Function }) => {
+
   const toast = useToast();
   const navigate = useNavigate();
   const token: string | null = sessionStorage.getItem("access_token");
@@ -98,15 +99,16 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     checkToken();
   }, [loggedIn])
 
+  function selectFileHandler(action: number, id: number) {
+    if (action === -1) setSelectedFiles(selectedFiles.filter((fileId: number) => fileId !== id));
+    else setSelectedFiles((prevState) => [...prevState, id]);
+  }
+
   useEffect(() => {
     setRows(
       files.map((r) => (
         <FileView 
           fileData={r}
-          // selectFile={(action: number) => {
-          //   if (action === -1) setSelectedFiles(selectedFiles.filter((id) => id !== r.id));
-          //   else setSelectedFiles((prevState) => [...prevState, r.id])
-          // }}
           refreshData={refreshData}
         />       
       ))
@@ -115,17 +117,12 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
  
   const columnNames: string[] = ["File Size", "Operations", "Owner", "Select"];
   
-  function temp() {
-    setSelectedFiles([]);
-  }
-
 
   return (
     token != null 
     ?
       <Stack minH="60vh" textAlign="center" mt={6}>
         <Text fontSize="30">File Manager</Text>
-        <Button onClick={temp} />
         <Stack p={5} minH="50vh" width="50%" mx="auto" bg="gray.100" spacing={4} borderRadius="10">
           <HStack>
             <ArrowBackIosIcon style={{ fontSize: 40 }} />
