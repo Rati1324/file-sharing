@@ -17,11 +17,9 @@ services:
     ports:
       - "3000:3000"
     command: sh -c "npm run dev"
-    # expose:
-    #   - 3000
     volumes:
       - ./front-end:/front-end
-      - /usr/src/app/node_modules
+      - /front-end/node_modules
 
   # pgadmin:
   #   image: dpage/pgadmin4:latest
