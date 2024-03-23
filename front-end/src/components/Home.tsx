@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect } from 'react'
 import { Stack, Container, Box, Flex, Heading, SimpleGrid, Text, Button, Checkbox as ChakraBox } from '@chakra-ui/react'
 import { NavLink } from 'react-router-dom';
-import { setSelectedFiles, selectedFiles } from '../redux/FileManagerSlice';
+import { setSelectedFiles, selectedFiles } from '../redux/fileManagerSlice';
 
 const textStyles = {
 	color: '#343A40',

@@ -4,7 +4,8 @@ import FilePresentIcon from '@mui/icons-material/FilePresent';
 import { Checkbox } from '@chakra-ui/react'
 import FileOperations from './FileOperations';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedFiles } from '../../redux/FileManagerSlice';
+import { RootState } from '@reduxjs/toolkit/query';
+import { setSelectedFiles } from '../../redux/fileManagerSlice';
 
 type FileProps = {
 	fileData: {
@@ -18,14 +19,15 @@ type FileProps = {
 
 const FileView = memo(({ fileData, refreshData }: FileProps) => {
   const dispatch = useDispatch();
-  const selectedFilesStore = useSelector(setSelectedFiles);
+  const selectedFilesStore = useSelector((store: RootState) => store.fileManager.selectedFiles);
+
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
 	function selectFileHandler(checked: boolean) {
     if (checked == true) {
       console.log(checked)
       setIsChecked(true);
-      // setSelectedFiles([]);
+      dispatch(setSelectedFiles([]));
     }
     else {
       console.log(checked)
@@ -37,7 +39,6 @@ const FileView = memo(({ fileData, refreshData }: FileProps) => {
   useEffect(() => {
     // setIsChecked(selectedFiles.includes(fileData.id));
     // console.log(isChecked);
-    console.log("render")
   })
 
 	return (
