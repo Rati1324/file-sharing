@@ -4,7 +4,7 @@ import {
     FormHelperText, FormErrorMessage
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { useState, ReactNode } from 'react';
+import ReactNode, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
 export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void}) => {
@@ -39,15 +39,16 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
 
   function signUpHandler(): ReactNode {
     console.log((Object.values(inputErrorMessages).filter(val => val !== "")).length)
-    const inValid = (Object.values(inputErrorMessages).filter(val => val !== "")).length;
-    if (inValid) return;
-    
+    const invalid = (Object.values(inputErrorMessages).filter(val => val !== "")).length;
+
+    console.log("errors", inputErrorMessages)
+    if (invalid) return;
     const userData: Record<string, string> = {
       username: usernameInput,
       email: emailInput,
       password: passwordInput,
     }
-    sendData(userData)
+    sendData(userData);
     return null;
   }
 
@@ -78,11 +79,11 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
   }
 
   function usernameInputHandler(usernameInput: string) {
-    const usernameRegex = /^(?=.*[a-zA-Z])(?=.*[\d\W]).{6,}$/;
-    let errorMessage = usernameRegex.test(usernameInput) ? ""
+    // console.log(usernameInput)
+    let errorMessage = (usernameInput.length < 4) ? ""
     : 
-    "Your username must contain at least one letter, one number or special character, and be at least 6 characters long"
-
+    "Your username must contain at least 4 characters"
+    
     setUsernameInput(usernameInput);
     setTimeout(() => {
       setInputErrorMessages((prev) => ({...prev, username: errorMessage}));

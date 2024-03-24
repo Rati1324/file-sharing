@@ -14,7 +14,7 @@ from .utils import (
 )
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 130
 
 router = APIRouter()
 
@@ -35,8 +35,8 @@ async def signup(db: Session = Depends(get_db), user_data: UserSchema = None):
         raise HTTPException(status_code=400, detail="Invalid email")
 
     # wtf is this regex
-    if not re.match(username_regex, user_data.username):
-        raise HTTPException(status_code=400, detail="Your username must contain at least one letter, one number or special character, and be at least 6 characters long")
+    # if not re.match(username_regex, user_data.username):
+    #     raise HTTPException(status_code=400, detail="Your username must contain at least one letter, one number or special character, and be at least 6 characters long")
 
     check_user_exists = user_exists(db, user_data.email)
     if check_user_exists:
@@ -78,6 +78,6 @@ async def signin(db: Session = Depends(get_db), user_data: UserLoginSchema = Non
 async def signin(authorization: str = Header(default=None), db: Session = Depends(get_db), search: Optional[str] = None):
     token = authorization[7:]
     current_user = get_current_user(db, token)
-    user = db.query(User).filter(User.email.like(f"%{search}%")).all()
-    user = [i for i in user if i.email != current_user["email"]]
-    return user
+    users = db.query(User).filter(User.email.like(f"%{search}%")).all()
+    users = [i for i in users if i.email != current_user["email"]]
+    return users

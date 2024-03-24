@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import {
   Modal, ModalOverlay, ModalContent, 
   ModalHeader, ModalFooter, ModalBody, 
@@ -7,7 +6,9 @@ import {
 import { useState, useEffect } from 'react';
 import ShareIcon from '@mui/icons-material/Share';
 import SearchBar from './SearchBar';
-import UsersTable from './UsersTable';
+import { useSelector } from 'react-redux';
+import Table from '../Table';
+import UserView from './UserView';
 
 export type User = {
   id: number,
@@ -18,20 +19,33 @@ export type User = {
 const ShareModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [users, setUsers] = useState<User[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
- 
+  // const [rows, setRows] = useState<React.ReactElement[]>([]);
+  const [rows, setRows] = useState<any[]>([]);
+  const columnNames = ["Email", "Username"];
+  const store = useSelector((state: any) => state.fileManager);
+
+  useEffect(() => {
+    console.log("in useeffect");
+
+    setRows(users.map((user: User) => {
+      return (
+        {"component": <UserView data={user} />, "id": user.id}
+      )
+    }))
+  }, [users])
+
   async function shareFiles() {
-    // const data = {"user_ids": selectedUsers, "files": selectedFiles};
-    // // fetch to share_files endpoint
-    // const res = await fetch('http://localhost:8000/share_files', {
-    //   method: 'POST',
-    //   body: JSON.stringify(data),
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Bearer ${sessionStorage.getItem("access_token")}`
-    //   }
-    // })
-    // console.log(res)
+    const data = {"user_ids": store.selectedUsers, "files": store.selectedFiles};
+    // fetch to share_files endpoint
+    const res = await fetch('http://localhost:8000/share_files', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem("access_token")}`
+      }
+    })
+    console.log(res)
   }
 
   return (
@@ -47,7 +61,7 @@ const ShareModal = () => {
 
           <ModalBody>
             <SearchBar tableName={"users"} setData={(data: Array<File | User>) => setUsers(data)} width={"90%"} />
-            <UsersTable users={users} />
+            <Table columnNames={columnNames} rows={rows} />
           </ModalBody>
 
           <ModalFooter>

@@ -5,10 +5,13 @@ import { v4 as uuidv4 } from 'uuid';
 // create interface for props
 interface TableProps {
   columnNames: string[],
-  rows: Array<React.ReactElement>,
+  rows: Array<any>,
 }
 
 const Table = ({ columnNames, rows}: TableProps) => {
+  useEffect(() => {
+    console.log(rows)
+  })
   return (
     <TableContainer>
       <ChTable variant='simple'>
@@ -20,14 +23,14 @@ const Table = ({ columnNames, rows}: TableProps) => {
           </Tr>
         </Thead>
         <Tbody>
-        {rows && rows.length ?
+        {/* {rows && rows.length ?
           rows.map((row) => (
-            <React.Fragment key={uuidv4()}>{row}</React.Fragment>
+            <React.Fragment key={row.id}>{row.component}</React.Fragment>
           ))
           :
           // <Text fontSize="xl" fontWeight={700}>No files found</Text>
           null
-        }
+        } */}
         {/* <Stack mt={20}>
           <input type="file"  onChange={setFileUploadHandler} />
           <Button onClick={uploadFileHandler}>Upload</Button>
