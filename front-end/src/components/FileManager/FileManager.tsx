@@ -17,7 +17,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   const token: string | null = sessionStorage.getItem("access_token");
   const [file, setFile] = useState<File>(new File([], ''));
   const [files, setFiles] = useState<any[]>([]);
-  const [rows, setRows] = useState(Array<React.ReactElement>);
+  const [rows, setRows] = useState<any[]>([]);
 
   const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
 
@@ -105,36 +105,32 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
 
   useEffect(() => {
     setRows(
-      files.map((r) => (
-        <FileView 
-          fileData={r}
-          refreshData={refreshData}
-        />       
+      files.map((file) => (
+        {"component": <FileView fileData={file} refreshData={refreshData} />, "id": file.id}
       ))
     )
   }, [files])
  
   const columnNames: string[] = ["File Size", "Operations", "Owner", "Select"];
-  
+
   return (
-    <div>asd</div>
-    // token != null 
-    // ?
-    //   <Stack minH="60vh" textAlign="center" mt={6}>
-    //     <Text fontSize="30">File Manager</Text>
-    //     <Stack p={5} minH="50vh" width="50%" mx="auto" bg="gray.100" spacing={4} borderRadius="10">
-    //       <HStack>
-    //         <ArrowBackIosIcon style={{ fontSize: 40 }} />
-    //         <ArrowForwardIosIcon style={{ fontSize: 40 }} />
-    //       </HStack>
+    token != null 
+    ?
+      <Stack minH="60vh" textAlign="center" mt={6}>
+        <Text fontSize="30">File Manager</Text>
+        <Stack p={5} minH="50vh" width="50%" mx="auto" bg="gray.100" spacing={4} borderRadius="10">
+          <HStack>
+            <ArrowBackIosIcon style={{ fontSize: 40 }} />
+            <ArrowForwardIosIcon style={{ fontSize: 40 }} />
+          </HStack>
 
-    //       <HStack>
-    //         <SearchBar tableName={"files"} setData={(data: Array<File | User>) => setFiles(data)} width={"30%"} />
-    //         <FileOperations refreshData={refreshData} fileId={0} fileName={""} />
-    //       </HStack>
+          <HStack>
+            <SearchBar tableName={"files"} setData={(data: Array<File | User>) => setFiles(data)} width={"30%"} />
+            <FileOperations refreshData={refreshData} fileId={0} fileName={""} />
+          </HStack>
 
-    //       <Table columnNames={columnNames} rows={rows} />
-          /* <Table>
+          <Table columnNames={columnNames} rows={rows} />
+            {/* <Table>
             <Thead>
               <Tr>
                 <Th>File Name</Th>
@@ -157,16 +153,16 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
               :
               <Text fontSize="xl" fontWeight={700}>No files found</Text>
             }
-          </Table> */
+          </Table>  */}
 
-          /* <Stack mt={20}>
+          {/* <Stack mt={20}>
             <input type="file"  onChange={setFileUploadHandler} />
             <Button onClick={uploadFileHandler}>Upload</Button>
-          </Stack>
+          </Stack> */}
         </Stack>
-      </Stack> */
-    /* :
-    null */
+      </Stack>
+      :
+    null 
   )
 }
 

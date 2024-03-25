@@ -2,7 +2,6 @@ import { TableContainer, Table as ChTable, Thead, Tr, Th, Tbody } from '@chakra-
 import React, { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-// create interface for props
 interface TableProps {
   columnNames: string[],
   rows: Array<any>,
@@ -23,14 +22,14 @@ const Table = ({ columnNames, rows}: TableProps) => {
           </Tr>
         </Thead>
         <Tbody>
-        {/* {rows && rows.length ?
+        {rows && rows.length ?
           rows.map((row) => (
             <React.Fragment key={row.id}>{row.component}</React.Fragment>
           ))
           :
           // <Text fontSize="xl" fontWeight={700}>No files found</Text>
           null
-        } */}
+        }
         {/* <Stack mt={20}>
           <input type="file"  onChange={setFileUploadHandler} />
           <Button onClick={uploadFileHandler}>Upload</Button>
