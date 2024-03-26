@@ -80,7 +80,7 @@ async def get_files(authorization: str = Header(default=None), search: Optional[
     result = []
     for file in files:
         suffix = " KB"
-        size = (round(len(file.binary_data)/1024, 2))
+        size = (round(len(file.binary_data)/sizes["KB"], 2))
         if sizes["MB"] < size < sizes["GB"]:
             suffix = " MB"
         elif size > sizes["GB"]:

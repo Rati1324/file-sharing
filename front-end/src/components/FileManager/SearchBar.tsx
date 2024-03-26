@@ -7,11 +7,10 @@ const SearchBar = ({ tableName, setData, width }:{ tableName: string, setData: (
   const [searchInput, setSearchInput] = useState<string>("");
 
   useEffect(() => {
-    if (searchInput === "") return;
     const timeout = setTimeout(async () => {
       try {
         const data = await getData(tableName, searchInput);
-        setData(data);
+        setData(data.result);
       }
       catch(error: any) {
         console.log('Error finding user:', error);

@@ -1,6 +1,6 @@
 import { Text, Stack, HStack, Button, } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { uploadFile, verifyToken, getData } from "../../helperFunctions";
 import { useToast } from '@chakra-ui/react';
 import { User } from './ShareModal';
@@ -10,6 +10,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Table from '../Table';
 import FileView from './FileView';
+import { useSelector } from 'react-redux';
 
 const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedIn: Function }) => {
   const toast = useToast();
@@ -18,8 +19,12 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   const [file, setFile] = useState<File>(new File([], ''));
   const [files, setFiles] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]);
+  const selectedFiles = useSelector((state: any) => state.fileManager.selectedFiles);
 
-  const [selectedFiles, setSelectedFiles] = useState<number[]>([]);
+  async function refreshData() {
+    const files = await getData("files");
+    setFiles(files.result);
+  }
 
   function setFileUploadHandler(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
@@ -61,11 +66,6 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     }
   }
 
-  async function refreshData() {
-    const files = await getData("files");
-    setFiles(files.result);
-  }
-
   useEffect(() => {
     const token: string | null = sessionStorage.getItem('access_token');
     if (token === null) {
@@ -79,7 +79,6 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
         if (response && response.status === 200) {
           setLoggedIn(true);
           await refreshData();
-          
         }
         else {
           setLoggedIn(false);
@@ -98,11 +97,6 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     checkToken();
   }, [loggedIn])
 
-  function selectFileHandler(action: number, id: number) {
-    if (action === -1) setSelectedFiles(selectedFiles.filter((fileId: number) => fileId !== id));
-    else setSelectedFiles((prevState) => [...prevState, id]);
-  }
-
   useEffect(() => {
     setRows(
       files.map((file) => (
@@ -111,7 +105,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     )
   }, [files])
  
-  const columnNames: string[] = ["File Size", "Operations", "Owner", "Select"];
+  const columnNames: string[] = ["File Size", "Operations", "Owner"];
 
   return (
     token != null 
@@ -126,39 +120,15 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
 
           <HStack>
             <SearchBar tableName={"files"} setData={(data: Array<File | User>) => setFiles(data)} width={"30%"} />
-            <FileOperations refreshData={refreshData} fileId={0} fileName={""} />
+            <FileOperations refreshData={refreshData} fileName={""} selectedFiles={selectedFiles} />
           </HStack>
 
           <Table columnNames={columnNames} rows={rows} />
-            {/* <Table>
-            <Thead>
-              <Tr>
-                <Th>File Name</Th>
-                <Th>File Size</Th>
-                <Th>Operations</Th>
-                <Th>Owner</Th>
-                <Th display="flex" justifyContent="center">Select</Th>
-              </Tr>
-            </Thead>
-            {files && files.length ?
-              files.map((f) => (
-                <FileView fileData={f} key={f.id} 
-                  selectFile={(action: number) => {
-                    if (action === -1) setSelectedFiles(selectedFiles.filter((id) => id !== f.id));
-                    else setSelectedFiles((prevState) => [...prevState, f.id])
-                  }}
-                  refreshData={refreshData}
-                />
-              ))
-              :
-              <Text fontSize="xl" fontWeight={700}>No files found</Text>
-            }
-          </Table>  */}
 
-          {/* <Stack mt={20}>
+          <Stack mt={20}>
             <input type="file"  onChange={setFileUploadHandler} />
             <Button onClick={uploadFileHandler}>Upload</Button>
-          </Stack> */}
+          </Stack>
         </Stack>
       </Stack>
       :

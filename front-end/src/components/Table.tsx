@@ -1,6 +1,5 @@
-import { TableContainer, Table as ChTable, Thead, Tr, Th, Tbody } from '@chakra-ui/react'
-import React, { useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { TableContainer, Table as ChTable, Thead, Th, Tbody, Text, Tr, Td } from '@chakra-ui/react'
+import React from 'react';
 
 interface TableProps {
   columnNames: string[],
@@ -8,9 +7,6 @@ interface TableProps {
 }
 
 const Table = ({ columnNames, rows}: TableProps) => {
-  useEffect(() => {
-    console.log(rows)
-  })
   return (
     <TableContainer>
       <ChTable variant='simple'>
@@ -27,13 +23,12 @@ const Table = ({ columnNames, rows}: TableProps) => {
             <React.Fragment key={row.id}>{row.component}</React.Fragment>
           ))
           :
-          // <Text fontSize="xl" fontWeight={700}>No files found</Text>
-          null
+          <Tr>
+            <Td>
+              <Text fontSize="xl" fontWeight={700}>No files found</Text>
+            </Td>
+          </Tr>
         }
-        {/* <Stack mt={20}>
-          <input type="file"  onChange={setFileUploadHandler} />
-          <Button onClick={uploadFileHandler}>Upload</Button>
-        </Stack> */}
         </Tbody>
       </ChTable>
     </TableContainer>

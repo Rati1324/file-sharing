@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, HStack, Tr, Td, Center } from '@chakra-ui/react';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import { Checkbox } from '@chakra-ui/react'
@@ -16,7 +16,7 @@ type FileProps = {
 	refreshData: () => void,
 };
 
-const FileView = memo(({ fileData, refreshData }: FileProps) => {
+const FileView = ({ fileData, refreshData }: FileProps) => {
   const dispatch = useDispatch();
 
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -31,13 +31,7 @@ const FileView = memo(({ fileData, refreshData }: FileProps) => {
     setIsChecked(checked);
 	}
 
-  useEffect(() => {
-    // setIsChecked(selectedFiles.includes(fileData.id));
-    // console.log(isChecked);
-  })
-
 	return (
-		// <Tr justify="space-between" w="100%">
 		<Tr>
       <Td>
         <HStack>
@@ -49,15 +43,15 @@ const FileView = memo(({ fileData, refreshData }: FileProps) => {
 			<Td>
         <Text fontWeight="bold">{fileData.size}</Text>
       </Td>
-
-			<Td>
-        <FileOperations selectedFiles={[fileData.id]} refreshData={refreshData} fileId={fileData.id} fileName={fileData.name} />
-			</Td>
-			<Td>
+      <Td>
         <Text>
           {fileData.owner}
         </Text>
 			</Td>
+			<Td>
+        <FileOperations selectedFiles={[fileData.id]} refreshData={refreshData} fileName={fileData.name} />
+			</Td>
+			
 			<Td>
         <Center>
           <Checkbox 
@@ -67,8 +61,9 @@ const FileView = memo(({ fileData, refreshData }: FileProps) => {
           />
         </Center>
 			</Td>
+      
 		</Tr>
 	)
-})
+}
 
 export default FileView;

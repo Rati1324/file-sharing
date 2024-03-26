@@ -25,15 +25,16 @@ const UserView = ({ data }: UserViewProps) => {
     dispatch(addUser(id))
     :
     dispatch(removeUser(id))
+    setSelected(checked)
   }
  
   useEffect(() => {
-    let checkSelected = selectedUsers.includes(data.id);
-    if (selected !== checkSelected) {
-      setSelected(checkSelected);
-    }
-    console.log(selectedUsers)
-    console.log("render")
+    // let checkSelected = selectedUsers.includes(data.id);
+    // if (selected !== checkSelected) {
+    //   setSelected(checkSelected);
+    // }
+    // console.log(selectedUsers)
+    // console.log("render")
   })
 
   return (
