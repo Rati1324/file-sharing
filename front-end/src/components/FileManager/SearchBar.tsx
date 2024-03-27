@@ -10,7 +10,7 @@ const SearchBar = ({ tableName, setData, width }:{ tableName: string, setData: (
     const timeout = setTimeout(async () => {
       try {
         const data = await getData(tableName, searchInput);
-        setData(data.result);
+        setData(data);
       }
       catch(error: any) {
         console.log('Error finding user:', error);

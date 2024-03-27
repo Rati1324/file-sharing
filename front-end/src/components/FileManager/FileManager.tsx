@@ -21,9 +21,48 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   const [rows, setRows] = useState<any[]>([]);
   const selectedFiles = useSelector((state: any) => state.fileManager.selectedFiles);
 
+  useEffect(() => {
+    const token: string | null = sessionStorage.getItem('access_token');
+    if (token === null) {
+      setLoggedIn(false);
+      navigate('/signin');
+    }
+
+    async function checkToken() {
+      const response = await verifyToken(token);
+      try {
+        if (response && response.status === 200) {
+          setLoggedIn(true);
+          await refreshData();
+        }
+        else {
+          setLoggedIn(false);
+          navigate('/signin');
+        }
+      }
+      catch(error: any) {
+        if (error.response && error.response.status === 401) {
+          setLoggedIn(false);
+          navigate('/signin');
+        } else {
+          console.log('This is an unexpected error:', error);
+        }
+      }
+    }
+    checkToken();
+  }, [loggedIn])
+
+  useEffect(() => {
+    setRows(
+      files.map((file) => (
+        {"component": <FileView fileData={file} refreshData={refreshData} />, "id": file.id}
+      ))
+    )
+  }, [files])
+
   async function refreshData() {
     const files = await getData("files");
-    setFiles(files.result);
+    setFiles(files);
   }
 
   function setFileUploadHandler(e: ChangeEvent<HTMLInputElement>) {
@@ -66,45 +105,6 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
     }
   }
 
-  useEffect(() => {
-    const token: string | null = sessionStorage.getItem('access_token');
-    if (token === null) {
-      setLoggedIn(false);
-      navigate('/signin');
-    }
-
-    async function checkToken() {
-      const response = await verifyToken(token);
-      try {
-        if (response && response.status === 200) {
-          setLoggedIn(true);
-          await refreshData();
-        }
-        else {
-          setLoggedIn(false);
-          navigate('/signin');
-        }
-      }
-      catch(error: any) {
-        if (error.response && error.response.status === 401) {
-          setLoggedIn(false);
-          navigate('/signin');
-        } else {
-          console.log('This is an unexpected error:', error);
-        }
-      }
-    }
-    checkToken();
-  }, [loggedIn])
-
-  useEffect(() => {
-    setRows(
-      files.map((file) => (
-        {"component": <FileView fileData={file} refreshData={refreshData} />, "id": file.id}
-      ))
-    )
-  }, [files])
- 
   const columnNames: string[] = ["File Size", "Operations", "Owner"];
 
   return (

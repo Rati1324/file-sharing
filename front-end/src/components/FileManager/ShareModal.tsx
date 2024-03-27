@@ -19,15 +19,18 @@ export type User = {
 const ShareModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [users, setUsers] = useState<User[]>([]);
-  // const [rows, setRows] = useState<React.ReactElement[]>([]);
   const [rows, setRows] = useState<any[]>([]);
   const columnNames = ["Email", "Username"];
   const store = useSelector((state: any) => state.fileManager);
 
   useEffect(() => {
-    console.log("in useeffect");
+    console.log(users)
+  })
 
-    setRows(users.map((user: User) => {
+  useEffect(() => {
+    // console.log(users)
+    // if (users !== undefined) {
+    setRows(users && users.map((user: User) => {
       return (
         {"component": <UserView data={user} />, "id": user.id}
       )
@@ -45,7 +48,6 @@ const ShareModal = () => {
         'Authorization': `Bearer ${sessionStorage.getItem("access_token")}`
       }
     })
-    console.log(res)
   }
 
   return (

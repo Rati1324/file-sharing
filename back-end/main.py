@@ -96,7 +96,7 @@ async def get_files(authorization: str = Header(default=None), search: Optional[
             "size": size,
             "owner": owner.email,
         })
-    return {"result": result}
+    return result
 
 @app.delete("/delete_files")
 async def delete_files(authorization: str = Header(default=None), db: Session = Depends(get_db), res: Request = None):

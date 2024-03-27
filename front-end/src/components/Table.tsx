@@ -25,7 +25,7 @@ const Table = ({ columnNames, rows}: TableProps) => {
           :
           <Tr>
             <Td>
-              <Text fontSize="xl" fontWeight={700}>No files found</Text>
+              <Text fontSize="xl" fontWeight={700}>No results found</Text>
             </Td>
           </Tr>
         }
