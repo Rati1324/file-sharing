@@ -14,7 +14,7 @@ front-end/*.local
 
 back-end/venv
 back-end/.env
-back-end/__pycache__
+back-end/**/__pycache__/
 
 # Editor directories and files
 .vscode/*

@@ -75,17 +75,22 @@ async def get_files(authorization: str = Header(default=None), search: Optional[
         shared_files = db.query(File_Model).join(ShareFile, File_Model.id == ShareFile.file_id).filter(ShareFile.user_id == cur_user_id).all()
         files += shared_files
 
-    sizes = {"KB": 1024, "MB": 1048576, "GB": 1073741824}
+    sizes = {"KB": 1000, "MB": 1000000, "GB": 1000000000}
 
     result = []
     for file in files:
         suffix = " KB"
-        size = (round(len(file.binary_data)/sizes["KB"], 2))
-        if sizes["MB"] < size < sizes["GB"]:
+        size = len(file.binary_data)
+        if sizes["KB"] <= size < sizes["MB"]:
+            size /= sizes["KB"]
+            suffix = "KB"
+        elif sizes["MB"] <= size < sizes["GB"]:
+            size /= sizes["MB"]
             suffix = " MB"
-        elif size > sizes["GB"]:
+        elif size >= sizes["GB"]:
+            size /= sizes["GB"]
             suffix = " GB"
-        size = str(size) + suffix
+        size = str(round(size, 5)) + suffix
 
         owner = db.query(User).filter_by(id=file.owner_id).first()
         owner.email = owner.email if user["email"] != owner.email else "Me"
