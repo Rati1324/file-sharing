@@ -125,7 +125,7 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
           <Table columnNames={columnNames} rows={rows} />
 
           <Stack mt={20}>
-            <input type="file"  onChange={setFileUploadHandler} />
+            <input type="file" onChange={setFileUploadHandler} />
             <Button onClick={uploadFileHandler}>Upload</Button>
           </Stack>
         </Stack>

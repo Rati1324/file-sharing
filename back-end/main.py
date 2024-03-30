@@ -1,10 +1,15 @@
 # ToDo
 # 1) need to give unique id only once to the fileview array components so that it doesnt re-render unless its changed [x]
-# 2) need to fix FileOperations props to delete file/files and download them []
+# 2) need to fix FileOperations props to delete file/files and download them [x]
 # 3) fix mb/kb thing [x]
 # 4) not redirecting when token is expired []
 
-import os, json
+# main features:
+# 1)delection [x]
+# 2) download []
+# 3) share []
+
+import os, json, datetime
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Header, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -112,20 +117,25 @@ async def get_files(authorization: str = Header(default=None), search: Optional[
 @app.post("/share_files")
 def share_file(authorization: str = Header(default=None), share_files_data: ShareFileSchema = None, db: Session = Depends(get_db)):
     token = authorization[7:]
-    # current_user = get_current_user(db, token)
+    current_user = get_current_user(db, token)
 
-    # for file in share_files_data.files:
-    #     db_file = db.query(File_Model).filter_by(id=file).first()
-    #     if db_file.owner_id != current_user["user_id"]:
-    #         raise credential_exception
+    for file in share_files_data.file_ids:
+        db_file = db.query(File_Model).filter_by(id=file).first()
+        if db_file.owner_id != current_user["user_id"]:
+            raise credential_exception
 
-    # users_file = [ShareFile(file_id: i.file_id, user_id: i.user_id) for i in share_files_data]
-    print(share_files_data)
-    shareFile_models = []
+    # get current date
+    date = datetime.datetime.now().date()
+
+    share_file_models = []
+    print(share_files_data.user_ids, share_files_data.file_ids)
     for u in share_files_data.user_ids:
         for f in share_files_data.file_ids:
-            shareFile_models.append(UserFile(user_id=u, file_id=f))
-    db.add_all(shareFile_models)
+            check_existing = db.query(UserFile).filter_by(user_id=u, file_id=f).first()
+            print(check_existing)
+            if check_existing is None:
+                share_file_models.append(UserFile(user_id=u, file_id=f, share_date=date))
+    db.add_all(share_file_models)
     db.commit()
     return {"result": share_files_data}
 

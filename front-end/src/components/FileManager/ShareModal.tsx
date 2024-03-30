@@ -9,6 +9,7 @@ import SearchBar from './SearchBar';
 import { useSelector } from 'react-redux';
 import Table from '../Table';
 import UserView from './UserView';
+import { useToast } from '@chakra-ui/react';
 
 export type User = {
   id: number,
@@ -20,6 +21,7 @@ const ShareModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [users, setUsers] = useState<User[]>([]);
   const [rows, setRows] = useState<any[]>([]);
+  const toast = useToast();
   const columnNames = ["Email", "Username"];
   const store = useSelector((state: any) => state.fileManager);
 
@@ -48,6 +50,12 @@ const ShareModal = () => {
         'Authorization': `Bearer ${sessionStorage.getItem("access_token")}`
       }
     })
+    if (res.status === 200) {
+      toast({
+        title: 'Shared succesfully', status: 'success',
+        duration: 2000, isClosable: true,
+      })
+    }
   }
 
   return (
