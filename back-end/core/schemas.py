@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import List
 
 class UserLoginSchema(BaseModel):
     email: str = Field(default=None)
@@ -15,9 +16,14 @@ class TokenSchema(BaseModel):
     token_type: str = Field(default=None)
 
 class TokenDataSchema(BaseModel):
-    username: str or None = None
+    username: str = None
 
 class ShareFileSchema(BaseModel):
     user_ids: list = Field(default=None)
-    files: list = Field(default=None)
-    
+    file_ids: list = Field(default=None)
+ 
+class DownloadFilesSchema(BaseModel):
+    file_ids: list = Field(default=None)
+
+class DeleteFilesSchema(BaseModel):
+    file_ids: List[int] = Field(default=None)

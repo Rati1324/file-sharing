@@ -49,7 +49,7 @@ const FileView = ({ fileData, refreshData }: FileProps) => {
         </Text>
 			</Td>
 			<Td>
-        <FileOperations selectedFiles={[fileData.id]} refreshData={refreshData} fileName={fileData.name} />
+        <FileOperations refreshData={refreshData} fileName={fileData.name} fileId={fileData.id} />
 			</Td>
 			
 			<Td>

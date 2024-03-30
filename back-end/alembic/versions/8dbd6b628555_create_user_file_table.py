@@ -17,7 +17,6 @@ down_revision: Union[str, None] = 'f67526e064fc'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
-
 def upgrade() -> None:
     op.create_table(
         'user_file',
@@ -28,7 +27,6 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(['user_id'], ['user.id']),
         sa.ForeignKeyConstraint(['file_id'], ['file.id']),
     )
-    pass
 
 
 def downgrade() -> None:

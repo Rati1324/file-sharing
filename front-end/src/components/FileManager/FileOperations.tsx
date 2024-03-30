@@ -5,26 +5,43 @@ import { useToast } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import ShareModal from './ShareModal';
 import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 type FileOperationsProps = {
-  selectedFiles: number[],
+  fileId: number | null,
   refreshData: Function,
   fileName: string,
 }
 
-const FileOperations = ({ selectedFiles, fileName, refreshData }: FileOperationsProps ) => {
+const FileOperations = ({ fileId, fileName, refreshData }: FileOperationsProps ) => {
   const toast = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const selectedFiles = useSelector((state: any) => state.fileManager.selectedFiles);
 
   async function deleteFilesHandler() {
     try {
-      deleteFiles(selectedFiles);
+      let res: number;
+      if (fileId == null) {
+        res = await deleteFiles(selectedFiles)
+      }
+      else {
+        res = await deleteFiles([fileId])
+      }
       refreshData();
-      toast({
-        title: 'Deleted successfully', status: 'success',
-        duration: 2000, isClosable: true,
-      })
+
+      if (res !== 200) {
+        toast({
+          title: 'Failed to delete', status: 'error',
+          duration: 2000, isClosable: true,
+        })
+      }
+      else {
+        toast({
+          title: 'Deleted successfully', status: 'success',
+          duration: 2000, isClosable: true,
+        })
+      }
     }
     catch(error: any) {
       if (error.response && error.response.status === 401) {
@@ -42,7 +59,7 @@ const FileOperations = ({ selectedFiles, fileName, refreshData }: FileOperations
     }
   }
 
-  async function downloadFile() {
+  async function downloadFilesHandler() {
     const token: string | null = sessionStorage.getItem('access_token');
 
     try {
@@ -71,7 +88,7 @@ const FileOperations = ({ selectedFiles, fileName, refreshData }: FileOperations
 
   return (
     <>
-      <DownloadIcon onClick={downloadFile} style={{cursor: "pointer"}} />
+      <DownloadIcon onClick={downloadFilesHandler} style={{cursor: "pointer"}} />
       <DeleteFile deleteHandler={deleteFilesHandler} />
       <ShareModal />
     </>

@@ -16,8 +16,8 @@ from core.utils import (
 )
 
 from core.config import Base, engine
-from core.models import User, File as File_Model, ShareFile
-from core.schemas import ShareFileSchema
+from core.models import User, File as File_Model, UserFile
+from core.schemas import ShareFileSchema, DownloadFilesSchema, DeleteFilesSchema
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="signin")
 
@@ -90,7 +90,7 @@ async def get_files(authorization: str = Header(default=None), search: Optional[
         elif size >= sizes["GB"]:
             size /= sizes["GB"]
             suffix = " GB"
-        size = str(round(size, 5)) + suffix
+        size = str(round(size, 2)) + suffix
 
         owner = db.query(User).filter_by(id=file.owner_id).first()
         owner.email = owner.email if user["email"] != owner.email else "Me"
@@ -102,34 +102,6 @@ async def get_files(authorization: str = Header(default=None), search: Optional[
             "owner": owner.email,
         })
     return result
-
-@app.delete("/delete_files")
-async def delete_files(authorization: str = Header(default=None), db: Session = Depends(get_db), res: Request = None):
-    user = get_current_user(db, authorization[7:])
-    file_ids = json.loads(await res.body())
-
-    files = db.query(File_Model).filter(File_Model.id.in_(file_ids)).all()
-    for file in files:
-        if file.owner_id != user["user_id"]:
-            raise credential_exception
-
-    for file in files:
-        db.delete(file)
-    db.commit()
-    return {"status": "deleted successfully"}
-
-@app.get("/download_file/{file_id}")
-def download_file(authorization: str = Header(default=None), file_id: int = None, db: Session = Depends(get_db)):
-    token = authorization[7:]
-    user = get_current_user(db, token)
-    file = db.query(File_Model).filter_by(id=file_id).first()
-    if file.owner_id != user["user_id"]:
-        raise credential_exception
-
-    file_data_io = BytesIO(file.binary_data)
-
-    return StreamingResponse(file_data_io, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file.name}'})
-
 
 @app.post("/share_files")
 def share_file(authorization: str = Header(default=None), share_files_data: ShareFileSchema = None, db: Session = Depends(get_db)):
@@ -145,8 +117,42 @@ def share_file(authorization: str = Header(default=None), share_files_data: Shar
     print(share_files_data)
     shareFile_models = []
     for u in share_files_data.user_ids:
-        for f in share_files_data.files:
-            shareFile_models.append(ShareFile(user_id=u, file_id=f))
+        for f in share_files_data.file_ids:
+            shareFile_models.append(UserFile(user_id=u, file_id=f))
     db.add_all(shareFile_models)
     db.commit()
     return {"result": share_files_data}
+
+@app.get("/download_file")
+def download_file(authorization: str = Header(default=None), file_id: int = None, db: Session = Depends(get_db), file_ids: DownloadFilesSchema = None):
+    token = authorization[7:]
+    user = get_current_user(db, token)
+    file = db.query(File_Model).filter_by(id=file_id).first()
+
+    if file.owner_id != user["user_id"]:
+        raise credential_exception
+
+    file_data_io = BytesIO(file.binary_data)
+
+    return StreamingResponse(file_data_io, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file.name}'})
+
+@app.delete("/delete_files")
+# receive normal request instead of schema, it doesnt work cuz its DELETE
+async def delete_files(authorization: str = Header(default=None), request: Request = None, db: Session = Depends(get_db)):
+    user = get_current_user(db, authorization[7:])
+    file_ids = await request.json()
+
+    files = db.query(File_Model).filter(File_Model.id.in_(file_ids)).all()
+
+    for file in files:
+        if file.owner_id != user["user_id"]:
+            raise credential_exception
+
+    for file in files:
+        print("deleting file")
+        db.delete(file)
+    db.commit()
+    return {"status": "deleted successfully"}
+
+
+

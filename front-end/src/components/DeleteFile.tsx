@@ -1,6 +1,6 @@
 import { AlertDialog, AlertDialogBody, AlertDialogFooter,
   AlertDialogHeader, AlertDialogContent, AlertDialogOverlay,
-  AlertDialogCloseButton, Button, useDisclosure
+  Button, useDisclosure
 } from '@chakra-ui/react';
 import DeleteIcon from '@mui/icons-material/Delete';
 

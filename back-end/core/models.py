@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, LargeBinary, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Date
 from core.config import Base
 
 class User(Base):
@@ -16,10 +16,14 @@ class File(Base):
     name: str = Column(String)
     binary_data = Column(LargeBinary)
     owner_id = Column(Integer, ForeignKey("user.id"))
-    owner = relationship("User", backref="file")
+    owner = relationship("User", backref="file", cascade="all, delete")
 
-class ShareFile(Base):
-    __tablename__ = "share_file"
+
+class UserFile(Base):
+    __tablename__ = "user_file" 
     id: int = Column(Integer, primary_key=True, index=True)
-    file_id = Column(Integer, ForeignKey("file.id"))
     user_id = Column(Integer, ForeignKey("user.id"))
+    file_id = Column(Integer, ForeignKey("file.id"))
+    share_date = Column(Date)
+    user = relationship("User", backref="user_file", cascade="all, delete")
+    file = relationship("File", backref="user_file", cascade="all, delete")
