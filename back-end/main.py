@@ -1,3 +1,9 @@
+# ToDo
+# 1) need to give unique id only once to the fileview array components so that it doesnt re-render unless its changed [x]
+# 2) need to fix FileOperations props to delete file/files and download them []
+# 3) fix mb/kb thing [x]
+# 4) not redirecting when token is expired []
+
 import os, json
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Header, Request
 from fastapi.security import OAuth2PasswordBearer
@@ -72,7 +78,7 @@ async def get_files(authorization: str = Header(default=None), search: Optional[
         files = db.query(File_Model).filter_by(owner_id=cur_user_id).filter(File_Model.name.ilike(f"%{search}%")).all()
     else:
         files = db.query(File_Model).filter_by(owner_id=cur_user_id).all()
-        shared_files = db.query(File_Model).join(ShareFile, File_Model.id == ShareFile.file_id).filter(ShareFile.user_id == cur_user_id).all()
+        shared_files = db.query(File_Model).join(UserFile, File_Model.id == UserFile.file_id).filter(UserFile.user_id == cur_user_id).all()
         files += shared_files
 
     sizes = {"KB": 1000, "MB": 1000000, "GB": 1000000000}

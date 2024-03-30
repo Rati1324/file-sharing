@@ -80,7 +80,7 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
 
   function usernameInputHandler(usernameInput: string) {
     // console.log(usernameInput)
-    let errorMessage = (usernameInput.length < 4) ? ""
+    let errorMessage = (usernameInput.length > 4) ? ""
     : 
     "Your username must contain at least 4 characters"
     

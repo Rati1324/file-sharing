@@ -21,7 +21,6 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
 
   useEffect(() => {
     const token: string | null = sessionStorage.getItem('access_token');
-    console.log(token)
     if (token === null) {
       setLoggedIn(false);
       navigate('/signin');
@@ -52,8 +51,9 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   }, [loggedIn])
 
   useEffect(() => {
+    console.log(files)
     setRows(
-      files.map((file) => (
+      files && files.map((file) => (
         {"component": <FileView fileData={file} refreshData={refreshData} />, "id": file.id}
       ))
     )
