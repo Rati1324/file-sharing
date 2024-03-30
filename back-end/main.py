@@ -152,18 +152,19 @@ def download_file(authorization: str = Header(default=None), db: Session = Depen
         if invalid_creds:
             raise credential_exception
 
-    zipped_files = BytesIO()
-    with zipfile.ZipFile(zipped_files, 'w') as zip_file:
-        for file_id in file_ids.file_ids:
-            file = db.query(File_Model).filter_by(id=file_id).first()
 
-            # Write each file to the zip file
-            zip_file.writestr(file.name, file.binary_data)
+    if len(files) == 1:
+        file_data = BytesIO(files[0].binary_data)
+        return StreamingResponse(file_data, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={files[0].name}'})
 
-    zipped_files.seek(0)
-
-    return StreamingResponse(zipped_files, media_type='application/zip', headers={'Content-Disposition': 'attachment; filename=files.zip'})
-    # return StreamingResponse(zipped_files, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file.name}'})
+    else:
+        zipped_files = BytesIO()
+        with zipfile.ZipFile(zipped_files, 'w') as zip_file:
+            for file_id in file_ids.file_ids:
+                file = db.query(File_Model).filter_by(id=file_id).first()
+                zip_file.writestr(file.name, file.binary_data)
+        zipped_files.seek(0)
+        return StreamingResponse(zipped_files, media_type='application/zip', headers={'Content-Disposition': 'attachment; filename=files.zip'})
 
 @app.delete("/delete_files")
 # receive normal request instead of schema, it doesnt work cuz its DELETE
