@@ -90,8 +90,8 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
   }
 
   return (
-    <Flex minH={'90vh'} align={'center'} justify={'center'} bg="rgba(54, 55, 64, 0.2)">
-      <Stack w={"30%"} spacing={8} mx={'auto'} py={12} px={6}>
+    <Flex minH={'100vh'} align={'center'} justify={'center'} bg="rgba(54, 55, 64, 0.2)">
+      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
             Sign up
@@ -101,7 +101,7 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
           </Text>
         </Stack>
 
-        <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={10}> 
+        <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} minW={'20vw'}> 
           <Stack spacing={4}>
             <FormControl id="firstName" isRequired>
               <FormLabel>Username</FormLabel>
@@ -132,7 +132,7 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
                 </InputRightElement>
               </InputGroup>
 
-            <FormHelperText whiteSpace="pre-wrap">{inputErrorMessages.password}</FormHelperText>
+              <FormHelperText whiteSpace="pre-wrap">{inputErrorMessages.password}</FormHelperText>
             </FormControl>
             <Stack spacing={10} pt={2}>
               <Button
