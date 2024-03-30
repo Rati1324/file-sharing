@@ -19,11 +19,11 @@ class TokenDataSchema(BaseModel):
     username: str = None
 
 class ShareFileSchema(BaseModel):
-    user_ids: list = Field(default=None)
-    file_ids: list = Field(default=None)
+    user_ids: List[int] = Field(default=None)
+    file_ids: List[int] = Field(default=None)
  
 class DownloadFilesSchema(BaseModel):
-    file_ids: list = Field(default=None)
+    file_ids: List[int] = Field(default=None)
 
 class DeleteFilesSchema(BaseModel):
     file_ids: List[int] = Field(default=None)

@@ -9,7 +9,7 @@
 # 2) download []
 # 3) share []
 
-import os, json, datetime
+import os, json, datetime, zipfile
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Header, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -128,29 +128,42 @@ def share_file(authorization: str = Header(default=None), share_files_data: Shar
     date = datetime.datetime.now().date()
 
     share_file_models = []
-    print(share_files_data.user_ids, share_files_data.file_ids)
     for u in share_files_data.user_ids:
         for f in share_files_data.file_ids:
             check_existing = db.query(UserFile).filter_by(user_id=u, file_id=f).first()
-            print(check_existing)
             if check_existing is None:
                 share_file_models.append(UserFile(user_id=u, file_id=f, share_date=date))
     db.add_all(share_file_models)
     db.commit()
     return {"result": share_files_data}
 
-@app.get("/download_file")
-def download_file(authorization: str = Header(default=None), file_id: int = None, db: Session = Depends(get_db), file_ids: DownloadFilesSchema = None):
+@app.post("/download_file")
+def download_file(authorization: str = Header(default=None), db: Session = Depends(get_db), file_ids: DownloadFilesSchema = None):
     token = authorization[7:]
     user = get_current_user(db, token)
-    file = db.query(File_Model).filter_by(id=file_id).first()
 
-    if file.owner_id != user["user_id"]:
-        raise credential_exception
+    files = db.query(File_Model).filter(File_Model.id.in_(file_ids.file_ids)).all()
+    invalid_owner = len([1 for file in files if file.owner_id != user["user_id"]])
+    
+    if invalid_owner:
+        shared_files = db.query(UserFile).filter(UserFile.file_id.in_(file_ids.file_ids)).all()
+        invalid_creds = len([1 for file in shared_files if file.user_id != user["user_id"]])
 
-    file_data_io = BytesIO(file.binary_data)
+        if invalid_creds:
+            raise credential_exception
 
-    return StreamingResponse(file_data_io, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file.name}'})
+    zipped_files = BytesIO()
+    with zipfile.ZipFile(zipped_files, 'w') as zip_file:
+        for file_id in file_ids.file_ids:
+            file = db.query(File_Model).filter_by(id=file_id).first()
+
+            # Write each file to the zip file
+            zip_file.writestr(file.name, file.binary_data)
+
+    zipped_files.seek(0)
+
+    return StreamingResponse(zipped_files, media_type='application/zip', headers={'Content-Disposition': 'attachment; filename=files.zip'})
+    # return StreamingResponse(zipped_files, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file.name}'})
 
 @app.delete("/delete_files")
 # receive normal request instead of schema, it doesnt work cuz its DELETE

@@ -1,6 +1,6 @@
 import DeleteFile from '../DeleteFile';
 import DownloadIcon from '@mui/icons-material/Download';
-import { deleteFiles } from '../../helperFunctions';
+import { deleteFiles, downloadFiles } from '../../helperFunctions';
 import { useToast } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import ShareModal from './ShareModal';
@@ -60,21 +60,13 @@ const FileOperations = ({ fileId, fileName, refreshData }: FileOperationsProps )
   }
 
   async function downloadFilesHandler() {
-    const token: string | null = sessionStorage.getItem('access_token');
-
     try {
-      const res = await fetch(`http://localhost:8000/download_file/${fileId}`, {
-        method: "GET",
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        }
-      })
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.setAttribute('download', fileName);
-      a.click();
+      if (fileId == null) {
+        await downloadFiles(selectedFiles, fileName);
+      }
+      else {
+        await downloadFiles([fileId], fileName);
+      }
     }
 
     catch (error: any) {
