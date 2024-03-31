@@ -48,7 +48,7 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
             to enjoy all of our cool features ✌️
           </Text>
         </Stack>
-        <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} minW={'20vw'}>
+        <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} minW={'27vw'}>
           <Stack spacing={4}>
             <FormControl id="email">
               <FormLabel>Email address</FormLabel>

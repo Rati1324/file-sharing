@@ -4,7 +4,7 @@ import {
     FormHelperText, FormErrorMessage
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import ReactNode, { useState } from 'react';
+import ReactNode, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
 export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void}) => {
@@ -13,6 +13,7 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [inputErrorMessages, setInputErrorMessages] = useState({username: "", email: "", password: ""});
+  const [emptyError, setEmptyError] = useState("");
   const navigate = useNavigate();
 
   async function sendData(data: Record<string, string>): Promise<any> {
@@ -37,11 +38,15 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
   }
 
   function signUpHandler(): ReactNode {
-    console.log((Object.values(inputErrorMessages).filter(val => val !== "")).length)
     const invalid = (Object.values(inputErrorMessages).filter(val => val !== "")).length;
-
-    console.log("errors", inputErrorMessages)
-    if (invalid) return;
+    const empty = [usernameInput, emailInput, passwordInput].filter(val => val === "").length;
+    console.log(inputErrorMessages, emptyError)
+    console.log(empty, invalid)
+    if (invalid && !empty) return;
+    if (empty) {
+      setEmptyError("Please fill out all fields");
+      return;
+    }
     const userData: Record<string, string> = {
       username: usernameInput,
       email: emailInput,
@@ -51,43 +56,41 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
     return null;
   }
 
-  function emailInputHandler(emailInput: string) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    let errorMessage = emailRegex.test(emailInput) ? "" : "Invalid email";
-
-    setEmailInput(emailInput);
-    setTimeout(() => {
-      setInputErrorMessages((prev) => ({...prev, email: errorMessage}));
-    }, 2000)
-  }
-
-  function passwordInputHandler(passwordInput: string) {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-    let errorMessage = passwordRegex.test(passwordInput) ? "" 
-    : 
-    `Password must contain:
-    1) At least one lowercase letter
-    2) At least one uppercase letter
-    3) At least one digit
-    4) Minimum length of 8 characters`;
-
-    setPasswordInput(passwordInput);
-    setTimeout(() => {
-      setInputErrorMessages((prev) => ({...prev, password: errorMessage}));
-    }, 2000)
-  }
-
-  function usernameInputHandler(usernameInput: string) {
-    // console.log(usernameInput)
-    let errorMessage = (usernameInput.length > 4) ? ""
-    : 
-    "Your username must contain at least 4 characters"
-    
-    setUsernameInput(usernameInput);
-    setTimeout(() => {
+  useEffect(() => {
+    if (usernameInput === "") return;
+    const timeOut = setTimeout(() => {
+      let errorMessage = usernameInput.length > 4 ? "" : "Username must be at least 4 characters long";
       setInputErrorMessages((prev) => ({...prev, username: errorMessage}));
     }, 2000)
-  }
+    return () => clearTimeout(timeOut);
+  }, [usernameInput])
+
+  useEffect(() => {
+    if (emailInput === "") return;
+    const timeOut = setTimeout(() => {
+      let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      let errorMessage = emailRegex.test(emailInput) ? "" : "Invalid email";
+      setInputErrorMessages((prev) => ({...prev, email: errorMessage}));
+    }, 2000)
+    return () => clearTimeout(timeOut);
+  }, [emailInput])
+
+  useEffect(() => {
+    if (passwordInput === "") return;
+    const timeOut = setTimeout(() => {
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+      let errorMessage = passwordRegex.test(passwordInput) ? "" 
+      : 
+      `Password must contain:
+      1) At least one lowercase letter
+      2) At least one uppercase letter
+      3) At least one digit
+      4) Minimum length of 8 characters`;
+
+      setInputErrorMessages((prev) => ({...prev, password: errorMessage}));
+    }, 2000)
+    return () => clearTimeout(timeOut);
+  }, [passwordInput])
 
   return (
     <Flex minH={'100vh'} align={'center'} justify={'center'} bg="rgba(54, 55, 64, 0.2)">
@@ -101,16 +104,18 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
           </Text>
         </Stack>
 
-        <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} minW={'20vw'}> 
+        <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} minW={'27vw'}> 
           <Stack spacing={4}>
-            <FormControl id="firstName" isRequired>
+            <FormControl id="username" isInvalid={inputErrorMessages.username !== ""} isRequired>
               <FormLabel>Username</FormLabel>
-              <Input type="text" borderColor="gray.500" onChange={(e) => usernameInputHandler(e.target.value)}/>
+              <Input type="text" borderColor="gray.500" onChange={(e) => setUsernameInput(e.target.value)} required/>
+
+              <FormErrorMessage>{inputErrorMessages.username}</FormErrorMessage>
             </FormControl>
 
             <FormControl id="email" isInvalid={inputErrorMessages.email !== ""} isRequired>
               <FormLabel>Email address</FormLabel>
-              <Input type="email" borderColor="gray.500" onChange={(e) => emailInputHandler(e.target.value)}/>
+              <Input type="email" borderColor="gray.500" onChange={(e) => setEmailInput(e.target.value)}/>
                   
               <FormErrorMessage>{inputErrorMessages.email}</FormErrorMessage>
             </FormControl>
@@ -121,7 +126,7 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
                 <Input 
                   borderColor="gray.500"
                   type={showPassword ? 'text' : 'password'} 
-                  onChange={(e) => passwordInputHandler(e.target.value)}
+                  onChange={(e) => setPasswordInput(e.target.value)}
                 />
                 <InputRightElement h={'full'}>
                   <Button
@@ -133,6 +138,10 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
               </InputGroup>
 
               <FormHelperText whiteSpace="pre-wrap">{inputErrorMessages.password}</FormHelperText>
+            </FormControl>
+
+            <FormControl id="password" isInvalid={emptyError !== ""} isRequired>
+              <FormErrorMessage>{emptyError}</FormErrorMessage>
             </FormControl>
             <Stack spacing={10} pt={2}>
               <Button
