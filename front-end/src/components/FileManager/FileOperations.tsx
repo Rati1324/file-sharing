@@ -4,8 +4,8 @@ import { deleteFiles, downloadFiles } from '../../helperFunctions';
 import { useToast } from '@chakra-ui/react';
 import { useNavigate } from "react-router-dom";
 import ShareModal from './ShareModal';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 
 type FileOperationsProps = {
   fileId: number | null,
@@ -18,16 +18,20 @@ const FileOperations = ({ fileId, fileName, refreshData }: FileOperationsProps )
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const selectedFiles = useSelector((state: any) => state.fileManager.selectedFiles);
+  const [filesToSend, setFileToSend] = useState<number[]>([]); 
+
+  useEffect(() => {
+    if (fileId == null) {
+      setFileToSend(selectedFiles);
+    }
+    else {
+      setFileToSend([fileId]);
+    }
+  }, [selectedFiles])
 
   async function deleteFilesHandler() {
     try {
-      let res: number;
-      if (fileId == null) {
-        res = await deleteFiles(selectedFiles)
-      }
-      else {
-        res = await deleteFiles([fileId])
-      }
+      let res: number = await deleteFiles(filesToSend);
       refreshData();
 
       if (res !== 200) {
@@ -61,12 +65,7 @@ const FileOperations = ({ fileId, fileName, refreshData }: FileOperationsProps )
 
   async function downloadFilesHandler() {
     try {
-      if (fileId == null) {
-        await downloadFiles(selectedFiles, fileName);
-      }
-      else {
-        await downloadFiles([fileId], fileName);
-      }
+      await downloadFiles(filesToSend, fileName);
     }
 
     catch (error: any) {
@@ -78,11 +77,30 @@ const FileOperations = ({ fileId, fileName, refreshData }: FileOperationsProps )
     }
   }
 
+  async function shareFilesHandler() {
+    // const data = {"user_ids": store.selectedUsers, "file_ids": filesToSend};
+    // // fetch to share_files endpoint
+    // const res = await fetch('http://localhost:8000/share_files', {
+    //   method: 'POST',
+    //   body: JSON.stringify(data),
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `Bearer ${sessionStorage.getItem("access_token")}`
+    //   }
+    // })
+    // if (res.status === 200) {
+    //   toast({
+    //     title: 'Shared succesfully', status: 'success',
+    //     duration: 2000, isClosable: true,
+    //   })
+    // }
+  }
+
   return (
     <>
       <DownloadIcon onClick={downloadFilesHandler} style={{cursor: "pointer"}} />
-      <DeleteFile deleteHandler={deleteFilesHandler} />
-      <ShareModal />
+      <DeleteFile deleteFiles={deleteFilesHandler} />
+      <ShareModal shareFiles={shareFilesHandler}/>
     </>
   )
 }

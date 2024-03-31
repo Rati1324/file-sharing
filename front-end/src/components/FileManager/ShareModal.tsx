@@ -17,7 +17,7 @@ export type User = {
   username: string,
 }
 
-const ShareModal = () => {
+const ShareModal = ({ shareFiles }: { shareFiles: Function }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [users, setUsers] = useState<User[]>([]);
   const [rows, setRows] = useState<any[]>([]);
@@ -39,24 +39,7 @@ const ShareModal = () => {
     }))
   }, [users])
 
-  async function shareFiles() {
-    const data = {"user_ids": store.selectedUsers, "file_ids": store.selectedFiles};
-    // fetch to share_files endpoint
-    const res = await fetch('http://localhost:8000/share_files', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessionStorage.getItem("access_token")}`
-      }
-    })
-    if (res.status === 200) {
-      toast({
-        title: 'Shared succesfully', status: 'success',
-        duration: 2000, isClosable: true,
-      })
-    }
-  }
+  
 
   return (
     <>

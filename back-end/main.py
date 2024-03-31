@@ -129,7 +129,9 @@ def share_file(authorization: str = Header(default=None), share_files_data: Shar
 
     share_file_models = []
     for u in share_files_data.user_ids:
+        print("first loop")
         for f in share_files_data.file_ids:
+            print("second loop")
             check_existing = db.query(UserFile).filter_by(user_id=u, file_id=f).first()
             if check_existing is None:
                 share_file_models.append(UserFile(user_id=u, file_id=f, share_date=date))
@@ -152,7 +154,6 @@ def download_file(authorization: str = Header(default=None), db: Session = Depen
         if invalid_creds:
             raise credential_exception
 
-
     if len(files) == 1:
         file_data = BytesIO(files[0].binary_data)
         return StreamingResponse(file_data, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={files[0].name}'})
@@ -160,27 +161,34 @@ def download_file(authorization: str = Header(default=None), db: Session = Depen
     else:
         zipped_files = BytesIO()
         with zipfile.ZipFile(zipped_files, 'w') as zip_file:
+            print(file_ids)
             for file_id in file_ids.file_ids:
                 file = db.query(File_Model).filter_by(id=file_id).first()
                 zip_file.writestr(file.name, file.binary_data)
         zipped_files.seek(0)
         return StreamingResponse(zipped_files, media_type='application/zip', headers={'Content-Disposition': 'attachment; filename=files.zip'})
 
-@app.delete("/delete_files")
+@app.post("/delete_files")
 # receive normal request instead of schema, it doesnt work cuz its DELETE
 async def delete_files(authorization: str = Header(default=None), request: Request = None, db: Session = Depends(get_db)):
     user = get_current_user(db, authorization[7:])
     file_ids = await request.json()
 
     files = db.query(File_Model).filter(File_Model.id.in_(file_ids)).all()
+    shared_files = [row[0] for row in db.query(UserFile.file_id).filter(UserFile.file_id.in_(file_ids)).all()]
 
     for file in files:
-        if file.owner_id != user["user_id"]:
+        if file.owner_id != user["user_id"] and file.id not in shared_files:
+            print(file.id, shared_files)
             raise credential_exception
 
     for file in files:
-        print("deleting file")
-        db.delete(file)
+        if file in shared_files:
+            # db.delete(is_shared)
+            # delete where id is file_id in UserFile table
+            db.query(UserFile).filter(UserFile.file_id==file.id).delete()
+        else:
+            db.delete(file)
     db.commit()
     return {"status": "deleted successfully"}
 

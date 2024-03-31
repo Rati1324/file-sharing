@@ -94,7 +94,8 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
 
   return (
     <Flex minH={'100vh'} align={'center'} justify={'center'} bg="rgba(54, 55, 64, 0.2)">
-      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
+      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} >
+
         <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
             Sign up
@@ -104,20 +105,25 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
           </Text>
         </Stack>
 
-        <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} minW={'27vw'}> 
-          <Stack spacing={4}>
+        <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} minW={'23vw'}> 
+          <Stack spacing={8}>
             <FormControl id="username" isInvalid={inputErrorMessages.username !== ""} isRequired>
               <FormLabel>Username</FormLabel>
-              <Input type="text" borderColor="gray.500" onChange={(e) => setUsernameInput(e.target.value)} required/>
+              <Input type="text" borderColor="gray.500" 
+                onKeyDown={(e) => {if (e.key === "Enter") signUpHandler()}}
+                onChange={(e) => setUsernameInput(e.target.value)} required
+              />
 
-              <FormErrorMessage>{inputErrorMessages.username}</FormErrorMessage>
+              <FormErrorMessage style={{position:"absolute"}}>{inputErrorMessages.username}</FormErrorMessage>
             </FormControl>
 
             <FormControl id="email" isInvalid={inputErrorMessages.email !== ""} isRequired>
               <FormLabel>Email address</FormLabel>
-              <Input type="email" borderColor="gray.500" onChange={(e) => setEmailInput(e.target.value)}/>
+              <Input type="email" borderColor="gray.500" 
+                onKeyDown={(e) => {if (e.key === "Enter") signUpHandler()}}
+                onChange={(e) => setEmailInput(e.target.value)}/>
                   
-              <FormErrorMessage>{inputErrorMessages.email}</FormErrorMessage>
+              <FormErrorMessage style={{position:"absolute"}}>{inputErrorMessages.email}</FormErrorMessage>
             </FormControl>
 
             <FormControl id="password" isInvalid={inputErrorMessages.password !== ""} isRequired>
@@ -126,6 +132,7 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
                 <Input 
                   borderColor="gray.500"
                   type={showPassword ? 'text' : 'password'} 
+                  onKeyDown={(e) => {if (e.key === "Enter") signUpHandler()}}
                   onChange={(e) => setPasswordInput(e.target.value)}
                 />
                 <InputRightElement h={'full'}>
@@ -143,11 +150,8 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
             <FormControl id="password" isInvalid={emptyError !== ""} isRequired>
               <FormErrorMessage>{emptyError}</FormErrorMessage>
             </FormControl>
-            <Stack spacing={10} pt={2}>
-              <Button
-                loadingText="Submitting" size="lg" bg={'blue.400'}
-                color={'white'} _hover={{ bg: 'blue.500', }}
-                onClick={signUpHandler}>
+            <Stack spacing={6} pt={2}>
+              <Button loadingText="Submitting"  bg={'blue.400'} color={'white'} _hover={{ bg: 'blue.500', }} onClick={signUpHandler}>
                 Sign up
               </Button>
             </Stack>
