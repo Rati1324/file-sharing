@@ -137,7 +137,6 @@ def share_file(authorization: str = Header(default=None), share_files_data: Shar
     #         raise credential_exception
 
     # users_file = [ShareFile(file_id: i.file_id, user_id: i.user_id) for i in share_files_data]
-    print(share_files_data)
     shareFile_models = []
     for u in share_files_data.user_ids:
         for f in share_files_data.files:
