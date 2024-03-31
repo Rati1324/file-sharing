@@ -109,10 +109,6 @@ const FileOperations = ({ fileId, fileName, refreshData }: FileOperationsProps )
     }
   }
 
-  
-
-  
-
   return (
     <>
       <DownloadIcon onClick={downloadFilesHandler} style={{cursor: "pointer"}} />

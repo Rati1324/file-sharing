@@ -75,5 +75,6 @@ async def signin(authorization: str = Header(default=None), db: Session = Depend
     token = authorization[7:]
     current_user = get_current_user(db, token)
     users = db.query(User).filter(User.email.like(f"%{search}%")).all()
+    print(len(users))
     users = [i for i in users if i.email != current_user["email"]]
     return users

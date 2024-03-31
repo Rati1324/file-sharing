@@ -175,19 +175,15 @@ async def delete_files(authorization: str = Header(default=None), request: Reque
     shared_files = [row[0] for row in db.query(UserFile.file_id).filter(UserFile.file_id.in_(file_ids)).all()]
 
     for file in files:
-        if file.owner_id != user["user_id"] and file.id not in shared_files:
-            raise credential_exception
-
-    for file in files:
-        if file.id in shared_files:
+        if file.owner_id == user["user_id"]:
+            db.delete(file)
+        elif file.id not in shared_files:
             db.query(UserFile).filter(UserFile.file_id==file.id).delete()
         else:
-            db.delete(file)
+            raise credential_exception
+        
     db.commit()
     return {"status": "deleted successfully"}
-
-
-
 
 @app.get("/download_file/{file_id}")
 def download_file(authorization: str = Header(default=None), file_id: int = None, db: Session = Depends(get_db)):
