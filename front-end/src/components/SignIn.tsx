@@ -66,7 +66,7 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
               <Input type="password" 
                 borderColor="gray.500"
                 onKeyDown={(e) => {
-                  if (e.key === "enter") loginHandler()
+                  if (e.key === "Enter") loginHandler()
                 }}
                 onChange={(e) => setPasswordInput(e.target.value)}
               />

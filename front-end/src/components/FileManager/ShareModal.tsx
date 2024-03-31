@@ -39,7 +39,6 @@ const ShareModal = ({ shareFiles }: { shareFiles: Function }) => {
     }))
   }, [users])
 
-  
 
   return (
     <>

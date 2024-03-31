@@ -129,9 +129,7 @@ def share_file(authorization: str = Header(default=None), share_files_data: Shar
 
     share_file_models = []
     for u in share_files_data.user_ids:
-        print("first loop")
         for f in share_files_data.file_ids:
-            print("second loop")
             check_existing = db.query(UserFile).filter_by(user_id=u, file_id=f).first()
             if check_existing is None:
                 share_file_models.append(UserFile(user_id=u, file_id=f, share_date=date))
@@ -169,7 +167,6 @@ def download_file(authorization: str = Header(default=None), db: Session = Depen
         return StreamingResponse(zipped_files, media_type='application/zip', headers={'Content-Disposition': 'attachment; filename=files.zip'})
 
 @app.post("/delete_files")
-# receive normal request instead of schema, it doesnt work cuz its DELETE
 async def delete_files(authorization: str = Header(default=None), request: Request = None, db: Session = Depends(get_db)):
     user = get_current_user(db, authorization[7:])
     file_ids = await request.json()
@@ -179,13 +176,10 @@ async def delete_files(authorization: str = Header(default=None), request: Reque
 
     for file in files:
         if file.owner_id != user["user_id"] and file.id not in shared_files:
-            print(file.id, shared_files)
             raise credential_exception
 
     for file in files:
-        if file in shared_files:
-            # db.delete(is_shared)
-            # delete where id is file_id in UserFile table
+        if file.id in shared_files:
             db.query(UserFile).filter(UserFile.file_id==file.id).delete()
         else:
             db.delete(file)

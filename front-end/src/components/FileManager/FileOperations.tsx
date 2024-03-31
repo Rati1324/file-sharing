@@ -18,6 +18,7 @@ const FileOperations = ({ fileId, fileName, refreshData }: FileOperationsProps )
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const selectedFiles = useSelector((state: any) => state.fileManager.selectedFiles);
+  const selectedUsers = useSelector((state: any) => state.fileManager.selectedUsers);
   const [filesToSend, setFileToSend] = useState<number[]>([]); 
 
   useEffect(() => {
@@ -28,6 +29,51 @@ const FileOperations = ({ fileId, fileName, refreshData }: FileOperationsProps )
       setFileToSend([fileId]);
     }
   }, [selectedFiles])
+
+  async function shareFilesHandler() {
+    const data = {"user_ids": selectedUsers, "file_ids": filesToSend};
+    // fetch to share_files endpoint
+    const res = await fetch('http://localhost:8000/share_files', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem("access_token")}`
+      }
+    })
+    if (res.status === 200) {
+      toast({
+        title: 'Shared succesfully', status: 'success',
+        duration: 2000, isClosable: true,
+      })
+    }
+    else if (res.status === 401) {
+      toast({
+        title: 'Unauthorized request.', status: 'error',
+        duration: 2000, isClosable: true,
+      })
+    }
+    else {
+      toast({
+        title: 'Failed to share', status: 'error',
+        duration: 2000, isClosable: true,
+      })
+    }
+  }
+
+  async function downloadFilesHandler() {
+    try {
+      await downloadFiles(filesToSend, fileName);
+    }
+
+    catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        console.log('This is a 401 error!');
+      } else {
+        console.log('This is an unexpected error:', error);
+      }
+    }
+  }
 
   async function deleteFilesHandler() {
     try {
@@ -63,38 +109,9 @@ const FileOperations = ({ fileId, fileName, refreshData }: FileOperationsProps )
     }
   }
 
-  async function downloadFilesHandler() {
-    try {
-      await downloadFiles(filesToSend, fileName);
-    }
+  
 
-    catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        console.log('This is a 401 error!');
-      } else {
-        console.log('This is an unexpected error:', error);
-      }
-    }
-  }
-
-  async function shareFilesHandler() {
-    // const data = {"user_ids": store.selectedUsers, "file_ids": filesToSend};
-    // // fetch to share_files endpoint
-    // const res = await fetch('http://localhost:8000/share_files', {
-    //   method: 'POST',
-    //   body: JSON.stringify(data),
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Bearer ${sessionStorage.getItem("access_token")}`
-    //   }
-    // })
-    // if (res.status === 200) {
-    //   toast({
-    //     title: 'Shared succesfully', status: 'success',
-    //     duration: 2000, isClosable: true,
-    //   })
-    // }
-  }
+  
 
   return (
     <>
