@@ -9,6 +9,7 @@ import SearchBar from './SearchBar';
 import { useSelector } from 'react-redux';
 import Table from '../Table';
 import UserView from './UserView';
+import { useToast } from '@chakra-ui/react';
 
 export type User = {
   id: number,
@@ -16,10 +17,11 @@ export type User = {
   username: string,
 }
 
-const ShareModal = () => {
+const ShareModal = ({ shareFiles }: { shareFiles: Function }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [users, setUsers] = useState<User[]>([]);
   const [rows, setRows] = useState<any[]>([]);
+  const toast = useToast();
   const columnNames = ["Email", "Username"];
   const store = useSelector((state: any) => state.fileManager);
 
@@ -37,18 +39,6 @@ const ShareModal = () => {
     }))
   }, [users])
 
-  async function shareFiles() {
-    const data = {"user_ids": store.selectedUsers, "files": store.selectedFiles};
-    // fetch to share_files endpoint
-    const res = await fetch('http://localhost:8000/share_files', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessionStorage.getItem("access_token")}`
-      }
-    })
-  }
 
   return (
     <>

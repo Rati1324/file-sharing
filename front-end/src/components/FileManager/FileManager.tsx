@@ -10,7 +10,6 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Table from '../Table';
 import FileView from './FileView';
-import { useSelector } from 'react-redux';
 
 const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedIn: Function }) => {
   const toast = useToast();
@@ -19,7 +18,6 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   const [file, setFile] = useState<File>(new File([], ''));
   const [files, setFiles] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]);
-  const selectedFiles = useSelector((state: any) => state.fileManager.selectedFiles);
 
   useEffect(() => {
     const token: string | null = sessionStorage.getItem('access_token');
@@ -53,8 +51,9 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
   }, [loggedIn])
 
   useEffect(() => {
+    console.log(files)
     setRows(
-      files.map((file) => (
+      files && files.map((file) => (
         {"component": <FileView fileData={file} refreshData={refreshData} />, "id": file.id}
       ))
     )
@@ -120,13 +119,13 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
 
           <HStack>
             <SearchBar tableName={"files"} setData={(data: Array<File | User>) => setFiles(data)} width={"30%"} />
-            <FileOperations refreshData={refreshData} fileName={""} selectedFiles={selectedFiles} />
+            <FileOperations refreshData={refreshData} fileName={""} fileId={null} />
           </HStack>
 
           <Table columnNames={columnNames} rows={rows} />
 
           <Stack mt={20}>
-            <input type="file"  onChange={setFileUploadHandler} />
+            <input type="file" onChange={setFileUploadHandler} />
             <Button onClick={uploadFileHandler}>Upload</Button>
           </Stack>
         </Stack>

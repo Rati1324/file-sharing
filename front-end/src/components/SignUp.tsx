@@ -4,7 +4,7 @@ import {
     FormHelperText, FormErrorMessage
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import ReactNode, { useState } from 'react';
+import ReactNode, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
 export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void}) => {
@@ -13,10 +13,10 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [inputErrorMessages, setInputErrorMessages] = useState({username: "", email: "", password: ""});
+  const [emptyError, setEmptyError] = useState("");
   const navigate = useNavigate();
 
   async function sendData(data: Record<string, string>): Promise<any> {
-    console.log("sds")
     try {
       const response = await fetch("http://127.0.0.1:8000/signup", {
           method: "POST",
@@ -38,11 +38,15 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
   }
 
   function signUpHandler(): ReactNode {
-    console.log((Object.values(inputErrorMessages).filter(val => val !== "")).length)
     const invalid = (Object.values(inputErrorMessages).filter(val => val !== "")).length;
-
-    console.log("errors", inputErrorMessages)
-    if (invalid) return;
+    const empty = [usernameInput, emailInput, passwordInput].filter(val => val === "").length;
+    console.log(inputErrorMessages, emptyError)
+    console.log(empty, invalid)
+    if (invalid && !empty) return;
+    if (empty) {
+      setEmptyError("Please fill out all fields");
+      return;
+    }
     const userData: Record<string, string> = {
       username: usernameInput,
       email: emailInput,
@@ -52,47 +56,46 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
     return null;
   }
 
-  function emailInputHandler(emailInput: string) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    let errorMessage = emailRegex.test(emailInput) ? "" : "Invalid email";
-
-    setEmailInput(emailInput);
-    setTimeout(() => {
-      setInputErrorMessages((prev) => ({...prev, email: errorMessage}));
-    }, 2000)
-  }
-
-  function passwordInputHandler(passwordInput: string) {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-    let errorMessage = passwordRegex.test(passwordInput) ? "" 
-    : 
-    `Password must contain:
-    1) At least one lowercase letter
-    2) At least one uppercase letter
-    3) At least one digit
-    4) Minimum length of 8 characters`;
-
-    setPasswordInput(passwordInput);
-    setTimeout(() => {
-      setInputErrorMessages((prev) => ({...prev, password: errorMessage}));
-    }, 2000)
-  }
-
-  function usernameInputHandler(usernameInput: string) {
-    // console.log(usernameInput)
-    let errorMessage = (usernameInput.length < 4) ? ""
-    : 
-    "Your username must contain at least 4 characters"
-    
-    setUsernameInput(usernameInput);
-    setTimeout(() => {
+  useEffect(() => {
+    if (usernameInput === "") return;
+    const timeOut = setTimeout(() => {
+      let errorMessage = usernameInput.length > 4 ? "" : "Username must be at least 4 characters long";
       setInputErrorMessages((prev) => ({...prev, username: errorMessage}));
     }, 2000)
-  }
+    return () => clearTimeout(timeOut);
+  }, [usernameInput])
+
+  useEffect(() => {
+    if (emailInput === "") return;
+    const timeOut = setTimeout(() => {
+      let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      let errorMessage = emailRegex.test(emailInput) ? "" : "Invalid email";
+      setInputErrorMessages((prev) => ({...prev, email: errorMessage}));
+    }, 2000)
+    return () => clearTimeout(timeOut);
+  }, [emailInput])
+
+  useEffect(() => {
+    if (passwordInput === "") return;
+    const timeOut = setTimeout(() => {
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+      let errorMessage = passwordRegex.test(passwordInput) ? "" 
+      : 
+      `Password must contain:
+      1) At least one lowercase letter
+      2) At least one uppercase letter
+      3) At least one digit
+      4) Minimum length of 8 characters`;
+
+      setInputErrorMessages((prev) => ({...prev, password: errorMessage}));
+    }, 2000)
+    return () => clearTimeout(timeOut);
+  }, [passwordInput])
 
   return (
-    <Flex minH={'90vh'} align={'center'} justify={'center'} bg="rgba(54, 55, 64, 0.2)">
-      <Stack w={"30%"} spacing={8} mx={'auto'} py={12} px={6}>
+    <Flex minH={'100vh'} align={'center'} justify={'center'} bg="rgba(54, 55, 64, 0.2)">
+      <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} >
+
         <Stack align={'center'}>
           <Heading fontSize={'4xl'} textAlign={'center'}>
             Sign up
@@ -102,18 +105,25 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
           </Text>
         </Stack>
 
-        <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={10}> 
-          <Stack spacing={4}>
-            <FormControl id="firstName" isRequired>
+        <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} minW={'23vw'}> 
+          <Stack spacing={8}>
+            <FormControl id="username" isInvalid={inputErrorMessages.username !== ""} isRequired>
               <FormLabel>Username</FormLabel>
-              <Input type="text" borderColor="gray.500" onChange={(e) => usernameInputHandler(e.target.value)}/>
+              <Input type="text" borderColor="gray.500" 
+                onKeyDown={(e) => {if (e.key === "Enter") signUpHandler()}}
+                onChange={(e) => setUsernameInput(e.target.value)} required
+              />
+
+              <FormErrorMessage style={{position:"absolute"}}>{inputErrorMessages.username}</FormErrorMessage>
             </FormControl>
 
             <FormControl id="email" isInvalid={inputErrorMessages.email !== ""} isRequired>
               <FormLabel>Email address</FormLabel>
-              <Input type="email" borderColor="gray.500" onChange={(e) => emailInputHandler(e.target.value)}/>
+              <Input type="email" borderColor="gray.500" 
+                onKeyDown={(e) => {if (e.key === "Enter") signUpHandler()}}
+                onChange={(e) => setEmailInput(e.target.value)}/>
                   
-              <FormErrorMessage>{inputErrorMessages.email}</FormErrorMessage>
+              <FormErrorMessage style={{position:"absolute"}}>{inputErrorMessages.email}</FormErrorMessage>
             </FormControl>
 
             <FormControl id="password" isInvalid={inputErrorMessages.password !== ""} isRequired>
@@ -122,7 +132,8 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
                 <Input 
                   borderColor="gray.500"
                   type={showPassword ? 'text' : 'password'} 
-                  onChange={(e) => passwordInputHandler(e.target.value)}
+                  onKeyDown={(e) => {if (e.key === "Enter") signUpHandler()}}
+                  onChange={(e) => setPasswordInput(e.target.value)}
                 />
                 <InputRightElement h={'full'}>
                   <Button
@@ -133,13 +144,14 @@ export const SignUp = ({ setLoggedIn }: {setLoggedIn: (value: boolean) => void})
                 </InputRightElement>
               </InputGroup>
 
-            <FormHelperText whiteSpace="pre-wrap">{inputErrorMessages.password}</FormHelperText>
+              <FormHelperText whiteSpace="pre-wrap">{inputErrorMessages.password}</FormHelperText>
             </FormControl>
-            <Stack spacing={10} pt={2}>
-              <Button
-                loadingText="Submitting" size="lg" bg={'blue.400'}
-                color={'white'} _hover={{ bg: 'blue.500', }}
-                onClick={signUpHandler}>
+
+            <FormControl id="password" isInvalid={emptyError !== ""} isRequired>
+              <FormErrorMessage>{emptyError}</FormErrorMessage>
+            </FormControl>
+            <Stack spacing={6} pt={2}>
+              <Button loadingText="Submitting"  bg={'blue.400'} color={'white'} _hover={{ bg: 'blue.500', }} onClick={signUpHandler}>
                 Sign up
               </Button>
             </Stack>

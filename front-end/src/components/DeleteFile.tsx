@@ -1,12 +1,12 @@
 import { AlertDialog, AlertDialogBody, AlertDialogFooter,
   AlertDialogHeader, AlertDialogContent, AlertDialogOverlay,
-  AlertDialogCloseButton, Button, useDisclosure
+  Button, useDisclosure
 } from '@chakra-ui/react';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import React from 'react';  
 
-const DeleteFile = ({ deleteHandler } : { deleteHandler: () => void }) => {
+const DeleteFile = ({ deleteFiles } : { deleteFiles: () => void }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 	const cancelRef = React.useRef<HTMLButtonElement>(null)
 
@@ -32,7 +32,7 @@ const DeleteFile = ({ deleteHandler } : { deleteHandler: () => void }) => {
               <Button ref={cancelRef} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme='red' onClick={() => {deleteHandler(); onClose()}} ml={3}>
+              <Button colorScheme='red' onClick={() => {deleteFiles(); onClose()}} ml={3}>
                 Delete
               </Button>
             </AlertDialogFooter>

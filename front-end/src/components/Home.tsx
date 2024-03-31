@@ -10,9 +10,6 @@ const textStyles = {
 }
 
 const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
-  useEffect(() => {
-    console.log('hi')
-  }, [])
 
 	return (
 		<Flex minH={'83vh'} bg="rgba(54, 55, 64, 0.2)">

@@ -40,20 +40,15 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
   }
 
   return (
-    <Flex minH={'100vh'} align={'center'} justify={'center'}
-      bg="rgba(54, 55, 64, 0.2)">
+    <Flex minH={'100vh'} align={'center'} justify={'center'} bg="rgba(54, 55, 64, 0.2)">
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
-          <Heading fontSize={'4xl'}>Sign in to your account</Heading>
+          <Heading fontSize={'4xl'}>Sign in </Heading>
           <Text fontSize={'lg'} color={'gray.600'}>
             to enjoy all of our cool features ✌️
           </Text>
         </Stack>
-        <Box
-          rounded={'lg'}
-          bg={useColorModeValue('white', 'gray.700')}
-          boxShadow={'lg'}
-          p={8}>
+        <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.700')} boxShadow={'lg'} p={8} minW={'23vw'}>
           <Stack spacing={4}>
             <FormControl id="email">
               <FormLabel>Email address</FormLabel>
@@ -65,8 +60,9 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
                 onChange={(e) => setEmailInput(e.target.value)} 
               />
             </FormControl>
+
             <FormControl id="password">
-              <FormLabel>Password</FormLabel>
+              <FormLabel>password</FormLabel>
               <Input type="password" 
                 borderColor="gray.500"
                 onKeyDown={(e) => {
@@ -81,9 +77,9 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
                 direction={{ base: 'column', sm: 'row' }}
                 align={'start'}
                 justify={'space-between'}>
-                <Checkbox>Remember me</Checkbox>
-                <Text color={'blue.400'}>Forgot password?</Text>
-              </Stack>
+                <Checkbox>remember me</Checkbox>
+                <Text color={'blue.400'}>forgot password?</Text>
+              </Stack> 
               <Text color={'red.400'}>{message}</Text>
               <Button bg={'blue.400'} color={'white'} _hover={{bg: 'blue.500'}} onClick={loginHandler}>
                 Sign in
