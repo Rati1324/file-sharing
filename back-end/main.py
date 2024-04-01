@@ -2,12 +2,13 @@
 # 1) need to give unique id only once to the fileview array components so that it doesnt re-render unless its changed [x]
 # 2) need to fix FileOperations props to delete file/files and download them [x]
 # 3) fix mb/kb thing [x]
-# 4) not redirecting when token is expired []
+# 4) cascade when deleting shared files [x]
+# 5) not redirecting when token is expired []
 
 # main features:
-# 1)delection [x]
-# 2) download []
-# 3) share []
+# 1) delection [x]
+# 2) download [x]
+# 3) share [x]
 
 import os, json, datetime, zipfile
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Header, Request
@@ -176,7 +177,8 @@ async def delete_files(authorization: str = Header(default=None), request: Reque
 
     for file in files:
         if file.owner_id == user["user_id"]:
-            db.delete(file)
+            db_user = db.query(User).filter_by(id=user["user_id"]).first()
+            db_user.file.remove(file)
         elif file.id not in shared_files:
             db.query(UserFile).filter(UserFile.file_id==file.id).delete()
         else:
@@ -201,14 +203,13 @@ def download_file(authorization: str = Header(default=None), file_id: int = None
 @app.post("/share_files")
 def share_file(authorization: str = Header(default=None), share_files_data: ShareFileSchema = None, db: Session = Depends(get_db)):
     token = authorization[7:]
-    # current_user = get_current_user(db, token)
+    current_user = get_current_user(db, token)
 
-    # for file in share_files_data.files:
-    #     db_file = db.query(File_Model).filter_by(id=file).first()
-    #     if db_file.owner_id != current_user["user_id"]:
-    #         raise credential_exception
+    for file in share_files_data.files:
+        db_file = db.query(File_Model).filter_by(id=file).first()
+        if db_file.owner_id != current_user["user_id"]:
+            raise credential_exception
 
-    # users_file = [ShareFile(file_id: i.file_id, user_id: i.user_id) for i in share_files_data]
     shareFile_models = []
     for u in share_files_data.user_ids:
         for f in share_files_data.files:

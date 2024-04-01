@@ -54,5 +54,4 @@ def get_current_user(db: Session, token: str = None):
 
 def user_exists(db: Session, user_email: str = None):
     user = db.query(User).filter_by(email=user_email).first()
-    print(user)
     return user is not None
