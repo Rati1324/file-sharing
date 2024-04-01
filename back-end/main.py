@@ -175,16 +175,61 @@ async def delete_files(authorization: str = Header(default=None), request: Reque
     shared_files = [row[0] for row in db.query(UserFile.file_id).filter(UserFile.file_id.in_(file_ids)).all()]
 
     for file in files:
-        if file.owner_id != user["user_id"] and file.id not in shared_files:
-            raise credential_exception
-
-    for file in files:
-        if file.id in shared_files:
+        if file.owner_id == user["user_id"]:
+            db_user = db.query(User).filter_by(id=user["user_id"]).first()
+            db_user.file.remove(file)
+        elif file.id not in shared_files:
             db.query(UserFile).filter(UserFile.file_id==file.id).delete()
         else:
-            db.delete(file)
+            raise credential_exception
+        
     db.commit()
     return {"status": "deleted successfully"}
 
+@app.get("/download_file")
+def download_file(authorization: str = Header(default=None), db: Session = Depends(get_db), file_ids: DownloadFilesSchema = None):
+    token = authorization[7:]
+    user = get_current_user(db, token)
 
+    files = db.query(File_Model).filter(File_Model.id.in_(file_ids.file_ids)).all()
+    invalid_owner = len([1 for file in files if file.owner_id != user["user_id"]])
+    
+    if invalid_owner:
+        shared_files = db.query(UserFile).filter(UserFile.file_id.in_(file_ids.file_ids)).all()
+        invalid_creds = len([1 for file in shared_files if file.user_id != user["user_id"]])
 
+        if invalid_creds:
+            raise credential_exception
+
+    if len(files) == 1:
+        file_data = BytesIO(files[0].binary_data)
+        return StreamingResponse(file_data, media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={files[0].name}'})
+
+    else:
+        zipped_files = BytesIO()
+        with zipfile.ZipFile(zipped_files, 'w') as zip_file:
+            print(file_ids)
+            for file_id in file_ids.file_ids:
+                file = db.query(File_Model).filter_by(id=file_id).first()
+                zip_file.writestr(file.name, file.binary_data)
+        zipped_files.seek(0)
+        return StreamingResponse(zipped_files, media_type='application/zip', headers={'Content-Disposition': 'attachment; filename=files.zip'})
+
+@app.post("/share_files")
+def share_file(authorization: str = Header(default=None), share_files_data: ShareFileSchema = None, db: Session = Depends(get_db)):
+    token = authorization[7:]
+    current_user = get_current_user(db, token)
+
+    for file in share_files_data.files:
+        db_file = db.query(File_Model).filter_by(id=file).first()
+        if db_file.owner_id != current_user["user_id"]:
+            raise credential_exception
+
+    users_file = [ShareFile(file_id: i.file_id, user_id: i.user_id) for i in share_files_data]
+    shareFile_models = []
+    for u in share_files_data.user_ids:
+        for f in share_files_data.files:
+            shareFile_models.append(ShareFile(user_id=u, file_id=f))
+    db.add_all(shareFile_models)
+    db.commit()
+    return {"result": share_files_data}
