@@ -175,10 +175,11 @@ async def delete_files(authorization: str = Header(default=None), request: Reque
     shared_files = [row[0] for row in db.query(UserFile.file_id).filter(UserFile.file_id.in_(file_ids)).all()]
 
     for file in files:
+        print(file.id, shared_files)
         if file.owner_id == user["user_id"]:
             db_user = db.query(User).filter_by(id=user["user_id"]).first()
             db_user.file.remove(file)
-        elif file.id not in shared_files:
+        elif file.id in shared_files:
             db.query(UserFile).filter(UserFile.file_id==file.id).delete()
         else:
             raise credential_exception
@@ -225,7 +226,6 @@ def share_file(authorization: str = Header(default=None), share_files_data: Shar
         if db_file.owner_id != current_user["user_id"]:
             raise credential_exception
 
-    users_file = [ShareFile(file_id: i.file_id, user_id: i.user_id) for i in share_files_data]
     shareFile_models = []
     for u in share_files_data.user_ids:
         for f in share_files_data.files:
