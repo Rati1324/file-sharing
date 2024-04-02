@@ -3,6 +3,7 @@
 # 2) need to fix FileOperations props to delete file/files and download them [x]
 # 3) fix mb/kb thing [x]
 # 4) not redirecting when token is expired []
+# 5) test once again and merge with main []
 
 # main features:
 # 1)delection [x]
@@ -43,8 +44,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all HTTP headers
+    allow_methods=["*"], 
+    allow_headers=["*"], 
 )
 
 Base.metadata.create_all(bind=engine)
@@ -124,14 +125,16 @@ def share_file(authorization: str = Header(default=None), share_files_data: Shar
         if db_file.owner_id != current_user["user_id"]:
             raise credential_exception
 
-    # get current date
     date = datetime.datetime.now().date()
 
     share_file_models = []
     for u in share_files_data.user_ids:
+        print("for 1")
         for f in share_files_data.file_ids:
+            print("for 2")
             check_existing = db.query(UserFile).filter_by(user_id=u, file_id=f).first()
             if check_existing is None:
+                print("if 1")
                 share_file_models.append(UserFile(user_id=u, file_id=f, share_date=date))
     db.add_all(share_file_models)
     db.commit()
@@ -175,10 +178,10 @@ async def delete_files(authorization: str = Header(default=None), request: Reque
     shared_files = [row[0] for row in db.query(UserFile.file_id).filter(UserFile.file_id.in_(file_ids)).all()]
 
     for file in files:
-        print(file.id, shared_files)
         if file.owner_id == user["user_id"]:
-            db_user = db.query(User).filter_by(id=user["user_id"]).first()
-            db_user.file.remove(file)
+            # cascade doesnt work for some reason so i have to do this by hand
+            db.query(UserFile).filter(UserFile.file_id==file.id).delete()
+            db.delete(file)
         elif file.id in shared_files:
             db.query(UserFile).filter(UserFile.file_id==file.id).delete()
         else:
@@ -226,10 +229,10 @@ def share_file(authorization: str = Header(default=None), share_files_data: Shar
         if db_file.owner_id != current_user["user_id"]:
             raise credential_exception
 
-    shareFile_models = []
+    user_file_models = []
     for u in share_files_data.user_ids:
         for f in share_files_data.files:
-            shareFile_models.append(ShareFile(user_id=u, file_id=f))
-    db.add_all(shareFile_models)
+            user_file_models.append(UserFile(user_id=u, file_id=f))
+    db.add_all(user_file_models)
     db.commit()
     return {"result": share_files_data}
