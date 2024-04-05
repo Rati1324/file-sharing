@@ -28,7 +28,7 @@ Make sure you have the following software installed on your system:
 
 5. Access the API documentation:
 
-    API documentation (Swagger): http://localhost:8000/docs
+    API documentation (Swagger): http://localhost:3000/docs
 
     Interactive ReDoc documentation: http://localhost:8000/redoc
     
