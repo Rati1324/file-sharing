@@ -21,10 +21,6 @@ from core.schemas import ShareFileSchema, DownloadFilesSchema, DeleteFilesSchema
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="signin")
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("EXPIRE_MINUTES")
-
 app = FastAPI()
 app.include_router(user_services)
 
