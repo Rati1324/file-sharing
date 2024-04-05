@@ -2,9 +2,11 @@
 
 This repository contains a full-stack project for a file sharing platform that can be easily set up and run using Docker Compose.
 
-Main functionalities with files: Upload, Share, Download, Delete, Search
+Main functionalities with files: Upload, Share, Download, Delete, Search.
 
-Technologies used: FastAPI, React, ChakraUI, PostrgreSQL, Docker
+Authentication using JWT.
+
+Technologies used: FastAPI, React, ChakraUI, PostrgreSQL, Docker.
 
 ## Prerequisites
 
