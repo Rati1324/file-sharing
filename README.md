@@ -1,6 +1,7 @@
 # File Sharing Platform in FastAPI + React
 
 This repository contains a full-stack project for a file-sharing platform that can be easily set up and run using Docker Compose.
+
 Technologies user: FastAPI, React, ChakraUI, PostrgreSQL, Docker
 
 ## Prerequisites
