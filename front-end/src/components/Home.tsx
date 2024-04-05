@@ -32,11 +32,11 @@ const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
 								files with other users.
 							</Text>
 							{userLoggedIn ?
+								<NavLink to="/file_manager" >
 								<Button width="200px" _hover={{ backgroundColor: 'gray.400' }}>
-									<NavLink to="/file_manager" >
 										<Text fontSize="xl" style={{...textStyles}}>Go to file manager</Text>
-									</NavLink>
 								</Button>
+									</NavLink>
 								:
 								null
 							}
