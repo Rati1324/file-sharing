@@ -28,8 +28,8 @@ const Home = ({ userLoggedIn }: { userLoggedIn: boolean }) => {
 							</Heading>
 
 							<Text fontSize={'xl'} mb={5} style={{... textStyles}}>
-								this platform allows you to share files with other users and also
-								have a place to store all your files and stuff...
+								This platform allows you to sign up and securely store and share
+								files with other users.
 							</Text>
 							{userLoggedIn ?
 								<Button width="200px" _hover={{ backgroundColor: 'gray.400' }}>
@@ -71,8 +71,7 @@ const StatsText = ({ children }: { children: ReactNode }) => (
 )
 
 const stats = [
-	{ title: 'free features', content: <StatsText>up to 2 gbs without account supports most formats</StatsText>},
-	{ title: 'premium features', content: <StatsText>upload more than 2gbs with any format, allows sharing</StatsText>},
+	{ title: 'Technologies used', content: <StatsText>FastAPI, React, Docker, Postgresql</StatsText>},
 ]
 
 export default Home
