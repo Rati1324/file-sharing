@@ -73,13 +73,6 @@ const SignIn = ({ setLoggedIn }:{setLoggedIn: (value: boolean) => void}) => {
             </FormControl>
 
             <Stack spacing={10}>
-              <Stack
-                direction={{ base: 'column', sm: 'row' }}
-                align={'start'}
-                justify={'space-between'}>
-                <Checkbox>remember me</Checkbox>
-                <Text color={'blue.400'}>forgot password?</Text>
-              </Stack> 
               <Text color={'red.400'}>{message}</Text>
               <Button bg={'blue.400'} color={'white'} _hover={{bg: 'blue.500'}} onClick={loginHandler}>
                 Sign in

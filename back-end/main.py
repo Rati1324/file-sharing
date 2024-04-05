@@ -1,14 +1,3 @@
-# ToDo
-# 1) need to give unique id only once to the fileview array components so that it doesnt re-render unless its changed [x]
-# 2) need to fix FileOperations props to delete file/files and download them [x]
-# 3) fix mb/kb thing [x]
-# 4) not redirecting when token is expired []
-
-# main features:
-# 1)delection [x]
-# 2) download []
-# 3) share []
-
 import os, json, datetime, zipfile
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Header, Request
 from fastapi.security import OAuth2PasswordBearer
@@ -34,7 +23,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="signin")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("EXPIRE_MINUTES")
 
 app = FastAPI()
 app.include_router(user_services)
@@ -43,15 +32,11 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all HTTP headers
+    allow_methods=["*"], 
+    allow_headers=["*"], 
 )
 
 Base.metadata.create_all(bind=engine)
-
-@app.get("/test")
-async def test():
-    return {"status": "ok"}
 
 @app.post("/upload_file")
 async def upload_file(authorization: str = Header(default=None), file: UploadFile = File, db: Session = Depends(get_db)):
