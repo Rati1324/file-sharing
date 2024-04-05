@@ -112,10 +112,10 @@ const FileManager = ({ loggedIn, setLoggedIn } : { loggedIn: boolean, setLoggedI
       <Stack minH="60vh" textAlign="center" mt={6}>
         <Text fontSize="30">File Manager</Text>
         <Stack p={5} minH="50vh" width="50%" mx="auto" bg="gray.100" spacing={4} borderRadius="10">
-          <HStack>
+          {/* <HStack>
             <ArrowBackIosIcon style={{ fontSize: 40 }} />
             <ArrowForwardIosIcon style={{ fontSize: 40 }} />
-          </HStack>
+          </HStack> */}
 
           <HStack>
             <SearchBar tableName={"files"} setData={(data: Array<File | User>) => setFiles(data)} width={"30%"} />
