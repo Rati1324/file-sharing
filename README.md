@@ -39,3 +39,6 @@ To stop the application and remove the Docker containers, press Ctrl+C in the te
    
    ```bash
    docker-compose down
+
+![select](https://github.com/Rati1324/file-sharing/assets/61045363/29aaef8b-6b9d-41b2-9b6d-e97f579ee324)
+
