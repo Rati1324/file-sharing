@@ -40,6 +40,12 @@ To stop the application and remove the Docker containers, press Ctrl+C in the te
    ```bash
    docker-compose down
    ```
-User friendly UI to select and share your uploaded files with other users
+Selecting files to share with other users:
 ![select](https://github.com/Rati1324/file-sharing/assets/61045363/29aaef8b-6b9d-41b2-9b6d-e97f579ee324)
 
+Selecting users to share with:
+![share](https://github.com/Rati1324/file-sharing/assets/61045363/15278432-bc0e-47c4-b311-3609a16654a1)
+
+The shared files visible in other user's file manager:
+
+![result](https://github.com/Rati1324/file-sharing/assets/61045363/a9e6b960-dff1-4630-9dc0-cb647ffb7085)
